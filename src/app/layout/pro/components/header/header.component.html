@@ -1,0 +1,22 @@
+<div *ngIf="pro.isTopMenu" class="alain-pro__top-nav" [ngClass]="{'alain-pro__top-nav-light': pro.theme === 'light'}">
+  <div class="alain-pro__top-nav-main" [ngClass]="{'alain-pro__top-nav-main-wide': pro.isFixed}">
+    <div class="alain-pro__top-nav-main-left">
+      <layout-pro-logo class="alain-pro__top-nav-logo"></layout-pro-logo>
+      <div class="alain-pro__menu-wrap">
+        <div layout-pro-menu mode="horizontal"></div>
+      </div>
+    </div>
+    <div class="alain-pro__top-nav-main-right" layout-pro-header-widget></div>
+  </div>
+</div>
+<div *ngIf="!pro.isTopMenu" class="alain-pro__header">
+  <ng-container *ngIf="pro.isMobile">
+    <a [routerLink]="['/']" class="alain-pro__header-logo">
+      <img src="./assets/logo-color.svg" width="32" />
+    </a>
+    <div class="ant-divider ant-divider-vertical"></div>
+  </ng-container>
+  <i (click)="pro.setCollapsed()" nz-icon type="menu-{{pro.collapsed ? 'unfold' : 'fold'}}" class="alain-pro__header-trigger">
+  </i>
+  <div layout-pro-header-widget></div>
+</div>

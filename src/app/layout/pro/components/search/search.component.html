@@ -1,0 +1,11 @@
+<i nz-icon type="search"></i>
+<div class="alain-pro__header-search-input ant-select-auto-complete ant-select"
+     [class.alain-pro__header-search-input-show]="show">
+  <input #ipt placeholder="站内搜索" nz-input [nzAutocomplete]="searchAuto" [(ngModel)]="q" (input)="search$.next($event.target?.value)"
+         (blur)="show=false">
+</div>
+<nz-autocomplete #searchAuto>
+  <nz-auto-option *ngFor="let item of list" [nzValue]="item">
+    {{item}}
+  </nz-auto-option>
+</nz-autocomplete>

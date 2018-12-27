@@ -1,0 +1,18 @@
+<nz-dropdown nzPlacement="bottomRight">
+  <div class="alain-pro__header-item alain-pro__header-account" nz-dropdown>
+    <nz-avatar [nzSrc]="settings.user.avatar" nzSize="small" class="alain-pro__header-account-avatar"></nz-avatar>
+    <span class="name">{{settings.user.name}}</span>
+  </div>
+  <div nz-menu class="width-sm">
+    <div nz-menu-item routerLink="/pro/account/center"><i nz-icon type="user" class="mr-sm"></i>
+      {{ 'menu.account.center' | translate }}
+    </div>
+    <div nz-menu-item routerLink="/pro/account/settings"><i nz-icon type="setting" class="mr-sm"></i>
+      {{ 'menu.account.settings' | translate }}
+    </div>
+    <li nz-menu-divider></li>
+    <div nz-menu-item (click)="logout()"><i nz-icon type="logout" class="mr-sm"></i>
+      {{ 'menu.account.logout' | translate }}
+    </div>
+  </div>
+</nz-dropdown>

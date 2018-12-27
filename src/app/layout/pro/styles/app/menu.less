@@ -1,0 +1,43 @@
+@{alain-pro-prefix} {
+  &__menu {
+    display: block;
+    &-only-icon {
+      .sidebar-nav__item-icon {
+        font-size: @alain-pro-top-nav-only-icon-fs;
+      }
+    }
+    &-title {
+      position: relative;
+      &-badge {
+        background: @primary-color;
+        border-radius: 50%;
+        height: 18px;
+        width: 18px;
+        line-height: 18px;
+        padding: 0;
+        font-size: 12px;
+      }
+    }
+  }
+  &__side-nav {
+    @{alain-pro-prefix}__menu {
+      &-title {
+        display: flex;
+        align-items: center;
+        &-text {
+          flex: 1;
+        }
+      }
+    }
+    .ant-menu-inline-collapsed @{alain-pro-prefix}__menu-title-badge {
+      position: absolute;
+      top: 0;
+      right: -16px;
+      width: 8px;
+      height: 8px;
+      > em {
+        display: none;
+      }
+    }
+  }
+}
