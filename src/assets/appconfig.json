@@ -1,6 +1,6 @@
 {
-  "remoteServiceBaseUrl": "http://localhost/api",
-  "appBaseUrl": "http://localhost",
+  "remoteServiceBaseUrl": "http://127.0.0.1/api",
+  "appBaseUrl": "http://127.0.0.1",
   "localeMappings": [
     {
       "from": "pt-BR",
