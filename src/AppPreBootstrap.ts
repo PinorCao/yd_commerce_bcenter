@@ -57,7 +57,7 @@ export class AppPreBootstrap {
   ): Promise<any> {
     return abp
       .ajax({
-        url: AppConsts.remoteServiceBaseUrl + "/AbpUserConfiguration/GetAll",
+        url: AppConsts.remoteServiceBaseUrl + "/UserConfiguration/GetAll?sourceName=BusinessCenter",
         method: "GET",
         headers: {
           Authorization: "Bearer " + abp.auth.getToken(),
