@@ -828,9 +828,9 @@ export class AuditLogServiceProxy {
      * @param hasException (optional) 
      * @param minExecutionDuration (optional) 
      * @param maxExecutionDuration (optional) 
-     * @param sorting (optional) 排序字段 (eg:Id DESC)
-     * @param maxResultCount (optional) 最大结果数量(等同:PageSize)
-     * @param skipCount (optional) 列表跳过数量(等同: PageSize*PageIndex)
+     * @param sorting (optional) 
+     * @param maxResultCount (optional) 
+     * @param skipCount (optional) 
      * @return Success
      */
     getAuditLogs(startDate: moment.Moment | null | undefined, endDate: moment.Moment | null | undefined, userName: string | null | undefined, serviceName: string | null | undefined, methodName: string | null | undefined, browserInfo: string | null | undefined, hasException: boolean | null | undefined, minExecutionDuration: number | null | undefined, maxExecutionDuration: number | null | undefined, sorting: string | null | undefined, maxResultCount: number | null | undefined, skipCount: number | null | undefined): Observable<PagedResultDtoOfAuditLogListDto> {
@@ -915,9 +915,9 @@ export class AuditLogServiceProxy {
      * @param hasException (optional) 
      * @param minExecutionDuration (optional) 
      * @param maxExecutionDuration (optional) 
-     * @param sorting (optional) 排序字段 (eg:Id DESC)
-     * @param maxResultCount (optional) 最大结果数量(等同:PageSize)
-     * @param skipCount (optional) 列表跳过数量(等同: PageSize*PageIndex)
+     * @param sorting (optional) 
+     * @param maxResultCount (optional) 
+     * @param skipCount (optional) 
      * @return Success
      */
     getAuditLogsToExcel(startDate: moment.Moment | null | undefined, endDate: moment.Moment | null | undefined, userName: string | null | undefined, serviceName: string | null | undefined, methodName: string | null | undefined, browserInfo: string | null | undefined, hasException: boolean | null | undefined, minExecutionDuration: number | null | undefined, maxExecutionDuration: number | null | undefined, sorting: string | null | undefined, maxResultCount: number | null | undefined, skipCount: number | null | undefined): Observable<FileDto> {
@@ -1052,9 +1052,9 @@ export class AuditLogServiceProxy {
      * @param endDate (optional) 
      * @param userName (optional) 
      * @param entityTypeFullName (optional) 
-     * @param sorting (optional) 排序字段 (eg:Id DESC)
-     * @param maxResultCount (optional) 最大结果数量(等同:PageSize)
-     * @param skipCount (optional) 列表跳过数量(等同: PageSize*PageIndex)
+     * @param sorting (optional) 
+     * @param maxResultCount (optional) 
+     * @param skipCount (optional) 
      * @return Success
      */
     getEntityChanges(startDate: moment.Moment | null | undefined, endDate: moment.Moment | null | undefined, userName: string | null | undefined, entityTypeFullName: string | null | undefined, sorting: string | null | undefined, maxResultCount: number | null | undefined, skipCount: number | null | undefined): Observable<PagedResultDtoOfEntityChangeListDto> {
@@ -1124,9 +1124,9 @@ export class AuditLogServiceProxy {
      * @param endDate (optional) 
      * @param userName (optional) 
      * @param entityTypeFullName (optional) 
-     * @param sorting (optional) 排序字段 (eg:Id DESC)
-     * @param maxResultCount (optional) 最大结果数量(等同:PageSize)
-     * @param skipCount (optional) 列表跳过数量(等同: PageSize*PageIndex)
+     * @param sorting (optional) 
+     * @param maxResultCount (optional) 
+     * @param skipCount (optional) 
      * @return Success
      */
     getEntityChangesToExcel(startDate: moment.Moment | null | undefined, endDate: moment.Moment | null | undefined, userName: string | null | undefined, entityTypeFullName: string | null | undefined, sorting: string | null | undefined, maxResultCount: number | null | undefined, skipCount: number | null | undefined): Observable<FileDto> {
@@ -1396,6 +1396,300 @@ export class CachingServiceProxy {
     }
 
     protected processClearAllCaches(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+}
+
+@Injectable()
+export class CategoryServiceProxy {
+    private http: HttpClient;
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * 获取所有分类
+     * @param name (optional) 分类名称
+     * @param parentCategoryId (optional) 父分类Id(0为所有)
+     * @param sorting (optional) 
+     * @param maxResultCount (optional) 
+     * @param skipCount (optional) 
+     * @return Success
+     */
+    getCategorys(name: string | null | undefined, parentCategoryId: number | null | undefined, sorting: string | null | undefined, maxResultCount: number | null | undefined, skipCount: number | null | undefined): Observable<PagedResultDtoOfCategoryListDto> {
+        let url_ = this.baseUrl + "/api/services/app/Category/GetCategorys?";
+        if (name !== undefined)
+            url_ += "Name=" + encodeURIComponent("" + name) + "&"; 
+        if (parentCategoryId !== undefined)
+            url_ += "ParentCategoryId=" + encodeURIComponent("" + parentCategoryId) + "&"; 
+        if (sorting !== undefined)
+            url_ += "Sorting=" + encodeURIComponent("" + sorting) + "&"; 
+        if (maxResultCount !== undefined)
+            url_ += "MaxResultCount=" + encodeURIComponent("" + maxResultCount) + "&"; 
+        if (skipCount !== undefined)
+            url_ += "SkipCount=" + encodeURIComponent("" + skipCount) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetCategorys(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetCategorys(<any>response_);
+                } catch (e) {
+                    return <Observable<PagedResultDtoOfCategoryListDto>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<PagedResultDtoOfCategoryListDto>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetCategorys(response: HttpResponseBase): Observable<PagedResultDtoOfCategoryListDto> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? PagedResultDtoOfCategoryListDto.fromJS(resultData200) : new PagedResultDtoOfCategoryListDto();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<PagedResultDtoOfCategoryListDto>(<any>null);
+    }
+
+    /**
+     * 获取所有可用分类(下拉框)
+     * @return Success
+     */
+    getCategorySelectList(): Observable<SelectListItemDto[]> {
+        let url_ = this.baseUrl + "/api/services/app/Category/GetCategorySelectList";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetCategorySelectList(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetCategorySelectList(<any>response_);
+                } catch (e) {
+                    return <Observable<SelectListItemDto[]>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<SelectListItemDto[]>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetCategorySelectList(response: HttpResponseBase): Observable<SelectListItemDto[]> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(SelectListItemDto.fromJS(item));
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<SelectListItemDto[]>(<any>null);
+    }
+
+    /**
+     * 获取分类详情
+     * @param id (optional) 
+     * @return Success
+     */
+    getCategoryForEdit(id: number | null | undefined): Observable<GetCategoryForEditOutput> {
+        let url_ = this.baseUrl + "/api/services/app/Category/GetCategoryForEdit?";
+        if (id !== undefined)
+            url_ += "Id=" + encodeURIComponent("" + id) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetCategoryForEdit(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetCategoryForEdit(<any>response_);
+                } catch (e) {
+                    return <Observable<GetCategoryForEditOutput>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<GetCategoryForEditOutput>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetCategoryForEdit(response: HttpResponseBase): Observable<GetCategoryForEditOutput> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? GetCategoryForEditOutput.fromJS(resultData200) : new GetCategoryForEditOutput();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<GetCategoryForEditOutput>(<any>null);
+    }
+
+    /**
+     * 创建或更新分类
+     * @param input (optional) 
+     * @return Success
+     */
+    createOrUpdateCategory(input: CreateOrUpdateCategoryInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/app/Category/CreateOrUpdateCategory";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processCreateOrUpdateCategory(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processCreateOrUpdateCategory(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processCreateOrUpdateCategory(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * 删除分类
+     * @param id (optional) 
+     * @return Success
+     */
+    deleteCategory(id: number | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/app/Category/DeleteCategory?";
+        if (id !== undefined)
+            url_ += "Id=" + encodeURIComponent("" + id) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+            })
+        };
+
+        return this.http.request("delete", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processDeleteCategory(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processDeleteCategory(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processDeleteCategory(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -2223,9 +2517,6 @@ export class FileServiceProxy {
 
     /**
      * 下载临时文件
-     * @param fileName 文件名称
-     * @param fileType 文件类型
-     * @param fileToken 文件 Token
      * @return Success
      */
     downloadTempFile(fileName: string, fileType: string, fileToken: string): Observable<void> {
@@ -3657,8 +3948,8 @@ export class NotificationServiceProxy {
     /**
      * 获取用户通知
      * @param state (optional) 通知状态（可空）
-     * @param maxResultCount (optional) 最大结果数量(等同:PageSize)
-     * @param skipCount (optional) 列表跳过数量(等同: PageSize*PageIndex)
+     * @param maxResultCount (optional) 
+     * @param skipCount (optional) 
      * @return Success
      */
     getUserNotifications(state: State | null | undefined, maxResultCount: number | null | undefined, skipCount: number | null | undefined): Observable<GetNotificationsOutput> {
@@ -4038,9 +4329,9 @@ export class OrganizationUnitServiceProxy {
     /**
      * 获取组织单位成员
      * @param id (optional) 组织单位Id(大于0)
-     * @param sorting (optional) 排序字段 (eg:Id DESC)
-     * @param maxResultCount (optional) 最大结果数量(等同:PageSize)
-     * @param skipCount (optional) 列表跳过数量(等同: PageSize*PageIndex)
+     * @param sorting (optional) 
+     * @param maxResultCount (optional) 
+     * @param skipCount (optional) 
      * @return Success
      */
     getOrganizationUnitUsers(id: number | null | undefined, sorting: string | null | undefined, maxResultCount: number | null | undefined, skipCount: number | null | undefined): Observable<PagedResultDtoOfOrganizationUnitUserListDto> {
@@ -4775,9 +5066,9 @@ export class PaymentServiceProxy {
 
     /**
      * 获取支付记录
-     * @param sorting (optional) 排序字段 (eg:Id DESC)
-     * @param maxResultCount (optional) 最大结果数量(等同:PageSize)
-     * @param skipCount (optional) 列表跳过数量(等同: PageSize*PageIndex)
+     * @param sorting (optional) 
+     * @param maxResultCount (optional) 
+     * @param skipCount (optional) 
      * @return Success
      */
     getPaymentHistory(sorting: string | null | undefined, maxResultCount: number | null | undefined, skipCount: number | null | undefined): Observable<PagedResultDtoOfSubscriptionPaymentListDto> {
@@ -4913,9 +5204,9 @@ export class PictureServiceProxy {
     /**
      * 获取分组下的图片
      * @param groupId (optional) 图片分组Id，-1 获取全部
-     * @param sorting (optional) 排序字段 (eg:Id DESC)
-     * @param maxResultCount (optional) 最大结果数量(等同:PageSize)
-     * @param skipCount (optional) 列表跳过数量(等同: PageSize*PageIndex)
+     * @param sorting (optional) 
+     * @param maxResultCount (optional) 
+     * @param skipCount (optional) 
      * @return Success
      */
     getPictureAsync(groupId: number | null | undefined, sorting: string | null | undefined, maxResultCount: number | null | undefined, skipCount: number | null | undefined): Observable<PagedResultDtoOfPictureListDto> {
@@ -6317,9 +6608,9 @@ export class RoleServiceProxy {
      * 获取所有角色
      * @param displayName (optional) 显示名
      * @param permission (optional) 权限
-     * @param sorting (optional) 排序字段 (eg:Id DESC)
-     * @param maxResultCount (optional) 最大结果数量(等同:PageSize)
-     * @param skipCount (optional) 列表跳过数量(等同: PageSize*PageIndex)
+     * @param sorting (optional) 
+     * @param maxResultCount (optional) 
+     * @param skipCount (optional) 
      * @return Success
      */
     getRoles(displayName: string | null | undefined, permission: string | null | undefined, sorting: string | null | undefined, maxResultCount: number | null | undefined, skipCount: number | null | undefined): Observable<PagedResultDtoOfRoleListDto> {
@@ -6604,6 +6895,7 @@ export class SessionServiceProxy {
     }
 
     /**
+     * 更新登录状态
      * @return Success
      */
     updateUserSignInToken(): Observable<UpdateUserSignInTokenOutput> {
@@ -6908,9 +7200,9 @@ export class SMSTemplateServiceProxy {
      * @param templateCode (optional) 短信模板编码
      * @param providerName (optional) 短信模板供应商
      * @param isActived (optional) 是否激活(Null代表所有)
-     * @param sorting (optional) 排序字段 (eg:Id DESC)
-     * @param maxResultCount (optional) 最大结果数量(等同:PageSize)
-     * @param skipCount (optional) 列表跳过数量(等同: PageSize*PageIndex)
+     * @param sorting (optional) 
+     * @param maxResultCount (optional) 
+     * @param skipCount (optional) 
      * @return Success
      */
     getSMSTemplates(name: string | null | undefined, templateCode: string | null | undefined, providerName: string | null | undefined, isActived: boolean | null | undefined, sorting: string | null | undefined, maxResultCount: number | null | undefined, skipCount: number | null | undefined): Observable<PagedResultDtoOfSMSTemplateListDto> {
@@ -7260,19 +7552,19 @@ export class StateServiceServiceProxy {
 
     /**
      * 获取所有省份
-     * @param maxResultCount (optional) 最大结果数量(等同:PageSize)
-     * @param skipCount (optional) 列表跳过数量(等同: PageSize*PageIndex)
-     * @param sorting (optional) 排序字段 (eg:Id DESC)
+     * @param sorting (optional) 
+     * @param maxResultCount (optional) 
+     * @param skipCount (optional) 
      * @return Success
      */
-    getProvinces(maxResultCount: number | null | undefined, skipCount: number | null | undefined, sorting: string | null | undefined): Observable<PagedResultDtoOfProvinceListDto> {
+    getProvinces(sorting: string | null | undefined, maxResultCount: number | null | undefined, skipCount: number | null | undefined): Observable<PagedResultDtoOfProvinceListDto> {
         let url_ = this.baseUrl + "/api/services/app/StateService/GetProvinces?";
+        if (sorting !== undefined)
+            url_ += "Sorting=" + encodeURIComponent("" + sorting) + "&"; 
         if (maxResultCount !== undefined)
             url_ += "MaxResultCount=" + encodeURIComponent("" + maxResultCount) + "&"; 
         if (skipCount !== undefined)
             url_ += "SkipCount=" + encodeURIComponent("" + skipCount) + "&"; 
-        if (sorting !== undefined)
-            url_ += "Sorting=" + encodeURIComponent("" + sorting) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -7482,9 +7774,9 @@ export class StateServiceServiceProxy {
     /**
      * 获取所有城市
      * @param provinceId (optional) 省份Id(必须大于0)
-     * @param sorting (optional) 排序字段 (eg:Id DESC)
-     * @param maxResultCount (optional) 最大结果数量(等同:PageSize)
-     * @param skipCount (optional) 列表跳过数量(等同: PageSize*PageIndex)
+     * @param sorting (optional) 
+     * @param maxResultCount (optional) 
+     * @param skipCount (optional) 
      * @return Success
      */
     getCitys(provinceId: number | null | undefined, sorting: string | null | undefined, maxResultCount: number | null | undefined, skipCount: number | null | undefined): Observable<PagedResultDtoOfCityListDto> {
@@ -7709,9 +8001,9 @@ export class StateServiceServiceProxy {
     /**
      * 获取所有区域
      * @param ctyId (optional) 城市Id(必须大于0)
-     * @param sorting (optional) 排序字段 (eg:Id DESC)
-     * @param maxResultCount (optional) 最大结果数量(等同:PageSize)
-     * @param skipCount (optional) 列表跳过数量(等同: PageSize*PageIndex)
+     * @param sorting (optional) 
+     * @param maxResultCount (optional) 
+     * @param skipCount (optional) 
      * @return Success
      */
     getDistricts(ctyId: number | null | undefined, sorting: string | null | undefined, maxResultCount: number | null | undefined, skipCount: number | null | undefined): Observable<PagedResultDtoOfDistrictListDto> {
@@ -7949,9 +8241,9 @@ export class StoreServiceProxy {
      * 获取所有店铺
      * @param name (optional) 店铺名称
      * @param source (optional) 渠道来源(空-获取所有)
-     * @param sorting (optional) 排序字段 (eg:Id DESC)
-     * @param maxResultCount (optional) 最大结果数量(等同:PageSize)
-     * @param skipCount (optional) 列表跳过数量(等同: PageSize*PageIndex)
+     * @param sorting (optional) 
+     * @param maxResultCount (optional) 
+     * @param skipCount (optional) 
      * @return Success
      */
     getStores(name: string | null | undefined, source: Source | null | undefined, sorting: string | null | undefined, maxResultCount: number | null | undefined, skipCount: number | null | undefined): Observable<PagedResultDtoOfStoreListDto> {
@@ -8066,6 +8358,61 @@ export class StoreServiceProxy {
             }));
         }
         return _observableOf<SelectListItemDto[]>(<any>null);
+    }
+
+    /**
+     * 获取店铺详情
+     * @param id (optional) 
+     * @return Success
+     */
+    getStoreForEdit(id: number | null | undefined): Observable<GetStoreForEditOutput> {
+        let url_ = this.baseUrl + "/api/services/app/Store/GetStoreForEdit?";
+        if (id !== undefined)
+            url_ += "Id=" + encodeURIComponent("" + id) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetStoreForEdit(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetStoreForEdit(<any>response_);
+                } catch (e) {
+                    return <Observable<GetStoreForEditOutput>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<GetStoreForEditOutput>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetStoreForEdit(response: HttpResponseBase): Observable<GetStoreForEditOutput> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? GetStoreForEditOutput.fromJS(resultData200) : new GetStoreForEditOutput();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<GetStoreForEditOutput>(<any>null);
     }
 
     /**
@@ -8195,9 +8542,9 @@ export class TenantServiceProxy {
      * @param editionId (optional) 版本
      * @param editionIdSpecified (optional) 指定版本
      * @param isActive (optional) 是否启用(空代表全部)
-     * @param sorting (optional) 排序字段 (eg:Id DESC)
-     * @param maxResultCount (optional) 最大结果数量(等同:PageSize)
-     * @param skipCount (optional) 列表跳过数量(等同: PageSize*PageIndex)
+     * @param sorting (optional) 
+     * @param maxResultCount (optional) 
+     * @param skipCount (optional) 
      * @return Success
      */
     getTenants(tenancyName: string | null | undefined, name: string | null | undefined, subscriptionEndDateStart: moment.Moment | null | undefined, subscriptionEndDateEnd: moment.Moment | null | undefined, creationDateStart: moment.Moment | null | undefined, creationDateEnd: moment.Moment | null | undefined, editionId: number | null | undefined, editionIdSpecified: boolean | null | undefined, isActive: boolean | null | undefined, sorting: string | null | undefined, maxResultCount: number | null | undefined, skipCount: number | null | undefined): Observable<PagedResultDtoOfTenantListDto> {
@@ -9730,6 +10077,7 @@ export class TokenAuthServiceProxy {
     }
 
     /**
+     * 注销登录
      * @return Success
      */
     logOut(): Observable<void> {
@@ -10616,9 +10964,9 @@ export class UserServiceProxy {
      * @param permission (optional) 权限
      * @param roleIds (optional) 角色
      * @param onlyLockedUsers (optional) 只获取锁定用户
-     * @param sorting (optional) 排序字段 (eg:Id DESC)
-     * @param maxResultCount (optional) 最大结果数量(等同:PageSize)
-     * @param skipCount (optional) 列表跳过数量(等同: PageSize*PageIndex)
+     * @param sorting (optional) 
+     * @param maxResultCount (optional) 
+     * @param skipCount (optional) 
      * @return Success
      */
     getUsers(userName: string | null | undefined, surname: string | null | undefined, email: string | null | undefined, isEmailConfirmed: boolean | null | undefined, phoneNumber: string | null | undefined, isPhoneConfirmed: boolean | null | undefined, isActive: boolean | null | undefined, permission: string | null | undefined, roleIds: number[] | null | undefined, onlyLockedUsers: boolean | null | undefined, sorting: string | null | undefined, maxResultCount: number | null | undefined, skipCount: number | null | undefined): Observable<PagedResultDtoOfUserListDto> {
@@ -11250,9 +11598,9 @@ export class UserLinkServiceProxy {
 
     /**
      * 获取所有关联用户
-     * @param sorting (optional) 排序字段 (eg:Id DESC)
-     * @param maxResultCount (optional) 最大结果数量(等同:PageSize)
-     * @param skipCount (optional) 列表跳过数量(等同: PageSize*PageIndex)
+     * @param sorting (optional) 
+     * @param maxResultCount (optional) 
+     * @param skipCount (optional) 
      * @return Success
      */
     getLinkedUsers(sorting: string | null | undefined, maxResultCount: number | null | undefined, skipCount: number | null | undefined): Observable<PagedResultDtoOfLinkedUserDto> {
@@ -12605,11 +12953,8 @@ export interface IAuditLogListDto {
 }
 
 export class FileDto implements IFileDto {
-    /** 文件名称 */
     fileName!: string;
-    /** 文件类型 */
     fileType!: string;
-    /** 文件 Token */
     fileToken!: string;
 
     constructor(data?: IFileDto) {
@@ -12646,11 +12991,8 @@ export class FileDto implements IFileDto {
 }
 
 export interface IFileDto {
-    /** 文件名称 */
     fileName: string;
-    /** 文件类型 */
     fileType: string;
-    /** 文件 Token */
     fileToken: string;
 }
 
@@ -12986,6 +13328,310 @@ export interface IEntityDtoOfString {
     id: string | undefined;
 }
 
+export class PagedResultDtoOfCategoryListDto implements IPagedResultDtoOfCategoryListDto {
+    totalCount!: number | undefined;
+    items!: CategoryListDto[] | undefined;
+
+    constructor(data?: IPagedResultDtoOfCategoryListDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.totalCount = data["totalCount"];
+            if (data["items"] && data["items"].constructor === Array) {
+                this.items = [];
+                for (let item of data["items"])
+                    this.items.push(CategoryListDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): PagedResultDtoOfCategoryListDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new PagedResultDtoOfCategoryListDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["totalCount"] = this.totalCount;
+        if (this.items && this.items.constructor === Array) {
+            data["items"] = [];
+            for (let item of this.items)
+                data["items"].push(item.toJSON());
+        }
+        return data; 
+    }
+}
+
+export interface IPagedResultDtoOfCategoryListDto {
+    totalCount: number | undefined;
+    items: CategoryListDto[] | undefined;
+}
+
+export class CategoryListDto implements ICategoryListDto {
+    /** Id */
+    id!: number | undefined;
+    /** 分类名称 */
+    name!: string | undefined;
+    /** 分类名称:面包屑(父分 &gt;&gt; 子分类) */
+    breadcrumb!: string | undefined;
+    /** 父分类Id */
+    parentCategoryId!: number | undefined;
+    /** 图片Id */
+    pictureId!: number | undefined;
+    /** 图片Url(图片Id为0的话为空) */
+    pictureUrl!: string | undefined;
+    /** 是否启用 */
+    isActive!: boolean | undefined;
+    /** 排序Id */
+    displayOrder!: number | undefined;
+
+    constructor(data?: ICategoryListDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.name = data["name"];
+            this.breadcrumb = data["breadcrumb"];
+            this.parentCategoryId = data["parentCategoryId"];
+            this.pictureId = data["pictureId"];
+            this.pictureUrl = data["pictureUrl"];
+            this.isActive = data["isActive"];
+            this.displayOrder = data["displayOrder"];
+        }
+    }
+
+    static fromJS(data: any): CategoryListDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new CategoryListDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        data["breadcrumb"] = this.breadcrumb;
+        data["parentCategoryId"] = this.parentCategoryId;
+        data["pictureId"] = this.pictureId;
+        data["pictureUrl"] = this.pictureUrl;
+        data["isActive"] = this.isActive;
+        data["displayOrder"] = this.displayOrder;
+        return data; 
+    }
+}
+
+export interface ICategoryListDto {
+    /** Id */
+    id: number | undefined;
+    /** 分类名称 */
+    name: string | undefined;
+    /** 分类名称:面包屑(父分 &gt;&gt; 子分类) */
+    breadcrumb: string | undefined;
+    /** 父分类Id */
+    parentCategoryId: number | undefined;
+    /** 图片Id */
+    pictureId: number | undefined;
+    /** 图片Url(图片Id为0的话为空) */
+    pictureUrl: string | undefined;
+    /** 是否启用 */
+    isActive: boolean | undefined;
+    /** 排序Id */
+    displayOrder: number | undefined;
+}
+
+export class SelectListItemDto implements ISelectListItemDto {
+    text!: string | undefined;
+    value!: string | undefined;
+
+    constructor(data?: ISelectListItemDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.text = data["text"];
+            this.value = data["value"];
+        }
+    }
+
+    static fromJS(data: any): SelectListItemDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SelectListItemDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["text"] = this.text;
+        data["value"] = this.value;
+        return data; 
+    }
+}
+
+export interface ISelectListItemDto {
+    text: string | undefined;
+    value: string | undefined;
+}
+
+export class GetCategoryForEditOutput implements IGetCategoryForEditOutput {
+    /** Id */
+    id!: number | undefined;
+    /** 名称 */
+    name!: string | undefined;
+    /** 父分类Id */
+    parentCategoryId!: number | undefined;
+    /** 图片Id */
+    pictureId!: number | undefined;
+    /** 是否启用 */
+    isActive!: boolean | undefined;
+    /** 排序Id */
+    displayOrder!: number | undefined;
+
+    constructor(data?: IGetCategoryForEditOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.name = data["name"];
+            this.parentCategoryId = data["parentCategoryId"];
+            this.pictureId = data["pictureId"];
+            this.isActive = data["isActive"];
+            this.displayOrder = data["displayOrder"];
+        }
+    }
+
+    static fromJS(data: any): GetCategoryForEditOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new GetCategoryForEditOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        data["parentCategoryId"] = this.parentCategoryId;
+        data["pictureId"] = this.pictureId;
+        data["isActive"] = this.isActive;
+        data["displayOrder"] = this.displayOrder;
+        return data; 
+    }
+}
+
+export interface IGetCategoryForEditOutput {
+    /** Id */
+    id: number | undefined;
+    /** 名称 */
+    name: string | undefined;
+    /** 父分类Id */
+    parentCategoryId: number | undefined;
+    /** 图片Id */
+    pictureId: number | undefined;
+    /** 是否启用 */
+    isActive: boolean | undefined;
+    /** 排序Id */
+    displayOrder: number | undefined;
+}
+
+export class CreateOrUpdateCategoryInput implements ICreateOrUpdateCategoryInput {
+    /** Id，空或者为0时创建分类 */
+    id!: number | undefined;
+    /** 名称 */
+    name!: string;
+    /** 父分类Id */
+    parentCategoryId!: number | undefined;
+    /** 图片Id */
+    pictureId!: number | undefined;
+    /** 是否启用 */
+    isActive!: boolean | undefined;
+    /** 排序Id */
+    displayOrder!: number | undefined;
+
+    constructor(data?: ICreateOrUpdateCategoryInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.name = data["name"];
+            this.parentCategoryId = data["parentCategoryId"];
+            this.pictureId = data["pictureId"];
+            this.isActive = data["isActive"];
+            this.displayOrder = data["displayOrder"];
+        }
+    }
+
+    static fromJS(data: any): CreateOrUpdateCategoryInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new CreateOrUpdateCategoryInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        data["parentCategoryId"] = this.parentCategoryId;
+        data["pictureId"] = this.pictureId;
+        data["isActive"] = this.isActive;
+        data["displayOrder"] = this.displayOrder;
+        return data; 
+    }
+}
+
+export interface ICreateOrUpdateCategoryInput {
+    /** Id，空或者为0时创建分类 */
+    id: number | undefined;
+    /** 名称 */
+    name: string;
+    /** 父分类Id */
+    parentCategoryId: number | undefined;
+    /** 图片Id */
+    pictureId: number | undefined;
+    /** 是否启用 */
+    isActive: boolean | undefined;
+    /** 排序Id */
+    displayOrder: number | undefined;
+}
+
 export class ListResultDtoOfSubscribableEditionComboboxItemDto implements IListResultDtoOfSubscribableEditionComboboxItemDto {
     items!: SubscribableEditionComboboxItemDto[] | undefined;
 
@@ -13210,50 +13856,6 @@ export class GetDefaultEditionNameOutput implements IGetDefaultEditionNameOutput
 
 export interface IGetDefaultEditionNameOutput {
     name: string | undefined;
-}
-
-export class SelectListItemDto implements ISelectListItemDto {
-    /** 文本 */
-    text!: string | undefined;
-    /** 值 */
-    value!: string | undefined;
-
-    constructor(data?: ISelectListItemDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.text = data["text"];
-            this.value = data["value"];
-        }
-    }
-
-    static fromJS(data: any): SelectListItemDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new SelectListItemDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["text"] = this.text;
-        data["value"] = this.value;
-        return data; 
-    }
-}
-
-export interface ISelectListItemDto {
-    /** 文本 */
-    text: string | undefined;
-    /** 值 */
-    value: string | undefined;
 }
 
 export class ListResultDtoOfEditionListDto implements IListResultDtoOfEditionListDto {
@@ -20797,6 +21399,98 @@ export interface IStoreListDto {
     orderSync: boolean | undefined;
 }
 
+export class GetStoreForEditOutput implements IGetStoreForEditOutput {
+    /** Id */
+    id!: number | undefined;
+    /** 店铺名 */
+    name!: string | undefined;
+    /** 图片Id */
+    pictureId!: number | undefined;
+    /** 第三方App id */
+    appKey!: string | undefined;
+    /** 第三方App secret */
+    appSecret!: string | undefined;
+    /** 订单来源10 = Self ; 20 = FxgAd ; 30 = FxgPd ; 40 = Tenant ; 50 = YouZan */
+    orderSourceType!: GetStoreForEditOutputOrderSourceType | undefined;
+    /** 订单同步 */
+    orderSync!: boolean | undefined;
+    /** 排序id */
+    displayOrder!: number | undefined;
+    /** 创建时间 */
+    creationTime!: moment.Moment | undefined;
+    /** 最后修改时间 */
+    lastModificationTime!: moment.Moment | undefined;
+
+    constructor(data?: IGetStoreForEditOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.name = data["name"];
+            this.pictureId = data["pictureId"];
+            this.appKey = data["appKey"];
+            this.appSecret = data["appSecret"];
+            this.orderSourceType = data["orderSourceType"];
+            this.orderSync = data["orderSync"];
+            this.displayOrder = data["displayOrder"];
+            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
+            this.lastModificationTime = data["lastModificationTime"] ? moment(data["lastModificationTime"].toString()) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): GetStoreForEditOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new GetStoreForEditOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        data["pictureId"] = this.pictureId;
+        data["appKey"] = this.appKey;
+        data["appSecret"] = this.appSecret;
+        data["orderSourceType"] = this.orderSourceType;
+        data["orderSync"] = this.orderSync;
+        data["displayOrder"] = this.displayOrder;
+        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
+        data["lastModificationTime"] = this.lastModificationTime ? this.lastModificationTime.toISOString() : <any>undefined;
+        return data; 
+    }
+}
+
+export interface IGetStoreForEditOutput {
+    /** Id */
+    id: number | undefined;
+    /** 店铺名 */
+    name: string | undefined;
+    /** 图片Id */
+    pictureId: number | undefined;
+    /** 第三方App id */
+    appKey: string | undefined;
+    /** 第三方App secret */
+    appSecret: string | undefined;
+    /** 订单来源10 = Self ; 20 = FxgAd ; 30 = FxgPd ; 40 = Tenant ; 50 = YouZan */
+    orderSourceType: GetStoreForEditOutputOrderSourceType | undefined;
+    /** 订单同步 */
+    orderSync: boolean | undefined;
+    /** 排序id */
+    displayOrder: number | undefined;
+    /** 创建时间 */
+    creationTime: moment.Moment | undefined;
+    /** 最后修改时间 */
+    lastModificationTime: moment.Moment | undefined;
+}
+
 export class CreateOrUpdateStoreInput implements ICreateOrUpdateStoreInput {
     /** Id，空或者为0时创建店铺 */
     id!: number | undefined;
@@ -24695,6 +25389,14 @@ export enum CheckUserCodeInputCodeType {
 }
 
 export enum StoreListDtoOrderSourceType {
+    _10 = 10, 
+    _20 = 20, 
+    _30 = 30, 
+    _40 = 40, 
+    _50 = 50, 
+}
+
+export enum GetStoreForEditOutputOrderSourceType {
     _10 = 10, 
     _20 = 20, 
     _30 = 30, 
