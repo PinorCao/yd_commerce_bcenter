@@ -1659,13 +1659,13 @@ export class CategoryServiceProxy {
 
     /**
      * 删除分类
-     * @param id (optional) 
+     * @param ids (optional) 
      * @return Success
      */
-    deleteCategory(id: number | null | undefined): Observable<void> {
+    deleteCategory(ids: number[] | null | undefined): Observable<void> {
         let url_ = this.baseUrl + "/api/services/app/Category/DeleteCategory?";
-        if (id !== undefined)
-            url_ += "Id=" + encodeURIComponent("" + id) + "&"; 
+        if (ids !== undefined)
+            ids && ids.forEach(item => { url_ += "Ids=" + encodeURIComponent("" + item) + "&"; });
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -5423,14 +5423,12 @@ export class PictureServiceProxy {
 
     /**
      * 批量删除图片
-     * @param ids 需要删除的图片Id
+     * @param ids (optional) 
      * @return Success
      */
-    deleteAsync(ids: number[]): Observable<void> {
+    deleteAsync(ids: number[] | null | undefined): Observable<void> {
         let url_ = this.baseUrl + "/api/services/app/Picture/DeleteAsync?";
-        if (ids === undefined || ids === null)
-            throw new Error("The parameter 'ids' must be defined and cannot be null.");
-        else
+        if (ids !== undefined)
             ids && ids.forEach(item => { url_ += "Ids=" + encodeURIComponent("" + item) + "&"; });
         url_ = url_.replace(/[?&]$/, "");
 
@@ -5720,6 +5718,297 @@ export class PictureServiceProxy {
     }
 
     protected processDeleteGroupAsync(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+}
+
+@Injectable()
+export class ProductServiceProxy {
+    private http: HttpClient;
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * 获取所有商品
+     * @param name (optional) 商品名称
+     * @param sorting (optional) 
+     * @param maxResultCount (optional) 
+     * @param skipCount (optional) 
+     * @return Success
+     */
+    getProducts(name: string | null | undefined, sorting: string | null | undefined, maxResultCount: number | null | undefined, skipCount: number | null | undefined): Observable<PagedResultDtoOfProductListDto> {
+        let url_ = this.baseUrl + "/api/services/app/Product/GetProducts?";
+        if (name !== undefined)
+            url_ += "Name=" + encodeURIComponent("" + name) + "&"; 
+        if (sorting !== undefined)
+            url_ += "Sorting=" + encodeURIComponent("" + sorting) + "&"; 
+        if (maxResultCount !== undefined)
+            url_ += "MaxResultCount=" + encodeURIComponent("" + maxResultCount) + "&"; 
+        if (skipCount !== undefined)
+            url_ += "SkipCount=" + encodeURIComponent("" + skipCount) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetProducts(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetProducts(<any>response_);
+                } catch (e) {
+                    return <Observable<PagedResultDtoOfProductListDto>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<PagedResultDtoOfProductListDto>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetProducts(response: HttpResponseBase): Observable<PagedResultDtoOfProductListDto> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? PagedResultDtoOfProductListDto.fromJS(resultData200) : new PagedResultDtoOfProductListDto();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<PagedResultDtoOfProductListDto>(<any>null);
+    }
+
+    /**
+     * 获取所有可用商品(下拉框)
+     * @return Success
+     */
+    getProductSelectList(): Observable<SelectListItemDto[]> {
+        let url_ = this.baseUrl + "/api/services/app/Product/GetProductSelectList";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetProductSelectList(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetProductSelectList(<any>response_);
+                } catch (e) {
+                    return <Observable<SelectListItemDto[]>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<SelectListItemDto[]>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetProductSelectList(response: HttpResponseBase): Observable<SelectListItemDto[]> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(SelectListItemDto.fromJS(item));
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<SelectListItemDto[]>(<any>null);
+    }
+
+    /**
+     * 获取商品详情
+     * @param id (optional) 
+     * @return Success
+     */
+    getProductForEdit(id: number | null | undefined): Observable<GetProductForEditOutput> {
+        let url_ = this.baseUrl + "/api/services/app/Product/GetProductForEdit?";
+        if (id !== undefined)
+            url_ += "Id=" + encodeURIComponent("" + id) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetProductForEdit(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetProductForEdit(<any>response_);
+                } catch (e) {
+                    return <Observable<GetProductForEditOutput>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<GetProductForEditOutput>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetProductForEdit(response: HttpResponseBase): Observable<GetProductForEditOutput> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? GetProductForEditOutput.fromJS(resultData200) : new GetProductForEditOutput();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<GetProductForEditOutput>(<any>null);
+    }
+
+    /**
+     * 创建或更新商品
+     * @param input (optional) 
+     * @return Success
+     */
+    createOrUpdateProduct(input: CreateOrUpdateProductInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/app/Product/CreateOrUpdateProduct";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processCreateOrUpdateProduct(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processCreateOrUpdateProduct(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processCreateOrUpdateProduct(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * 删除商品
+     * @param ids (optional) 
+     * @return Success
+     */
+    deleteProduct(ids: number[] | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/app/Product/DeleteProduct?";
+        if (ids !== undefined)
+            ids && ids.forEach(item => { url_ += "Ids=" + encodeURIComponent("" + item) + "&"; });
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+            })
+        };
+
+        return this.http.request("delete", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processDeleteProduct(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processDeleteProduct(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processDeleteProduct(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -8470,13 +8759,13 @@ export class StoreServiceProxy {
 
     /**
      * 删除店铺
-     * @param id (optional) 
+     * @param ids (optional) 
      * @return Success
      */
-    deleteStore(id: number | null | undefined): Observable<void> {
+    deleteStore(ids: number[] | null | undefined): Observable<void> {
         let url_ = this.baseUrl + "/api/services/app/Store/DeleteStore?";
-        if (id !== undefined)
-            url_ += "Id=" + encodeURIComponent("" + id) + "&"; 
+        if (ids !== undefined)
+            ids && ids.forEach(item => { url_ += "Ids=" + encodeURIComponent("" + item) + "&"; });
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -13505,6 +13794,8 @@ export class GetCategoryForEditOutput implements IGetCategoryForEditOutput {
     parentCategoryId!: number | undefined;
     /** 图片Id */
     pictureId!: number | undefined;
+    /** 图片Url */
+    pictureUrl!: string | undefined;
     /** 是否启用 */
     isActive!: boolean | undefined;
     /** 排序Id */
@@ -13525,6 +13816,7 @@ export class GetCategoryForEditOutput implements IGetCategoryForEditOutput {
             this.name = data["name"];
             this.parentCategoryId = data["parentCategoryId"];
             this.pictureId = data["pictureId"];
+            this.pictureUrl = data["pictureUrl"];
             this.isActive = data["isActive"];
             this.displayOrder = data["displayOrder"];
         }
@@ -13543,6 +13835,7 @@ export class GetCategoryForEditOutput implements IGetCategoryForEditOutput {
         data["name"] = this.name;
         data["parentCategoryId"] = this.parentCategoryId;
         data["pictureId"] = this.pictureId;
+        data["pictureUrl"] = this.pictureUrl;
         data["isActive"] = this.isActive;
         data["displayOrder"] = this.displayOrder;
         return data; 
@@ -13558,6 +13851,8 @@ export interface IGetCategoryForEditOutput {
     parentCategoryId: number | undefined;
     /** 图片Id */
     pictureId: number | undefined;
+    /** 图片Url */
+    pictureUrl: string | undefined;
     /** 是否启用 */
     isActive: boolean | undefined;
     /** 排序Id */
@@ -18809,6 +19104,784 @@ export interface ICreateOrUpdatePictureGroupInput {
     id: number | undefined;
 }
 
+export class PagedResultDtoOfProductListDto implements IPagedResultDtoOfProductListDto {
+    totalCount!: number | undefined;
+    items!: ProductListDto[] | undefined;
+
+    constructor(data?: IPagedResultDtoOfProductListDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.totalCount = data["totalCount"];
+            if (data["items"] && data["items"].constructor === Array) {
+                this.items = [];
+                for (let item of data["items"])
+                    this.items.push(ProductListDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): PagedResultDtoOfProductListDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new PagedResultDtoOfProductListDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["totalCount"] = this.totalCount;
+        if (this.items && this.items.constructor === Array) {
+            data["items"] = [];
+            for (let item of this.items)
+                data["items"].push(item.toJSON());
+        }
+        return data; 
+    }
+}
+
+export interface IPagedResultDtoOfProductListDto {
+    totalCount: number | undefined;
+    items: ProductListDto[] | undefined;
+}
+
+export class ProductListDto implements IProductListDto {
+    /** 商品名 */
+    name!: string | undefined;
+    /** 短描述/推荐语 */
+    shortDescription!: string | undefined;
+    /** SKU */
+    sku!: string | undefined;
+    /** 库存数量 */
+    stockQuantity!: number | undefined;
+    /** 售价 */
+    price!: number | undefined;
+    /** 货物成本/进货价 */
+    productCost!: number | undefined;
+    /** 图片Url */
+    pictureUrl!: string | undefined;
+    id!: number | undefined;
+
+    constructor(data?: IProductListDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.name = data["name"];
+            this.shortDescription = data["shortDescription"];
+            this.sku = data["sku"];
+            this.stockQuantity = data["stockQuantity"];
+            this.price = data["price"];
+            this.productCost = data["productCost"];
+            this.pictureUrl = data["pictureUrl"];
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): ProductListDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new ProductListDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["name"] = this.name;
+        data["shortDescription"] = this.shortDescription;
+        data["sku"] = this.sku;
+        data["stockQuantity"] = this.stockQuantity;
+        data["price"] = this.price;
+        data["productCost"] = this.productCost;
+        data["pictureUrl"] = this.pictureUrl;
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface IProductListDto {
+    /** 商品名 */
+    name: string | undefined;
+    /** 短描述/推荐语 */
+    shortDescription: string | undefined;
+    /** SKU */
+    sku: string | undefined;
+    /** 库存数量 */
+    stockQuantity: number | undefined;
+    /** 售价 */
+    price: number | undefined;
+    /** 货物成本/进货价 */
+    productCost: number | undefined;
+    /** 图片Url */
+    pictureUrl: string | undefined;
+    id: number | undefined;
+}
+
+export class GetProductForEditOutput implements IGetProductForEditOutput {
+    /** 商品名 */
+    name!: string | undefined;
+    /** 短描述/推荐语 */
+    shortDescription!: string | undefined;
+    /** 长描述(Html) */
+    fullDescription!: string | undefined;
+    /** SKU */
+    sku!: string | undefined;
+    /** 第三方sku(仓储发货备用) */
+    thirdPartySku!: string | undefined;
+    /** 库存数量 */
+    stockQuantity!: number | undefined;
+    /** 低库存通知（暂不实现） */
+    notifyAdminForQuantityBelow!: number | undefined;
+    /** 售价 */
+    price!: number | undefined;
+    /** 货物成本/进货价 */
+    productCost!: number | undefined;
+    /** 重量（发货毛重） */
+    weight!: number | undefined;
+    /** 长 */
+    length!: number | undefined;
+    /** 宽 */
+    width!: number | undefined;
+    /** 高 */
+    height!: number | undefined;
+    /** 分类 */
+    categorys!: ProductCategory[] | undefined;
+    /** 图片 */
+    pictures!: ProductPictureDto[] | undefined;
+    /** 商品属性和值 */
+    attributes!: ProductAttributeDto[] | undefined;
+    /** 商品属性组合 */
+    attributeCombinations!: AttributeCombinationDto[] | undefined;
+    id!: number | undefined;
+
+    constructor(data?: IGetProductForEditOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.name = data["name"];
+            this.shortDescription = data["shortDescription"];
+            this.fullDescription = data["fullDescription"];
+            this.sku = data["sku"];
+            this.thirdPartySku = data["thirdPartySku"];
+            this.stockQuantity = data["stockQuantity"];
+            this.notifyAdminForQuantityBelow = data["notifyAdminForQuantityBelow"];
+            this.price = data["price"];
+            this.productCost = data["productCost"];
+            this.weight = data["weight"];
+            this.length = data["length"];
+            this.width = data["width"];
+            this.height = data["height"];
+            if (data["categorys"] && data["categorys"].constructor === Array) {
+                this.categorys = [];
+                for (let item of data["categorys"])
+                    this.categorys.push(ProductCategory.fromJS(item));
+            }
+            if (data["pictures"] && data["pictures"].constructor === Array) {
+                this.pictures = [];
+                for (let item of data["pictures"])
+                    this.pictures.push(ProductPictureDto.fromJS(item));
+            }
+            if (data["attributes"] && data["attributes"].constructor === Array) {
+                this.attributes = [];
+                for (let item of data["attributes"])
+                    this.attributes.push(ProductAttributeDto.fromJS(item));
+            }
+            if (data["attributeCombinations"] && data["attributeCombinations"].constructor === Array) {
+                this.attributeCombinations = [];
+                for (let item of data["attributeCombinations"])
+                    this.attributeCombinations.push(AttributeCombinationDto.fromJS(item));
+            }
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): GetProductForEditOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new GetProductForEditOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["name"] = this.name;
+        data["shortDescription"] = this.shortDescription;
+        data["fullDescription"] = this.fullDescription;
+        data["sku"] = this.sku;
+        data["thirdPartySku"] = this.thirdPartySku;
+        data["stockQuantity"] = this.stockQuantity;
+        data["notifyAdminForQuantityBelow"] = this.notifyAdminForQuantityBelow;
+        data["price"] = this.price;
+        data["productCost"] = this.productCost;
+        data["weight"] = this.weight;
+        data["length"] = this.length;
+        data["width"] = this.width;
+        data["height"] = this.height;
+        if (this.categorys && this.categorys.constructor === Array) {
+            data["categorys"] = [];
+            for (let item of this.categorys)
+                data["categorys"].push(item.toJSON());
+        }
+        if (this.pictures && this.pictures.constructor === Array) {
+            data["pictures"] = [];
+            for (let item of this.pictures)
+                data["pictures"].push(item.toJSON());
+        }
+        if (this.attributes && this.attributes.constructor === Array) {
+            data["attributes"] = [];
+            for (let item of this.attributes)
+                data["attributes"].push(item.toJSON());
+        }
+        if (this.attributeCombinations && this.attributeCombinations.constructor === Array) {
+            data["attributeCombinations"] = [];
+            for (let item of this.attributeCombinations)
+                data["attributeCombinations"].push(item.toJSON());
+        }
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface IGetProductForEditOutput {
+    /** 商品名 */
+    name: string | undefined;
+    /** 短描述/推荐语 */
+    shortDescription: string | undefined;
+    /** 长描述(Html) */
+    fullDescription: string | undefined;
+    /** SKU */
+    sku: string | undefined;
+    /** 第三方sku(仓储发货备用) */
+    thirdPartySku: string | undefined;
+    /** 库存数量 */
+    stockQuantity: number | undefined;
+    /** 低库存通知（暂不实现） */
+    notifyAdminForQuantityBelow: number | undefined;
+    /** 售价 */
+    price: number | undefined;
+    /** 货物成本/进货价 */
+    productCost: number | undefined;
+    /** 重量（发货毛重） */
+    weight: number | undefined;
+    /** 长 */
+    length: number | undefined;
+    /** 宽 */
+    width: number | undefined;
+    /** 高 */
+    height: number | undefined;
+    /** 分类 */
+    categorys: ProductCategory[] | undefined;
+    /** 图片 */
+    pictures: ProductPictureDto[] | undefined;
+    /** 商品属性和值 */
+    attributes: ProductAttributeDto[] | undefined;
+    /** 商品属性组合 */
+    attributeCombinations: AttributeCombinationDto[] | undefined;
+    id: number | undefined;
+}
+
+export class ProductCategory implements IProductCategory {
+    tenantId!: number | undefined;
+    productId!: number | undefined;
+    categoryId!: number | undefined;
+    id!: number | undefined;
+
+    constructor(data?: IProductCategory) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.tenantId = data["tenantId"];
+            this.productId = data["productId"];
+            this.categoryId = data["categoryId"];
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): ProductCategory {
+        data = typeof data === 'object' ? data : {};
+        let result = new ProductCategory();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["tenantId"] = this.tenantId;
+        data["productId"] = this.productId;
+        data["categoryId"] = this.categoryId;
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface IProductCategory {
+    tenantId: number | undefined;
+    productId: number | undefined;
+    categoryId: number | undefined;
+    id: number | undefined;
+}
+
+/** 产品图片 */
+export class ProductPictureDto implements IProductPictureDto {
+    /** 图片Id */
+    pictureId!: number | undefined;
+    /** 图片Url */
+    pictureUrl!: string | undefined;
+    /** 排序 */
+    displayOrder!: number | undefined;
+    id!: number | undefined;
+
+    constructor(data?: IProductPictureDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.pictureId = data["pictureId"];
+            this.pictureUrl = data["pictureUrl"];
+            this.displayOrder = data["displayOrder"];
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): ProductPictureDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new ProductPictureDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["pictureId"] = this.pictureId;
+        data["pictureUrl"] = this.pictureUrl;
+        data["displayOrder"] = this.displayOrder;
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+/** 产品图片 */
+export interface IProductPictureDto {
+    /** 图片Id */
+    pictureId: number | undefined;
+    /** 图片Url */
+    pictureUrl: string | undefined;
+    /** 排序 */
+    displayOrder: number | undefined;
+    id: number | undefined;
+}
+
+/** 商品属性 */
+export class ProductAttributeDto implements IProductAttributeDto {
+    /** 商品属性名 */
+    name!: string | undefined;
+    /** 预定义值/值记录 */
+    values!: ProductAttributeValueDto[] | undefined;
+    /** 排序Id */
+    displayOrder!: number | undefined;
+    id!: number | undefined;
+
+    constructor(data?: IProductAttributeDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.name = data["name"];
+            if (data["values"] && data["values"].constructor === Array) {
+                this.values = [];
+                for (let item of data["values"])
+                    this.values.push(ProductAttributeValueDto.fromJS(item));
+            }
+            this.displayOrder = data["displayOrder"];
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): ProductAttributeDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new ProductAttributeDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["name"] = this.name;
+        if (this.values && this.values.constructor === Array) {
+            data["values"] = [];
+            for (let item of this.values)
+                data["values"].push(item.toJSON());
+        }
+        data["displayOrder"] = this.displayOrder;
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+/** 商品属性 */
+export interface IProductAttributeDto {
+    /** 商品属性名 */
+    name: string | undefined;
+    /** 预定义值/值记录 */
+    values: ProductAttributeValueDto[] | undefined;
+    /** 排序Id */
+    displayOrder: number | undefined;
+    id: number | undefined;
+}
+
+/** 属性组合 */
+export class AttributeCombinationDto implements IAttributeCombinationDto {
+    /** 属性值 */
+    attributes!: ProductAttributeValueDto[] | undefined;
+    /** 库存 */
+    stockQuantity!: number | undefined;
+    /** SKU */
+    sku!: string | undefined;
+    /** 第三方sku(仓储发货备用) */
+    thirdPartySku!: string | undefined;
+    /** 价格覆盖 */
+    overriddenPrice!: number | undefined;
+    /** 成本覆盖 */
+    overriddenGoodCost!: number | undefined;
+    id!: number | undefined;
+
+    constructor(data?: IAttributeCombinationDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            if (data["attributes"] && data["attributes"].constructor === Array) {
+                this.attributes = [];
+                for (let item of data["attributes"])
+                    this.attributes.push(ProductAttributeValueDto.fromJS(item));
+            }
+            this.stockQuantity = data["stockQuantity"];
+            this.sku = data["sku"];
+            this.thirdPartySku = data["thirdPartySku"];
+            this.overriddenPrice = data["overriddenPrice"];
+            this.overriddenGoodCost = data["overriddenGoodCost"];
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): AttributeCombinationDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new AttributeCombinationDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (this.attributes && this.attributes.constructor === Array) {
+            data["attributes"] = [];
+            for (let item of this.attributes)
+                data["attributes"].push(item.toJSON());
+        }
+        data["stockQuantity"] = this.stockQuantity;
+        data["sku"] = this.sku;
+        data["thirdPartySku"] = this.thirdPartySku;
+        data["overriddenPrice"] = this.overriddenPrice;
+        data["overriddenGoodCost"] = this.overriddenGoodCost;
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+/** 属性组合 */
+export interface IAttributeCombinationDto {
+    /** 属性值 */
+    attributes: ProductAttributeValueDto[] | undefined;
+    /** 库存 */
+    stockQuantity: number | undefined;
+    /** SKU */
+    sku: string | undefined;
+    /** 第三方sku(仓储发货备用) */
+    thirdPartySku: string | undefined;
+    /** 价格覆盖 */
+    overriddenPrice: number | undefined;
+    /** 成本覆盖 */
+    overriddenGoodCost: number | undefined;
+    id: number | undefined;
+}
+
+/** 属性值 */
+export class ProductAttributeValueDto implements IProductAttributeValueDto {
+    productAttributeId!: number | undefined;
+    /** Gets or sets the name */
+    value!: string | undefined;
+    /** 图片id */
+    pictureId!: number | undefined;
+    /** 排序Id */
+    displayOrder!: number | undefined;
+    id!: number | undefined;
+
+    constructor(data?: IProductAttributeValueDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.productAttributeId = data["productAttributeId"];
+            this.value = data["value"];
+            this.pictureId = data["pictureId"];
+            this.displayOrder = data["displayOrder"];
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): ProductAttributeValueDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new ProductAttributeValueDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["productAttributeId"] = this.productAttributeId;
+        data["value"] = this.value;
+        data["pictureId"] = this.pictureId;
+        data["displayOrder"] = this.displayOrder;
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+/** 属性值 */
+export interface IProductAttributeValueDto {
+    productAttributeId: number | undefined;
+    /** Gets or sets the name */
+    value: string | undefined;
+    /** 图片id */
+    pictureId: number | undefined;
+    /** 排序Id */
+    displayOrder: number | undefined;
+    id: number | undefined;
+}
+
+export class CreateOrUpdateProductInput implements ICreateOrUpdateProductInput {
+    /** Id，空或者为0时创建商品 */
+    id!: number | undefined;
+    /** 商品名 */
+    name!: string | undefined;
+    /** 短描述/推荐语 */
+    shortDescription!: string | undefined;
+    /** 长描述(Html) */
+    fullDescription!: string | undefined;
+    /** SKU */
+    sku!: string | undefined;
+    /** 第三方sku(仓储发货备用) */
+    thirdPartySku!: string | undefined;
+    /** 库存数量 */
+    stockQuantity!: number | undefined;
+    /** 低库存通知（暂不实现） */
+    notifyAdminForQuantityBelow!: number | undefined;
+    /** 售价 */
+    price!: number | undefined;
+    /** 货物成本/进货价 */
+    productCost!: number | undefined;
+    /** 重量（发货毛重） */
+    weight!: number | undefined;
+    /** 长 */
+    length!: number | undefined;
+    /** 宽 */
+    width!: number | undefined;
+    /** 高 */
+    height!: number | undefined;
+    /** 分类 */
+    categorys!: ProductCategory[] | undefined;
+    /** 图片 */
+    pictures!: ProductPictureDto[] | undefined;
+    /** 商品属性和值 */
+    attributes!: ProductAttributeDto[] | undefined;
+    /** 商品属性组合 */
+    attributeCombinations!: AttributeCombinationDto[] | undefined;
+
+    constructor(data?: ICreateOrUpdateProductInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.name = data["name"];
+            this.shortDescription = data["shortDescription"];
+            this.fullDescription = data["fullDescription"];
+            this.sku = data["sku"];
+            this.thirdPartySku = data["thirdPartySku"];
+            this.stockQuantity = data["stockQuantity"];
+            this.notifyAdminForQuantityBelow = data["notifyAdminForQuantityBelow"];
+            this.price = data["price"];
+            this.productCost = data["productCost"];
+            this.weight = data["weight"];
+            this.length = data["length"];
+            this.width = data["width"];
+            this.height = data["height"];
+            if (data["categorys"] && data["categorys"].constructor === Array) {
+                this.categorys = [];
+                for (let item of data["categorys"])
+                    this.categorys.push(ProductCategory.fromJS(item));
+            }
+            if (data["pictures"] && data["pictures"].constructor === Array) {
+                this.pictures = [];
+                for (let item of data["pictures"])
+                    this.pictures.push(ProductPictureDto.fromJS(item));
+            }
+            if (data["attributes"] && data["attributes"].constructor === Array) {
+                this.attributes = [];
+                for (let item of data["attributes"])
+                    this.attributes.push(ProductAttributeDto.fromJS(item));
+            }
+            if (data["attributeCombinations"] && data["attributeCombinations"].constructor === Array) {
+                this.attributeCombinations = [];
+                for (let item of data["attributeCombinations"])
+                    this.attributeCombinations.push(AttributeCombinationDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): CreateOrUpdateProductInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new CreateOrUpdateProductInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        data["shortDescription"] = this.shortDescription;
+        data["fullDescription"] = this.fullDescription;
+        data["sku"] = this.sku;
+        data["thirdPartySku"] = this.thirdPartySku;
+        data["stockQuantity"] = this.stockQuantity;
+        data["notifyAdminForQuantityBelow"] = this.notifyAdminForQuantityBelow;
+        data["price"] = this.price;
+        data["productCost"] = this.productCost;
+        data["weight"] = this.weight;
+        data["length"] = this.length;
+        data["width"] = this.width;
+        data["height"] = this.height;
+        if (this.categorys && this.categorys.constructor === Array) {
+            data["categorys"] = [];
+            for (let item of this.categorys)
+                data["categorys"].push(item.toJSON());
+        }
+        if (this.pictures && this.pictures.constructor === Array) {
+            data["pictures"] = [];
+            for (let item of this.pictures)
+                data["pictures"].push(item.toJSON());
+        }
+        if (this.attributes && this.attributes.constructor === Array) {
+            data["attributes"] = [];
+            for (let item of this.attributes)
+                data["attributes"].push(item.toJSON());
+        }
+        if (this.attributeCombinations && this.attributeCombinations.constructor === Array) {
+            data["attributeCombinations"] = [];
+            for (let item of this.attributeCombinations)
+                data["attributeCombinations"].push(item.toJSON());
+        }
+        return data; 
+    }
+}
+
+export interface ICreateOrUpdateProductInput {
+    /** Id，空或者为0时创建商品 */
+    id: number | undefined;
+    /** 商品名 */
+    name: string | undefined;
+    /** 短描述/推荐语 */
+    shortDescription: string | undefined;
+    /** 长描述(Html) */
+    fullDescription: string | undefined;
+    /** SKU */
+    sku: string | undefined;
+    /** 第三方sku(仓储发货备用) */
+    thirdPartySku: string | undefined;
+    /** 库存数量 */
+    stockQuantity: number | undefined;
+    /** 低库存通知（暂不实现） */
+    notifyAdminForQuantityBelow: number | undefined;
+    /** 售价 */
+    price: number | undefined;
+    /** 货物成本/进货价 */
+    productCost: number | undefined;
+    /** 重量（发货毛重） */
+    weight: number | undefined;
+    /** 长 */
+    length: number | undefined;
+    /** 宽 */
+    width: number | undefined;
+    /** 高 */
+    height: number | undefined;
+    /** 分类 */
+    categorys: ProductCategory[] | undefined;
+    /** 图片 */
+    pictures: ProductPictureDto[] | undefined;
+    /** 商品属性和值 */
+    attributes: ProductAttributeDto[] | undefined;
+    /** 商品属性组合 */
+    attributeCombinations: AttributeCombinationDto[] | undefined;
+}
+
 export class CurrentUserProfileEditDto implements ICurrentUserProfileEditDto {
     /** 名字 */
     name!: string;
@@ -21338,8 +22411,6 @@ export interface IPagedResultDtoOfStoreListDto {
 }
 
 export class StoreListDto implements IStoreListDto {
-    /** Id */
-    id!: number | undefined;
     /** 店铺名 */
     name!: string | undefined;
     /** 图片Id */
@@ -21348,6 +22419,7 @@ export class StoreListDto implements IStoreListDto {
     orderSourceType!: StoreListDtoOrderSourceType | undefined;
     /** 订单同步 */
     orderSync!: boolean | undefined;
+    id!: number | undefined;
 
     constructor(data?: IStoreListDto) {
         if (data) {
@@ -21360,11 +22432,11 @@ export class StoreListDto implements IStoreListDto {
 
     init(data?: any) {
         if (data) {
-            this.id = data["id"];
             this.name = data["name"];
             this.pictureId = data["pictureId"];
             this.orderSourceType = data["orderSourceType"];
             this.orderSync = data["orderSync"];
+            this.id = data["id"];
         }
     }
 
@@ -21377,18 +22449,16 @@ export class StoreListDto implements IStoreListDto {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
         data["name"] = this.name;
         data["pictureId"] = this.pictureId;
         data["orderSourceType"] = this.orderSourceType;
         data["orderSync"] = this.orderSync;
+        data["id"] = this.id;
         return data; 
     }
 }
 
 export interface IStoreListDto {
-    /** Id */
-    id: number | undefined;
     /** 店铺名 */
     name: string | undefined;
     /** 图片Id */
@@ -21397,15 +22467,16 @@ export interface IStoreListDto {
     orderSourceType: StoreListDtoOrderSourceType | undefined;
     /** 订单同步 */
     orderSync: boolean | undefined;
+    id: number | undefined;
 }
 
 export class GetStoreForEditOutput implements IGetStoreForEditOutput {
-    /** Id */
-    id!: number | undefined;
     /** 店铺名 */
     name!: string | undefined;
     /** 图片Id */
     pictureId!: number | undefined;
+    /** 图片Url */
+    pictureUrl!: string | undefined;
     /** 第三方App id */
     appKey!: string | undefined;
     /** 第三方App secret */
@@ -21420,6 +22491,7 @@ export class GetStoreForEditOutput implements IGetStoreForEditOutput {
     creationTime!: moment.Moment | undefined;
     /** 最后修改时间 */
     lastModificationTime!: moment.Moment | undefined;
+    id!: number | undefined;
 
     constructor(data?: IGetStoreForEditOutput) {
         if (data) {
@@ -21432,9 +22504,9 @@ export class GetStoreForEditOutput implements IGetStoreForEditOutput {
 
     init(data?: any) {
         if (data) {
-            this.id = data["id"];
             this.name = data["name"];
             this.pictureId = data["pictureId"];
+            this.pictureUrl = data["pictureUrl"];
             this.appKey = data["appKey"];
             this.appSecret = data["appSecret"];
             this.orderSourceType = data["orderSourceType"];
@@ -21442,6 +22514,7 @@ export class GetStoreForEditOutput implements IGetStoreForEditOutput {
             this.displayOrder = data["displayOrder"];
             this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
             this.lastModificationTime = data["lastModificationTime"] ? moment(data["lastModificationTime"].toString()) : <any>undefined;
+            this.id = data["id"];
         }
     }
 
@@ -21454,9 +22527,9 @@ export class GetStoreForEditOutput implements IGetStoreForEditOutput {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
         data["name"] = this.name;
         data["pictureId"] = this.pictureId;
+        data["pictureUrl"] = this.pictureUrl;
         data["appKey"] = this.appKey;
         data["appSecret"] = this.appSecret;
         data["orderSourceType"] = this.orderSourceType;
@@ -21464,17 +22537,18 @@ export class GetStoreForEditOutput implements IGetStoreForEditOutput {
         data["displayOrder"] = this.displayOrder;
         data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
         data["lastModificationTime"] = this.lastModificationTime ? this.lastModificationTime.toISOString() : <any>undefined;
+        data["id"] = this.id;
         return data; 
     }
 }
 
 export interface IGetStoreForEditOutput {
-    /** Id */
-    id: number | undefined;
     /** 店铺名 */
     name: string | undefined;
     /** 图片Id */
     pictureId: number | undefined;
+    /** 图片Url */
+    pictureUrl: string | undefined;
     /** 第三方App id */
     appKey: string | undefined;
     /** 第三方App secret */
@@ -21489,6 +22563,7 @@ export interface IGetStoreForEditOutput {
     creationTime: moment.Moment | undefined;
     /** 最后修改时间 */
     lastModificationTime: moment.Moment | undefined;
+    id: number | undefined;
 }
 
 export class CreateOrUpdateStoreInput implements ICreateOrUpdateStoreInput {
