@@ -19499,7 +19499,7 @@ export class GetProductForEditOutput implements IGetProductForEditOutput {
     /** 高 */
     height!: number | undefined;
     /** 分类 */
-    categorys!: ProductCategoryDto[] | undefined;
+    categories!: ProductCategoryDto[] | undefined;
     /** 图片 */
     pictures!: ProductPictureDto[] | undefined;
     /** 商品属性和值 */
@@ -19532,10 +19532,10 @@ export class GetProductForEditOutput implements IGetProductForEditOutput {
             this.length = data["length"];
             this.width = data["width"];
             this.height = data["height"];
-            if (data["categorys"] && data["categorys"].constructor === Array) {
-                this.categorys = [];
-                for (let item of data["categorys"])
-                    this.categorys.push(ProductCategoryDto.fromJS(item));
+            if (data["categories"] && data["categories"].constructor === Array) {
+                this.categories = [];
+                for (let item of data["categories"])
+                    this.categories.push(ProductCategoryDto.fromJS(item));
             }
             if (data["pictures"] && data["pictures"].constructor === Array) {
                 this.pictures = [];
@@ -19578,10 +19578,10 @@ export class GetProductForEditOutput implements IGetProductForEditOutput {
         data["length"] = this.length;
         data["width"] = this.width;
         data["height"] = this.height;
-        if (this.categorys && this.categorys.constructor === Array) {
-            data["categorys"] = [];
-            for (let item of this.categorys)
-                data["categorys"].push(item.toJSON());
+        if (this.categories && this.categories.constructor === Array) {
+            data["categories"] = [];
+            for (let item of this.categories)
+                data["categories"].push(item.toJSON());
         }
         if (this.pictures && this.pictures.constructor === Array) {
             data["pictures"] = [];
@@ -19631,7 +19631,7 @@ export interface IGetProductForEditOutput {
     /** 高 */
     height: number | undefined;
     /** 分类 */
-    categorys: ProductCategoryDto[] | undefined;
+    categories: ProductCategoryDto[] | undefined;
     /** 图片 */
     pictures: ProductPictureDto[] | undefined;
     /** 商品属性和值 */
@@ -20029,7 +20029,7 @@ export class CreateOrUpdateProductInput implements ICreateOrUpdateProductInput {
     /** 高 */
     height!: number | undefined;
     /** 分类 */
-    categorys!: ProductCategoryDto[] | undefined;
+    categories!: ProductCategoryDto[] | undefined;
     /** 图片 */
     pictures!: ProductPictureDto[] | undefined;
     /** 商品属性和值 */
@@ -20062,10 +20062,10 @@ export class CreateOrUpdateProductInput implements ICreateOrUpdateProductInput {
             this.length = data["length"];
             this.width = data["width"];
             this.height = data["height"];
-            if (data["categorys"] && data["categorys"].constructor === Array) {
-                this.categorys = [];
-                for (let item of data["categorys"])
-                    this.categorys.push(ProductCategoryDto.fromJS(item));
+            if (data["categories"] && data["categories"].constructor === Array) {
+                this.categories = [];
+                for (let item of data["categories"])
+                    this.categories.push(ProductCategoryDto.fromJS(item));
             }
             if (data["pictures"] && data["pictures"].constructor === Array) {
                 this.pictures = [];
@@ -20108,10 +20108,10 @@ export class CreateOrUpdateProductInput implements ICreateOrUpdateProductInput {
         data["length"] = this.length;
         data["width"] = this.width;
         data["height"] = this.height;
-        if (this.categorys && this.categorys.constructor === Array) {
-            data["categorys"] = [];
-            for (let item of this.categorys)
-                data["categorys"].push(item.toJSON());
+        if (this.categories && this.categories.constructor === Array) {
+            data["categories"] = [];
+            for (let item of this.categories)
+                data["categories"].push(item.toJSON());
         }
         if (this.pictures && this.pictures.constructor === Array) {
             data["pictures"] = [];
@@ -20162,7 +20162,7 @@ export interface ICreateOrUpdateProductInput {
     /** 高 */
     height: number | undefined;
     /** 分类 */
-    categorys: ProductCategoryDto[] | undefined;
+    categories: ProductCategoryDto[] | undefined;
     /** 图片 */
     pictures: ProductPictureDto[] | undefined;
     /** 商品属性和值 */
