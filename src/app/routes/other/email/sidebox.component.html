@@ -53,10 +53,10 @@
     </ul>
   </div>
 </ng-template>
-<div class="message__sidebox" *ngIf="!pro.isMobile">
+<div class="message__sidebox" *ngIf="!brand.isMobile">
   <ng-template [ngTemplateOutlet]="sidebox"></ng-template>
 </div>
-<nz-drawer *ngIf="pro.isMobile" [nzWidth]="width" nzWrapClassName="alain-pro__drawer" [(nzVisible)]="visible"
+<nz-drawer *ngIf="brand.isMobile" [nzWidth]="width" nzWrapClassName="alain-pro__drawer" [(nzVisible)]="visible"
   [nzClosable]="false" [nzMaskClosable]="true" nzPlacement="left" (nzOnClose)="close()">
   <ng-template [ngTemplateOutlet]="sidebox"></ng-template>
 </nz-drawer>

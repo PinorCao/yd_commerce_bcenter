@@ -8,7 +8,9 @@ import {
 import { DOCUMENT } from '@angular/common';
 import { NzMessageService } from 'ng-zorro-antd';
 import { LazyService, copy } from '@delon/util';
-import { ProService } from '../pro.service';
+import { ALAIN_I18N_TOKEN } from '@delon/theme';
+import { I18NService } from '@core/i18n/i18n.service';
+import { BrandService } from '../pro.service';
 import { ProLayout } from '../pro.types';
 
 @Component({
@@ -25,7 +27,7 @@ export class ProSettingDrawerComponent {
   private loadedLess = false;
 
   get layout() {
-    return this.pro.layout;
+    return this.brand.layout;
   }
 
   collapse = false;
@@ -33,13 +35,13 @@ export class ProSettingDrawerComponent {
   themes = [
     {
       key: 'dark',
-      title: '暗色菜单风格',
+      title: 'app.setting.pagestyle.dark',
       img:
         'https://gw.alipayobjects.com/zos/rmsportal/LCkqqYNmvBEbokSDscrm.svg',
     },
     {
       key: 'light',
-      title: '亮色菜单风格',
+      title: 'app.setting.pagestyle.light',
       img:
         'https://gw.alipayobjects.com/zos/rmsportal/jpRkZQMyYRryryPNtyIC.svg',
     },
@@ -84,13 +86,13 @@ export class ProSettingDrawerComponent {
   menuModes = [
     {
       key: 'side',
-      title: '侧边菜单布局',
+      title: 'app.setting.sidemenu',
       img:
         'https://gw.alipayobjects.com/zos/rmsportal/JopDzEhOqwOjeNTXkoje.svg',
     },
     {
       key: 'top',
-      title: '顶部菜单布局',
+      title: 'app.setting.topmenu',
       img:
         'https://gw.alipayobjects.com/zos/rmsportal/KDNDBbriJhLwuqMoxcAr.svg',
     },
@@ -99,25 +101,26 @@ export class ProSettingDrawerComponent {
   contentWidths = [
     {
       key: 'fixed',
-      title: '定宽',
+      title: 'app.setting.content-width.fixed',
       disabled: false,
     },
     {
       key: 'fluid',
-      title: '流式',
+      title: 'app.setting.content-width.fluid',
       disabled: false,
     },
   ];
 
   constructor(
-    public pro: ProService,
+    public brand: BrandService,
     private cd: ChangeDetectorRef,
     private msg: NzMessageService,
     private lazy: LazyService,
     private zone: NgZone,
     @Inject(DOCUMENT) private doc: any,
+    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService
   ) {
-    this.setLayout('menu', this.pro.menu, false);
+    this.setLayout('menu', this.brand.menu, false);
   }
 
   private loadLess(): Promise<void> {
@@ -181,22 +184,26 @@ export class ProSettingDrawerComponent {
       case 'menu':
         const isTop = value === 'top';
         this.contentWidths.find(w => w.key === 'fixed').disabled = !isTop;
-        const newLayout = Object.assign(this.pro.layout, <ProLayout>{
+        const newLayout = Object.assign(this.brand.layout, <ProLayout>{
           contentWidth: isTop ? 'fixed' : 'fluid',
           onlyIcon: isTop,
-          collapsed: isTop ? false : this.pro.layout.collapsed
+          collapsed: isTop && !this.brand.isMobile ? false : this.brand.layout.collapsed
         });
-        this.pro.setLayout(newLayout);
+        this.brand.setLayout(newLayout);
         break;
       case 'fixedHeader':
-        this.pro.setLayout('autoHideHeader', false);
+        this.brand.setLayout('autoHideHeader', false);
         break;
       default:
         break;
     }
-    this.pro.setLayout(name, value);
+    this.brand.setLayout(name, value);
     if (cd) {
-      setTimeout(() => this.cd.markForCheck());
+      setTimeout(() => {
+        // Re-render G2 muse be trigger window resize
+        window.dispatchEvent(new Event('resize'));
+        this.cd.markForCheck();
+      });
     }
   }
 
@@ -231,16 +238,7 @@ export class ProSettingDrawerComponent {
         }
       })
       .join('\n');
-    copy(`在 [src/styles/theme.less] 配置以下：
-${colorVars}
-
-在 [src/environments/*] 的 pro 配置以下：
-export const environment = {
-  ...
-  pro: {
-${layoutVars}
-  }
-}`);
-    this.msg.success('Copy success');
+    copy(this.i18n.fanyi('app.setting.copy.result', { colorVars, layoutVars }));
+    this.msg.success(this.i18n.fanyi('app.setting.copyinfo'));
   }
 }

@@ -4,8 +4,9 @@ import {
   NgZone,
   OnDestroy,
   OnInit,
+  Inject,
 } from '@angular/core';
-import { _HttpClient } from '@delon/theme';
+import { _HttpClient, ALAIN_I18N_TOKEN } from '@delon/theme';
 import { I18NService } from '@core/i18n/i18n.service';
 import { CalendarTheme } from '../calendar.theme';
 
@@ -14,23 +15,26 @@ import { CalendarTheme } from '../calendar.theme';
   templateUrl: './list-view.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CalendarListViewComponent extends CalendarTheme
-  implements OnInit, OnDestroy {
-  constructor(private http: _HttpClient, zone: NgZone, i18n: I18NService) {
+export class CalendarListViewComponent extends CalendarTheme implements OnInit, OnDestroy {
+
+  constructor(private http: _HttpClient, zone: NgZone, @Inject(ALAIN_I18N_TOKEN) i18n: I18NService) {
     super(zone, i18n);
   }
 
   private loadEvents(time: Date) {
     this.http.get(`/calendar?time=${+time}`).subscribe((res: any) => {
-      this.instance.addEventSource({
-        allDayDefault: true,
-        events: res,
+      this._executeOnStable(() => {
+        this.instance.addEventSource({
+          allDayDefault: true,
+          events: res,
+        });
       });
     });
   }
 
   ngOnInit() {
     this.options = {
+      plugins: [],
       header: {
         left: 'prev,next today',
         center: 'title',

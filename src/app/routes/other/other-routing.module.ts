@@ -34,7 +34,7 @@ const routes: Routes = [
   { path: 'forum', component: ForumComponent },
   { path: 'forum/thread/:id', component: ForumThreadComponent },
   { path: 'forum/:id', component: ForumViewComponent },
-  { path: 'email', component: EmailComponent, data: { reuse: true } },
+  { path: 'email', component: EmailComponent, data: { reuse: true, keepingScroll: true } },
   { path: 'email/compose', component: EmailComposeComponent },
   { path: 'email/:id', component: EmailViewComponent },
   { path: 'project', component: ProjectComponent },

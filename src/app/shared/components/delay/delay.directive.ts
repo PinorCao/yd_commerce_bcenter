@@ -7,42 +7,47 @@ import {
   AfterViewInit,
   OnDestroy,
 } from '@angular/core';
-import { InputNumber } from '@delon/util';
 import { NgModel } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { InputNumber, InputBoolean } from '@delon/util';
 
 @Directive({
-  selector: '[delay]',
+  selector: '[delay]:not([noDelay])',
   exportAs: 'delayComp'
 })
 export class DelayDirective implements AfterViewInit, OnDestroy {
   private data$: Subscription;
+  private firstEmit: boolean;
 
-  @ContentChild(NgModel)
-  private readonly ngModel: NgModel;
+  @ContentChild(NgModel) private readonly ngModel !: NgModel;
 
-  @Input('delay')
-  @InputNumber()
-  delay = 500;
-
-  @Output()
-  delayChange = new EventEmitter<any>();
+  @Input() @InputNumber() delayTime = 500;
+  @Input() @InputBoolean() delayFirstEmit = false;
+  @Output() readonly delayChange = new EventEmitter<any>();
 
   ngAfterViewInit(): void {
-    if (this.ngModel == null) {
-      throw new Error(`Muse be specify ngModel direcitve`);
-    }
+    const { ngModel, delayFirstEmit, delayTime, delayChange } = this;
+    if (ngModel == null) return;
 
-    this.data$ = this.ngModel.valueChanges
+    this.firstEmit = delayFirstEmit;
+    this.data$ = ngModel.valueChanges
       .pipe(
-        debounceTime(this.delay),
+        debounceTime(delayTime),
         distinctUntilChanged(),
       )
-      .subscribe(res => this.delayChange.emit(res));
+      .subscribe(res => {
+        if (this.firstEmit === false) {
+          this.firstEmit = true;
+          return;
+        }
+        delayChange.emit(res);
+      });
   }
 
   ngOnDestroy(): void {
-    this.data$.unsubscribe();
+    if (this.data$) {
+      this.data$.unsubscribe();
+    }
   }
 }

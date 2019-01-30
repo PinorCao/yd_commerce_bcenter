@@ -38,7 +38,6 @@ function del(params: any) {
     DATA.splice(getIdx(id), 1);
   } else {
     get(params).forEach(w => {
-      console.log(w);
       del({ id: w.id });
     });
   }

@@ -12,7 +12,7 @@ import {
 import { Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { _HttpClient } from '@delon/theme';
-import { ProService } from 'app/layout/pro/pro.service';
+import { BrandService } from '@brand';
 
 @Component({
   selector: 'email-sidebox',
@@ -21,7 +21,7 @@ import { ProService } from 'app/layout/pro/pro.service';
 })
 export class EmailSideboxComponent
   implements AfterViewInit, OnChanges, OnDestroy {
-  private pro$: Subscription;
+  private brand$: Subscription;
   private inited = false;
   // Must be the same as `@email-sidebox-width`
   width = 250;
@@ -36,8 +36,8 @@ export class EmailSideboxComponent
   @Output()
   changed = new EventEmitter<number>();
 
-  constructor(public pro: ProService, private cd: ChangeDetectorRef) {
-    this.pro$ = pro.notify
+  constructor(public brand: BrandService, private cd: ChangeDetectorRef) {
+    this.brand$ = brand.notify
       .pipe(filter(() => this.inited))
       .subscribe(() => this.cd.detectChanges());
   }
@@ -66,6 +66,6 @@ export class EmailSideboxComponent
   }
 
   ngOnDestroy() {
-    this.pro$.unsubscribe();
+    this.brand$.unsubscribe();
   }
 }

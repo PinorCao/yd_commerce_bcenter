@@ -3,6 +3,7 @@ import { _HttpClient } from '@delon/theme';
 import { NzFormatEmitEvent, NzMessageService, NzModalRef } from 'ng-zorro-antd';
 import { ArrayService, copy } from '@delon/util';
 import { FileManagerComponent } from '../file-manager/file-manager.component';
+import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 
 @Component({
   selector: 'app-img',
@@ -93,6 +94,10 @@ export class ImgComponent implements AfterViewInit {
     }
     i.on = true;
     this.result.push(i);
+  }
+
+  drop(e: CdkDragDrop<any[]>) {
+    moveItemInArray(this.result, e.previousIndex, e.currentIndex);
   }
 
   ok() {

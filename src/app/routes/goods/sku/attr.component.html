@@ -1,0 +1,27 @@
+<div se-container>
+  <se label="规格名" error="必填项">
+    <input placeholder="请选择/输入规格名称" nz-input (blur)="onBlur($event.target)" [nzAutocomplete]="autoAttr">
+    <nz-autocomplete nzBackfill #autoAttr (selectionChange)="onChange($event)">
+      <nz-auto-option *ngFor="let option of attributes" [nzLabel]="option.name" [nzValue]="option.id">
+        {{option.name}}
+      </nz-auto-option>
+    </nz-autocomplete>
+  </se>
+  <se *ngIf="attribute.id" style="width: 100%" label="规格值" required error="必填项">
+    <div nz-row nzGutter="16">
+      <div *ngFor="let item of attrValues;let i = index" nz-col class="gutter-row" nzSpan="6">
+        <div class="gutter-box">
+          <app-goods-sku-attr-value
+            [attributeId]="attribute.id"
+            [attrValues]="_attrValues"
+            (valueChange)="valueChange($event,i)">
+          </app-goods-sku-attr-value>
+        </div>
+      </div>
+      <div nz-col class="gutter-row" nzSpan="6">
+        <div (click)="addValue()" class="gutter-box">添加规格值</div>
+      </div>
+    </div>
+  </se>
+
+</div>

@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { TrendModule } from 'ngx-trend';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
 
-import { SharedModule } from '@shared/shared.module';
+import {SharedModule} from '@shared/shared.module';
 import { ChartRoutingModule } from './chart-routing.module';
 
 import { ChartG2Component } from './g2/g2.component';

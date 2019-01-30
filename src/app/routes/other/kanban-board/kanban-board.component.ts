@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { _HttpClient } from '@delon/theme';
-import { SortablejsOptions } from 'angular-sortablejs';
 import { NzMessageService } from 'ng-zorro-antd';
+import { CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 
 @Component({
   selector: 'app-kanban-board',
@@ -9,15 +9,22 @@ import { NzMessageService } from 'ng-zorro-antd';
 })
 export class KanbanBoardComponent implements OnInit {
   list: any[] = [];
-  options: SortablejsOptions = {
-    group: 'kanban',
-    filter: '.no-data'
-  };
 
   constructor(private http: _HttpClient, public msg: NzMessageService) {}
 
   ngOnInit() {
     this.http.get('/kanban-board').subscribe((res: any) => (this.list = res));
+  }
+
+  drop(event: CdkDragDrop<any[]>) {
+    if (event.previousContainer === event.container) {
+      moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
+    } else {
+      transferArrayItem(event.previousContainer.data,
+                        event.container.data,
+                        event.previousIndex,
+                        event.currentIndex);
+    }
   }
 
   del(p: any, i: any, idx: number) {

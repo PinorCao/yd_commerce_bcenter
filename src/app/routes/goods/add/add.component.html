@@ -1,0 +1,105 @@
+<page-header-wrapper [title]="'添加商品'">
+  <form nz-form #f="ngForm" (ngSubmit)="save()" class="sf__no-error">
+    <nz-card nzTitle="基本信息">
+      <div se-container>
+        <se label="商品名" required error="必填项">
+          <input nz-input [(ngModel)]="product.name" name="name" required maxlength="50">
+        </se>
+        <se label="分类" required error="必填项">
+          <nz-select [(ngModel)]="product.categories" name="categories" required>
+            <nz-option [nzLabel]="'请选择分类'" [nzValue]=""></nz-option>
+            <nz-option *ngFor="let category of categories" [nzLabel]="category.text"
+                       [nzValue]="category.value"></nz-option>
+          </nz-select>
+        </se>
+        <se label="售价" required error="必填项">
+          <input nz-input [(ngModel)]="product.price" name="price" maxlength="50" required>
+        </se>
+        <se label="货特成本/进货价" required error="必填项">
+          <input nz-input [(ngModel)]="product.goodCost" name="goodCost" maxlength="30" required>
+        </se>
+        <se label="库存数量" required error="必填项">
+          <input nz-input [(ngModel)]="product.stockQuantity" name="stockQuantity" maxlength="50" required>
+        </se>
+        <se label="低库存通知">
+          <input nz-input [(ngModel)]="product.notifyAdminForQuantityBelow" name="notifyAdminForQuantityBelow"
+                 maxlength="30">
+        </se>
+        <se label="短描述/推荐语" required error="必填项" style="width:100%">
+          <input nz-input type="number" [(ngModel)]="product.shortDescription" name="shortDescription" maxlength="100"
+                 placeholder="" required>
+        </se>
+        <se label="长描述(Html)" required error="必填项" style="width:100%">
+          <textarea nz-input [(ngModel)]="product.fullDescription" name="fullDescription" maxlength="100"
+                    placeholder="" required></textarea>
+        </se>
+      </div>
+    </nz-card>
+    <nz-card nzTitle="参数">
+      <div se-container>
+        <se label="长" required error="必填项">
+          <input [(ngModel)]="product.length" name="length" nz-input type="number" maxlength="50" required>
+        </se>
+        <se label="宽" required error="必填项">
+          <input [(ngModel)]="product.width" name="width" nz-input type="number" maxlength="50" required>
+        </se>
+        <se label="高" required error="必填项">
+          <input [(ngModel)]="product.height" name="height" nz-input type="number" maxlength="50" required>
+        </se>
+        <se label="重量（发货毛重）" required error="必填项">
+          <input [(ngModel)]="product.weight" name="weight" nz-input type="number" maxlength="50" required>
+        </se>
+      </div>
+    </nz-card>
+    <nz-card nzTitle="属性规格">
+      <app-goods-sku-attr
+        *ngFor="let item of product.attributes;let i = index"
+        (attrChange)="attrChange($event,i)"
+        [attributes]="attributes">
+      </app-goods-sku-attr>
+      <p (click)="addAttr()">添加规格项目</p>
+    </nz-card>
+
+    <nz-card nzTitle="规格明细">
+      <div se-container>
+        <nz-table *ngIf="product.attributeCombinations.length > 0" [nzShowPagination]="false" nzSize="small">
+          <thead>
+          <tr>
+            <th *ngFor="let attribute of product.attributeCombinations[0].attributes">{{attribute.name}}</th>
+            <th>库存</th>
+            <th>价格</th>
+            <th>成本</th>
+            <th>SKU</th>
+            <th>第三方SKU</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let combination of product.attributeCombinations">
+            <td *ngFor="let attribute of combination.attributes">{{attribute.values[0].name}}</td>
+            <td>
+              <nz-input-number [(ngModel)]="combination.stockQuantity" name="combination.stockQuantity" nzMin="0.1" required></nz-input-number>
+            </td>
+            <td>
+              <nz-input-number [(ngModel)]="combination.overriddenPrice" name="combination.overriddenPrice" nzMin="0" required></nz-input-number>
+            </td>
+            <td>
+              <nz-input-number [(ngModel)]="combination.overriddenGoodCost" name="combination.overriddenGoodCost" nzMin="0" required></nz-input-number>
+            </td>
+            <td>
+              <nz-input-number [(ngModel)]="combination.sku" name="combination.sku" nzMin="0" required></nz-input-number>
+            </td>
+            <td>
+              <input nz-input [(ngModel)]="combination.thirdPartySku" name="combination.thirdPartySku" maxlength="50">
+            </td>
+          </tr>
+          </tbody>
+        </nz-table>
+      </div>
+    </nz-card>
+
+    <footer-toolbar>
+      <button type="submit" nz-button nzType="primary" [disabled]="f.invalid">添加</button>
+      <button type="button" nz-button (click)="cancel()">返回</button>
+    </footer-toolbar>
+  </form>
+</page-header-wrapper>

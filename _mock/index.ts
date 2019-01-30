@@ -7,14 +7,15 @@ export * from './_user';
 export * from './_geo';
 
 export * from './_file-manager';
-export * from './_forum';
 export * from './_img';
 export * from './_log';
 export * from './_menu';
-export * from './_other';
 export * from './_permission';
 export * from './_role';
-export * from './_trade';
 export * from './_user-pro';
-export * from './_ware';
 export * from './utils';
+
+export * from './_forum';
+export * from './_other';
+export * from './_trade';
+export * from './_ware';

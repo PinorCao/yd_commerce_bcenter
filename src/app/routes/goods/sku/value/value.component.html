@@ -1,0 +1,6 @@
+<input placeholder="请选择/输入规格值" nz-input (blur)="onBlur($event.target)" [nzAutocomplete]="autoValue">
+<nz-autocomplete nzBackfill #autoValue (selectionChange)="onChange($event)">
+  <nz-auto-option *ngFor="let option of attrValues" [nzLabel]="option.name" [nzValue]="option.id" [nzDisabled]="option?.disable">
+    {{option.name}}
+  </nz-auto-option>
+</nz-autocomplete>

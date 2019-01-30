@@ -72,20 +72,29 @@
     margin-bottom: 8px;
     &-left {
       margin-right: @chat-avatar-box-width + 8px;
-      .chat__message-msg {
-        margin-left: 8px;
+      .chat__message-avatar {
+        margin-right: 8px;
       }
     }
     &-right {
       flex-direction: row-reverse;
       margin-left: @chat-avatar-box-width + 8px;
-      .chat__message-msg {
-        margin-right: 8px;
+      .chat__message-avatar {
+        margin-left: 8px;
       }
+    }
+    &-send {
+      text-align: center;
     }
     &-avatar {
       text-align: center;
       width: @chat-avatar-box-width;
+    }
+    &-text {
+      font-size: 12px;
+      text-align: center;
+      color: @grey-6;
+      width: 100%;
     }
     &-time {
       padding-top: 2px;

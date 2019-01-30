@@ -5,15 +5,19 @@ import { TitleService } from '@delon/theme';
 import { VERSION as VERSION_ALAIN } from '@delon/theme';
 import { VERSION as VERSION_ZORRO, NzModalService } from 'ng-zorro-antd';
 
+import { AppService } from './app.service';
+
 @Component({
   selector: 'app-root',
-  template: `<router-outlet></router-outlet>`,
+  template: `
+    <router-outlet></router-outlet>`,
 })
 export class AppComponent implements OnInit {
   constructor(
     el: ElementRef,
     renderer: Renderer2,
     private router: Router,
+    private appSvc: AppService,
     private titleSrv: TitleService,
     private modalSrv: NzModalService,
   ) {
@@ -29,8 +33,10 @@ export class AppComponent implements OnInit {
     );
   }
 
-
   ngOnInit() {
+    this.appSvc._getUser().subscribe(res => {
+      this.appSvc.updateUser(res.result.user);
+    });
     this.router.events
       .pipe(filter(evt => evt instanceof NavigationEnd))
       .subscribe(() => {

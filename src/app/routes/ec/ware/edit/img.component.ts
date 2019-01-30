@@ -11,6 +11,7 @@ import { filter } from 'rxjs/operators';
 import { deepCopy } from '@delon/util';
 
 import { WareEditService } from './edit.service';
+import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 
 const MAX = 5;
 
@@ -99,6 +100,10 @@ export class ECWareEditImgComponent implements OnInit, OnDestroy {
 
   copy(i: any) {
     i.ls = deepCopy(this.ls[0].ls);
+  }
+
+  drop(list: any[], e: CdkDragDrop<any[]>) {
+    moveItemInArray(list, e.previousIndex, e.currentIndex);
   }
 
   ngOnDestroy() {

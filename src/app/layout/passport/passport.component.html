@@ -1,22 +1,20 @@
-<page-grid>
-  <div class="container">
-    <pro-langs class="langs"></pro-langs>
-    <div class="wrap">
-      <div class="top">
-        <div class="head">
-          <img class="logo" src="./assets/logo-color.svg">
-          <span class="title">ng-alain</span>
-        </div>
-        <div class="desc">武林中最有影响力的《葵花宝典》；欲练神功，挥刀自宫</div>
+<div class="container">
+  <!--<pro-langs class="langs" btnClass></pro-langs>-->
+  <div class="wrap">
+    <div class="top">
+      <div class="head">
+        <img class="logo" src="./assets/logo-color.png">
+        <span class="title">有度电商管理后台</span>
       </div>
-      <router-outlet></router-outlet>
-      <global-footer [links]="links">
-        Copyright
-        <i class="anticon anticon-copyright"></i>
-        2017
-        <a href="//github.com/cipchk" target="_blank">卡色</a>
-        出品
-      </global-footer>
+      <div class="desc"></div>
     </div>
+    <router-outlet></router-outlet>
+    <global-footer [links]="links">
+      Copyright
+      <i class="anticon anticon-copyright"></i>
+      2018
+      <a href="http://cy.yfq.cn" target="_blank">广州大牛信息科技有限公司</a>
+      出品
+    </global-footer>
   </div>
-</page-grid>
+</div>

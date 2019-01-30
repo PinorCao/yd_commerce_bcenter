@@ -30,6 +30,12 @@
       ],
       "@env/*": [
         "environments/*"
+      ],
+      "@brand": [
+        "app/layout/pro/index"
+      ],
+      "@brand/*": [
+        "app/layout/pro/*"
       ]
     }
   },

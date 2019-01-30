@@ -123,7 +123,6 @@ export class ScrollbarDirective implements AfterViewInit, OnDestroy {
     this.ngDestroy.complete();
     this.zone.runOutsideAngular(() => {
       if (this.instance) {
-        console.log('disabled scrollbar');
         this.instance.destroy();
       }
       this.instance = null;

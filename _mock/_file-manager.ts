@@ -110,7 +110,6 @@ export const FILES = {
     return { msg: 'ok', item: DATA[idx] };
   },
   'POST /file/move': (req: MockRequest) => {
-    console.log(req.body);
     const idx = getIdx(req.body.id || 0);
     DATA[idx].parent_id = req.body.moveId;
     return { msg: 'ok', item: DATA[idx] };

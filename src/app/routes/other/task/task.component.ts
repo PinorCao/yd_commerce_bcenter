@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { NzMessageService } from 'ng-zorro-antd';
 import { _HttpClient } from '@delon/theme';
-import { SortablejsOptions } from 'angular-sortablejs';
-import { ProService } from 'app/layout/pro/pro.service';
+import { BrandService } from '@brand';
+import { CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 
 @Component({
   selector: 'app-task',
@@ -11,23 +11,11 @@ import { ProService } from 'app/layout/pro/pro.service';
 export class TaskComponent implements OnInit {
   type = 1;
   list: any[] = [];
-  options: SortablejsOptions = {
-    handle: '.task__item-handle',
-    group: 'task',
-    onAdd: (e: any) => {
-      const typeId = +e.to.dataset.id;
-      if (typeId !== 2) return;
-
-      const type = this.list.find(w => w.id === typeId);
-      const item = type.list[e.newIndex];
-      item.done = false;
-    },
-  };
 
   constructor(
     private http: _HttpClient,
     public msg: NzMessageService,
-    public pro: ProService,
+    public brand: BrandService,
   ) {}
 
   ngOnInit() {
@@ -39,5 +27,16 @@ export class TaskComponent implements OnInit {
       this.msg.success('Success');
       p.list.splice(idx, 1);
     });
+  }
+
+  drop(event: CdkDragDrop<any[]>) {
+    if (event.previousContainer === event.container) {
+      moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
+    } else {
+      transferArrayItem(event.previousContainer.data,
+                        event.container.data,
+                        event.previousIndex,
+                        event.currentIndex);
+    }
   }
 }

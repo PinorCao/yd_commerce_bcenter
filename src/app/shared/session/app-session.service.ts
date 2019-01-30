@@ -55,9 +55,11 @@ export class AppSessionService {
         .toPromise()
         .then(
           (result: GetCurrentLoginInformationsOutput) => {
-            this._application = result.application;
-            this._user = result.user;
-            this._tenant = result.tenant;
+            if(result){
+              this._application = result.application;
+              this._user = result.user;
+              this._tenant = result.tenant;
+            }
 
             resolve(true);
           },

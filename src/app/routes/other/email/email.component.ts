@@ -9,7 +9,7 @@ import { _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd';
 import { Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
-import { ProService } from 'app/layout/pro/pro.service';
+import { BrandService } from '@brand';
 
 @Component({
   selector: 'app-email',
@@ -17,7 +17,7 @@ import { ProService } from 'app/layout/pro/pro.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EmailComponent implements OnInit, OnDestroy {
-  private pro$: Subscription;
+  private brand$: Subscription;
   // Must be the same as `@email-sidebox-width`
   width = 250;
   menuVisible = false;
@@ -44,12 +44,12 @@ export class EmailComponent implements OnInit, OnDestroy {
   }
 
   constructor(
+    brand: BrandService,
+    private cdRef: ChangeDetectorRef,
     public http: _HttpClient,
     public msg: NzMessageService,
-    public pro: ProService,
-    private cdRef: ChangeDetectorRef,
   ) {
-    this.pro$ = pro.notify
+    this.brand$ = brand.notify
       .pipe(filter(() => !!this.list))
       .subscribe(() => this.cd());
   }
@@ -108,6 +108,6 @@ export class EmailComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.pro$.unsubscribe();
+    this.brand$.unsubscribe();
   }
 }

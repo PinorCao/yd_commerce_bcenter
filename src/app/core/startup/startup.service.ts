@@ -1,17 +1,20 @@
-import { Injectable, Injector, Inject } from "@angular/core";
-import { Router } from "@angular/router";
-import { HttpClient } from "@angular/common/http";
-import { zip } from "rxjs";
-import { catchError } from "rxjs/operators";
+import { Injectable, Inject } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { zip } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 import {
   MenuService,
   SettingsService,
   TitleService,
-  ALAIN_I18N_TOKEN
-} from "@delon/theme";
-import { ACLService } from "@delon/acl";
-import { TranslateService } from "@ngx-translate/core";
-import { I18NService } from "../i18n/i18n.service";
+  ALAIN_I18N_TOKEN,
+} from '@delon/theme';
+import { ACLService } from '@delon/acl';
+import { TranslateService } from '@ngx-translate/core';
+import { I18NService } from '../i18n/i18n.service';
+
+import { NzIconService } from 'ng-zorro-antd';
+import { ICONS_AUTO } from '../../../style-icons-auto';
+import { ICONS } from '../../../style-icons';
 
 /*
 import { AppPreBootstrap } from './../../../AppPreBootstrap';
@@ -24,15 +27,16 @@ import { AppPreBootstrap } from './../../../AppPreBootstrap';
 @Injectable()
 export class StartupService {
   constructor(
+    iconSrv: NzIconService,
     private menuService: MenuService,
     private translate: TranslateService,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private settingService: SettingsService,
     private aclService: ACLService,
     private titleService: TitleService,
-    private httpClient: HttpClient,
-    private injector: Injector
+    private httpClient: HttpClient
   ) {
+    iconSrv.addIcon(...ICONS_AUTO, ...ICONS);
   }
 
   load(): Promise<any> {
@@ -41,18 +45,17 @@ export class StartupService {
     return new Promise((resolve, reject) => {
       zip(
         this.httpClient.get(`assets/tmp/i18n/${this.i18n.defaultLang}.json`),
-        this.httpClient.get("assets/tmp/app-data.json")
+        this.httpClient.get('assets/tmp/app-data.json'),
       )
         .pipe(
           // 接收其他拦截器后产生的异常消息
           catchError(([langData, appData]) => {
             resolve(null);
             return [langData, appData];
-          })
+          }),
         )
         .subscribe(
           ([langData, appData]) => {
-
             abp.log.debug(langData);
 
             // setting language data
@@ -76,7 +79,7 @@ export class StartupService {
           },
           () => {
             resolve(null);
-          }
+          },
         );
     });
   }

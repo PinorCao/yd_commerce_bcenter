@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { AgmCoreModule } from '@agm/core';
 import { AbmModule } from 'angular-baidu-maps';
 
-import { SharedModule } from '@shared/shared.module';
+import {SharedModule} from '@shared/shared.module';
 import { MapRoutingModule } from './map-routing.module';
 
 import { MapGoogleComponent } from './google/google.component';

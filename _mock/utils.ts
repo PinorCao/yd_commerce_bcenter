@@ -68,6 +68,14 @@ export function genTag(num = -3) {
   );
 }
 
+export function addDate(days: number) {
+  return addDays(new Date(), days);
+}
+
 export function genData(days: number, dateFormat = 'YYYY-MM-DD') {
-  return format(addDays(new Date(), days), dateFormat);
+  return format(addDate(days), dateFormat);
+}
+
+export function rudeCopy(obj: any) {
+  return JSON.parse(JSON.stringify(obj));
 }

@@ -1,4 +1,9 @@
-import { Component, ChangeDetectionStrategy, Inject, Input } from '@angular/core';
+import {
+  Component,
+  ChangeDetectionStrategy,
+  Inject,
+  Input,
+} from '@angular/core';
 import { SettingsService, ALAIN_I18N_TOKEN } from '@delon/theme';
 import { I18NService } from '@core/i18n/i18n.service';
 import { DOCUMENT } from '@angular/common';
@@ -9,10 +14,11 @@ import { DOCUMENT } from '@angular/common';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LangsComponent {
-
   langs: any[];
 
-  @Input() placement = "bottomRight";
+  @Input() placement = 'bottomRight';
+  @Input() btnClass = 'alain-pro__header-item';
+  @Input() btnIconClass = 'alain-pro__header-item-icon';
 
   constructor(
     public settings: SettingsService,
@@ -35,7 +41,10 @@ export class LangsComponent {
 
   change(lang: string) {
     const spinEl = this.doc.createElement('div');
-    spinEl.setAttribute('class', `page-loading ant-spin ant-spin-lg ant-spin-spinning`);
+    spinEl.setAttribute(
+      'class',
+      `page-loading ant-spin ant-spin-lg ant-spin-spinning`,
+    );
     spinEl.innerHTML = `<span class="ant-spin-dot ant-spin-dot-spin"><i></i><i></i><i></i><i></i></span>`;
     this.doc.body.appendChild(spinEl);
 

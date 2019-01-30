@@ -8,11 +8,10 @@
 <ul *ngIf="menus" nz-menu [nzMode]="mode" [nzTheme]="pro.theme" [nzInlineCollapsed]="pro.isMobile ? false : pro.collapsed">
   <ng-container *ngFor="let l1 of menus">
     <li *ngIf="l1.children.length === 0" nz-menu-item class="alain-pro__menu-item"
-      [nzSelected]="l1._selected"
-      (click)="click(l1)">
+      [nzSelected]="l1._selected" [nzDisabled]="l1.disabled" (click)="to(l1)">
       <div class="alain-pro__menu-title">
         <ng-template [ngTemplateOutlet]="icon" [ngTemplateOutletContext]="{$implicit: l1.icon}"></ng-template>
-        <span class="alain-pro__menu-title-text" *ngIf="!pro.onlyIcon">{{l1.text}}</span>
+        <span class="alain-pro__menu-title-text" *ngIf="!pro.onlyIcon">{{l1._text}}</span>
         <div *ngIf="l1.badge" title="{{l1.badge}}" class="alain-pro__menu-title-badge badge">
           <em>{{l1.badge}}</em>
         </div>
@@ -20,23 +19,25 @@
     </li>
     <li *ngIf="l1.children.length > 0" nz-submenu class="alain-pro__menu-item"
         [class.text-white]="pro.theme === 'dark' && l1._selected"
-        [nzOpen]="l1._open" (nzOpenChange)="openChange(l1, $event)">
+        [nzOpen]="l1._open" [nzDisabled]="l1.disabled" (nzOpenChange)="openChange(l1, $event)">
       <span title class="alain-pro__menu-title">
         <ng-template [ngTemplateOutlet]="icon" [ngTemplateOutletContext]="{$implicit: l1.icon}"></ng-template>
-        <span class="alain-pro__menu-title-text" *ngIf="!pro.onlyIcon">{{l1.text}}</span>
+        <span class="alain-pro__menu-title-text" *ngIf="pro.isMobile || !pro.onlyIcon">{{l1._text}}</span>
         <div *ngIf="l1.badge" title="{{l1.badge}}" class="alain-pro__menu-title-badge badge">
           <em>{{l1.badge}}</em>
         </div>
       </span>
       <ul>
         <ng-container *ngFor="let l2 of l1.children">
-          <li *ngIf="l2.children.length === 0" nz-menu-item [nzSelected]="l2._selected" (click)="click(l2)">
-            {{l2.text}}
+          <li *ngIf="!l2._hidden && l2.children.length === 0" nz-menu-item [nzSelected]="l2._selected" [nzDisabled]="l2.disabled" (click)="to(l2)">
+            {{l2._text}}
           </li>
-          <li *ngIf="l2.children.length > 0" nz-submenu [nzOpen]="l2._open" (nzOpenChange)="openChange(l2, $event)">
+          <li *ngIf="!l2._hidden && l2.children.length > 0" nz-submenu [nzOpen]="l2._open" [nzDisabled]="l2.disabled" (nzOpenChange)="openChange(l2, $event)">
             <span title><span>{{l2.text}}</span></span>
             <ul>
-              <li *ngFor="let l3 of l2.children" nz-menu-item [nzSelected]="l3._selected" (click)="click(l3)">{{l3.text}}</li>
+              <ng-container *ngFor="let l3 of l2.children">
+                <li *ngIf="!l2._hidden" nz-menu-item [nzSelected]="l3._selected" [nzDisabled]="l3.disabled" (click)="to(l3)">{{l3._text}}</li>
+              </ng-container>
             </ul>
           </li>
         </ng-container>

@@ -1,0 +1,63 @@
+{
+  "attributes": [
+    {
+      "name": "颜色",
+      "values": [
+        {
+          "name": "红色",
+          "id": 11
+        },
+        {
+          "name": "黑色",
+          "id": 12
+        }
+      ],
+      "displayOrder": 0,
+      "id": 10
+    },
+    {
+      "name": "规格",
+      "values": [
+        {
+          "name": "小瓶",
+          "id": 21
+        },
+        {
+          "name": "大瓶",
+          "id": 22
+        }
+      ],
+      "displayOrder": 0,
+      "id": 20
+    }
+  ],
+  "attributeCombinations": [
+    {
+      "attributes": [
+        {
+          "name": "颜色",
+          "values": {
+            "name": "红色",
+            "id": 0
+          },
+          "displayOrder": 0,
+          "id": 0
+        },
+        {
+          "name": "规格",
+          "values": [
+            {
+              "name": "大瓶",
+              "pictureId": 0,
+              "displayOrder": 0,
+              "id": 1
+            }
+          ],
+          "displayOrder": 0,
+          "id": 20
+        }
+      ],
+      "id": 0
+    }
+  ]
+}

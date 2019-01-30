@@ -46,13 +46,4 @@ export class BillingComponent {
   ];
 
   constructor(public msg: NzMessageService) {}
-
-  _click(e: STChange) {
-    if (e.type === 'click') {
-      // Should prevent tr click trigger when clicking expand
-      // So click expand to repeat the trigger
-      // https://github.com/NG-ZORRO/ng-zorro-antd/issues/2419
-      e.click.item.expand = !e.click.item.expand;
-    }
-  }
 }

@@ -74,17 +74,10 @@ export class ECWareComponent {
     { title: '30天销量', index: 'sale_num', type: 'number' },
     { title: '状态', index: 'status' },
     {
-      title: 'OP',
+      title: '操作',
       buttons: [
         {
-          text: 'Delisting',
-          iif: (i: any) => i.status === 'ON_SALE',
-          pop: true,
-          popTitle: '确认下架吗？',
-          click: (i: any) => this.delisting(i.id),
-        },
-        {
-          text: 'Edit',
+          text: '编辑',
           type: 'link',
           click: (i: any) => `/ec/ware/edit/${i.id}`,
         },

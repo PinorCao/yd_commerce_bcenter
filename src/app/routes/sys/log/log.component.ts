@@ -62,10 +62,4 @@ export class SysLogComponent {
       });
     return false;
   }
-
-  _click(e: STChange) {
-    if (e.type === 'click') {
-      e.click.item.expand = !e.click.item.expand;
-    }
-  }
 }

@@ -1,13 +1,14 @@
 import {
   Component,
-  OnInit,
   ViewChild,
   HostListener,
   ElementRef,
   OnDestroy,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
 } from '@angular/core';
-import { Subject, of } from 'rxjs';
-import { debounceTime, distinctUntilChanged, flatMap } from 'rxjs/operators';
+import { Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
 import { _HttpClient } from '@delon/theme';
 
 @Component({
@@ -16,29 +17,28 @@ import { _HttpClient } from '@delon/theme';
   host: {
     '[class.alain-pro__header-item]': 'true',
     '[class.alain-pro__header-search]': 'true',
+    '[class.alain-pro__header-search-show]': 'show',
   },
-  preserveWhitespaces: false,
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class LayoutProWidgetSearchComponent implements OnInit, OnDestroy {
-  @ViewChild('ipt')
-  private ipt: ElementRef<any>;
+export class LayoutProWidgetSearchComponent implements OnDestroy {
+  @ViewChild('ipt') private ipt: ElementRef<any>;
   show = false;
   q: string;
   search$ = new Subject<string>();
   list: any[] = [];
 
-  constructor(private http: _HttpClient) {
+  constructor(http: _HttpClient, cdr: ChangeDetectorRef) {
     this.search$
       .pipe(
         debounceTime(300),
         distinctUntilChanged(),
-        flatMap((q: string) => {
-          // via http
-          // return http.get<any[]>('/search', { q });
-          return of(['搜索提示一', '搜索提示二', '搜索提示三']);
-        }),
+        switchMap((q: string) => http.get('/user', { no: q, pi: 1, ps: 5 })),
       )
-      .subscribe(res => (this.list = res));
+      .subscribe((res: any) => {
+        this.list = res.list;
+        cdr.detectChanges();
+      });
   }
 
   @HostListener('click')
@@ -47,7 +47,7 @@ export class LayoutProWidgetSearchComponent implements OnInit, OnDestroy {
     this.show = true;
   }
 
-  ngOnInit(): void {}
-
-  ngOnDestroy(): void {}
+  ngOnDestroy(): void {
+    this.search$.unsubscribe();
+  }
 }

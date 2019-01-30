@@ -4,11 +4,14 @@ import {
   OnInit,
   HostBinding,
   Inject,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
 } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
-import { Subscription, fromEvent } from 'rxjs';
-import { throttleTime, distinctUntilChanged } from 'rxjs/operators';
-import { ProService } from '../../pro.service';
+import { fromEvent, Subject, combineLatest } from 'rxjs';
+import { throttleTime, distinctUntilChanged, takeUntil, tap } from 'rxjs/operators';
+
+import { BrandService } from '../../pro.service';
 
 @Component({
   selector: 'layout-pro-header',
@@ -19,57 +22,50 @@ import { ProService } from '../../pro.service';
     '[class.alain-pro__header-hide]': 'hideHeader',
     '[style.padding.px]': '0',
   },
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class LayoutProHeaderComponent implements OnInit, OnDestroy {
-  private notify$: Subscription;
-  private scroll$: Subscription;
+  private unsubscribe$ = new Subject<void>();
 
   hideHeader = false;
 
   @HostBinding('style.width')
   get getHeadWidth() {
-    const {
-      isMobile,
-      fixedHeader,
-      menu,
-      collapsed,
-      width,
-      widthInCollapsed,
-    } = this.pro;
+    const { isMobile, fixedHeader, menu, collapsed, width, widthInCollapsed } = this.pro;
     if (isMobile || !fixedHeader || menu === 'top') {
       return '100%';
     }
-    return collapsed
-      ? `calc(100% - ${widthInCollapsed}px)`
-      : `calc(100% - ${width}px)`;
+    return collapsed ? `calc(100% - ${widthInCollapsed}px)` : `calc(100% - ${width}px)`;
   }
 
-  constructor(public pro: ProService, @Inject(DOCUMENT) private doc: any) {}
+  constructor(
+    public pro: BrandService,
+    @Inject(DOCUMENT) private doc: any,
+    private cdr: ChangeDetectorRef
+  ) { }
 
-  private handScroll() {
+  private handScroll = () => {
     if (!this.pro.autoHideHeader) {
       this.hideHeader = false;
       return;
     }
     setTimeout(() => {
-      this.hideHeader =
-        this.doc.body.scrollTop + this.doc.documentElement.scrollTop >
-        this.pro.autoHideHeaderTop;
+      this.hideHeader = this.doc.body.scrollTop + this.doc.documentElement.scrollTop > this.pro.autoHideHeaderTop;
     });
   }
 
   ngOnInit() {
-    this.notify$ = this.pro.notify.subscribe(() => this.handScroll());
-    this.scroll$ = fromEvent(window, 'scroll', { passive: false })
-      .pipe(
+    combineLatest(
+      this.pro.notify.pipe(tap(() => this.cdr.markForCheck())),
+      fromEvent(window, 'scroll', { passive: false }).pipe(
         throttleTime(50),
         distinctUntilChanged(),
       )
-      .subscribe(() => this.handScroll());
+    ).pipe(takeUntil(this.unsubscribe$)).subscribe(this.handScroll);
   }
 
   ngOnDestroy() {
-    this.notify$.unsubscribe();
-    this.scroll$.unsubscribe();
+    this.unsubscribe$.next();
+    this.unsubscribe$.complete();
   }
 }

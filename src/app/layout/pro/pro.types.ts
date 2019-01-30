@@ -23,25 +23,20 @@ export interface ProLayout extends Layout {
    */
   fixSiderbar: boolean;
   /**
-   * 只显示图标
-   * 受限于 [#2183](https://github.com/NG-ZORRO/ng-zorro-antd/issues/2183) 的一个临时解决方案
+   * Only icon of menu
+   * Limited to a temporary solution [#2183](https://github.com/NG-ZORRO/ng-zorro-antd/issues/2183)
    */
   onlyIcon: boolean;
   /**
-   * 色弱模式
+   * Color weak
    */
   colorWeak: boolean;
 }
 
 export interface ProMenu extends Menu {
-  /** 父 */
   __parent?: ProMenu;
-  /** 是否隐藏 */
   _hidden?: boolean;
-  /** 是否选中 */
   _selected?: boolean;
-  /** 是否展开 */
   _open?: boolean;
-  /** 二级菜单 */
   children?: ProMenu[];
 }

@@ -1,91 +1,64 @@
-import { Component, Input, OnDestroy } from '@angular/core';
+import { Component, Input, OnDestroy, ChangeDetectorRef, ChangeDetectionStrategy, OnInit } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
-import { Subscription } from 'rxjs';
-import { filter } from 'rxjs/operators';
+import { Subject } from 'rxjs';
+import { filter, takeUntil } from 'rxjs/operators';
 import { Menu, MenuService } from '@delon/theme';
-import { ProService } from '../../pro.service';
+import { InputBoolean } from '@delon/util';
+
+import { BrandService } from '../../pro.service';
 import { ProMenu } from '../../pro.types';
 
 @Component({
   selector: '[layout-pro-menu]',
   templateUrl: './menu.component.html',
+  styleUrls:['./menu.component.scss'],
   host: {
     '[class.alain-pro__menu]': 'true',
     '[class.alain-pro__menu-only-icon]': 'pro.onlyIcon',
   },
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class LayoutProMenuComponent implements OnDestroy {
-  private menu$: Subscription;
-  private router$: Subscription;
-  @Input()
-  mode = 'inline';
-
+export class LayoutProMenuComponent implements OnInit, OnDestroy {
+  private unsubscribe$ = new Subject<void>();
   menus: ProMenu[];
 
-  constructor(
-    menuSrv: MenuService,
-    private router: Router,
-    public pro: ProService,
-  ) {
-    this.menu$ = menuSrv.change.subscribe(res => this.genMenus(res));
+  @Input() @InputBoolean() disabledAcl = false;
+  @Input() mode = 'inline';
 
-    this.router$ = router.events
-      .pipe(filter(e => e instanceof NavigationEnd && pro.isSideMenu))
-      .subscribe(() => this.openStatus());
+  constructor(
+    private menuSrv: MenuService,
+    private router: Router,
+    public pro: BrandService,
+    private cdr: ChangeDetectorRef
+  ) { }
+
+  private cd() {
+    this.cdr.markForCheck();
   }
 
   private genMenus(data: Menu[]) {
     const res: ProMenu[] = [];
-    const inFn = (list: ProMenu[], parent: ProMenu) => {
-      for (const item of list) {
-        item.__parent = parent;
-        if (item._hidden === true) {
-          continue;
-        }
-        if (parent === null) {
-          res.push(item);
-        }
-        if (item.children && item.children.length > 0) {
-          inFn(item.children, item);
+    // ingores category menus
+    const ingoreCategores = data.reduce((prev, cur) => prev.concat(cur.children), []);
+    this.menuSrv.visit(ingoreCategores, (item, parent) => {
+      if (!item._aclResult) {
+        if (this.disabledAcl) {
+          item.disabled = true;
         } else {
-          item.children = [];
+          item._hidden = true;
         }
       }
-    };
-    // ingores category menus
-    const ingoreCategores = data.reduce(
-      (prev, cur) => prev.concat(cur.children),
-      [],
-    );
-    inFn(ingoreCategores, null);
+      if (item._hidden === true) {
+        return ;
+      }
+      if (parent === null) {
+        res.push(item);
+      }
+
+    });
     this.menus = res;
 
     this.openStatus();
-  }
-
-  private getHit(url: string): ProMenu {
-    let cur: ProMenu;
-    const inFn = (list: ProMenu[], value: string) => {
-      for (const i of list) {
-        if (!cur && i.link === value) {
-          cur = i;
-          break;
-        }
-        if (i.children && i.children.length > 0) {
-          inFn(i.children, value);
-        }
-      }
-    };
-
-    while (!cur && url) {
-      inFn(this.menus, url);
-      url = url
-        .split('/')
-        .slice(0, -1)
-        .join('/');
-    }
-
-    return cur;
   }
 
   private openStatus() {
@@ -100,15 +73,19 @@ export class LayoutProMenuComponent implements OnDestroy {
     };
     inFn(this.menus);
 
-    let item = this.getHit(this.router.url);
-    if (!item) return;
+    let item = this.menuSrv.getHit(this.menus, this.router.url, true);
+    if (!item) {
+      this.cd();
+      return;
+    }
     do {
       item._selected = true;
-      if (!this.pro.isTopMenu) {
+      if (!this.pro.isTopMenu && !this.pro.collapsed) {
         item._open = true;
       }
       item = item.__parent;
     } while (item);
+    this.cd();
   }
 
   openChange(item: ProMenu, statue: boolean) {
@@ -118,23 +95,46 @@ export class LayoutProMenuComponent implements OnDestroy {
     item._open = statue;
   }
 
-  click(item: ProMenu) {
-    if (item.externalLink) {
-      if (item.target === '_blank') {
-        window.open(item.externalLink);
+  to(item: ProMenu) {
+    if (item.disabled) return ;
+
+    const { router, pro } = this;
+    const { externalLink, target, link } = item;
+    if (externalLink) {
+      if (target === '_blank') {
+        window.open(externalLink);
       } else {
-        location.href = item.externalLink;
+        location.href = externalLink;
       }
       return;
     }
-    this.router.navigateByUrl(item.link);
-    if (this.pro.isMobile) {
-      setTimeout(() => this.pro.setCollapsed(true));
+    // Wait closed sub-menu panel
+    setTimeout(() => router.navigateByUrl(link), pro.collapsed || pro.isTopMenu ? 25 : 0);
+    if (pro.isMobile) {
+      setTimeout(() => pro.setCollapsed(true), 25);
     }
   }
 
+  ngOnInit() {
+    const { unsubscribe$, router, pro } = this;
+    this.menuSrv.change.pipe(
+      takeUntil(unsubscribe$)
+    ).subscribe(res => this.genMenus(res));
+
+    router.events.pipe(
+      takeUntil(unsubscribe$),
+      filter(e => e instanceof NavigationEnd)
+    ).subscribe(() => this.openStatus());
+
+    pro.notify.pipe(
+      takeUntil(unsubscribe$),
+      filter(() => !!this.menus)
+    ).subscribe(() => this.cd());
+  }
+
   ngOnDestroy() {
-    this.menu$.unsubscribe();
-    this.router$.unsubscribe();
+    const { unsubscribe$ } = this;
+    unsubscribe$.next();
+    unsubscribe$.complete();
   }
 }

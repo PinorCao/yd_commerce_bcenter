@@ -13,8 +13,8 @@
 <page-header-wrapper [loading]="!list">
   <div *ngIf="list" nz-row nzGutter="32" class="faq">
     <div nz-col nzLg="6" nzMd="8">
-      <ng-container *ngIf="!pro.isMobile; else sidebox">
-        <nz-affix [nzOffsetTop]="pro.fixedHeader ? 80 : 24">
+      <ng-container *ngIf="!brand.isMobile; else sidebox">
+        <nz-affix [nzOffsetTop]="brand.fixedHeader ? 80 : 24">
           <ng-template [ngTemplateOutlet]="sidebox"></ng-template>
         </nz-affix>
       </ng-container>

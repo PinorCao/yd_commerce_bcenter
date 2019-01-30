@@ -2,7 +2,7 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { DOCUMENT } from '@angular/platform-browser';
 import { NzMessageService } from 'ng-zorro-antd';
 
-import { ProService } from 'app/layout/pro/pro.service';
+import { BrandService } from '@brand';
 import { _HttpClient } from '@delon/theme';
 
 @Component({
@@ -15,7 +15,7 @@ export class FAQV1Component implements OnInit {
   constructor(
     private http: _HttpClient,
     public msg: NzMessageService,
-    public pro: ProService,
+    public brand: BrandService,
     @Inject(DOCUMENT) private doc: any,
   ) {}
 

@@ -4,9 +4,9 @@ import {
   OnInit,
   ChangeDetectorRef,
 } from '@angular/core';
-import { _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd';
-import { ProService } from '../../pro.service';
+import { _HttpClient } from '@delon/theme';
+import { BrandService } from '../../pro.service';
 
 @Component({
   selector: 'layout-pro-quick-panel',
@@ -21,7 +21,7 @@ export class LayoutProWidgetQuickPanelComponent implements OnInit {
   }
 
   constructor(
-    private pro: ProService,
+    private pro: BrandService,
     private http: _HttpClient,
     private cd: ChangeDetectorRef,
     public msg: NzMessageService,

@@ -6,7 +6,7 @@
         <button nz-popconfirm nz-button nzType="danger">清空搜索结果</button>
       </nz-popconfirm>
     </div>
-    <st #st [data]="url" [columns]="columns" [req]="{params: params}" [expand]="expand" rowClickTime="0" (change)="_click($event)">
+    <st #st [data]="url" [columns]="columns" [req]="{params: params}" [expand]="expand" expandRowByClick>
       <ng-template #expand let-i let-index="index" let-column="column">
         <sv-container labelWidth="100" col="1">
           <sv label="ID">{{i.id}}</sv>

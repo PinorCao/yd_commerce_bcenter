@@ -9,7 +9,7 @@ import { ActivatedRoute } from '@angular/router';
 import { _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd';
 import { Subscription } from 'rxjs';
-import { SortablejsOptions } from 'angular-sortablejs';
+import { CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 
 @Component({
   selector: 'app-project-view',
@@ -21,18 +21,6 @@ export class ProjectViewComponent implements OnInit, OnDestroy {
   idx = 0;
   id = 0;
   i: any;
-  options: SortablejsOptions = {
-    handle: '.task__item-handle',
-    group: 'task',
-    onAdd: (e: any) => {
-      const typeId = +e.to.dataset.id;
-      if (typeId !== 2) return;
-
-      const type = this.i.tasks.find(w => w.id === typeId);
-      const item = type.list[e.newIndex];
-      item.done = false;
-    },
-  };
 
   constructor(
     private route: ActivatedRoute,
@@ -53,6 +41,17 @@ export class ProjectViewComponent implements OnInit, OnDestroy {
       this.i = res;
       this.cd.detectChanges();
     });
+  }
+
+  drop(event: CdkDragDrop<any[]>) {
+    if (event.previousContainer === event.container) {
+      moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
+    } else {
+      transferArrayItem(event.previousContainer.data,
+                        event.container.data,
+                        event.previousIndex,
+                        event.currentIndex);
+    }
   }
 
   ngOnDestroy() {

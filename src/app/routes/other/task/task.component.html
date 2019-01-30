@@ -54,15 +54,15 @@
 <ng-template #taskTpl let-item>
   <div class="task__container p-lg">
     <h3 class="task__title">{{item.title}}</h3>
-    <div class="task__list" [attr.data-id]="item.id" [sortablejs]="item.list" [sortablejsOptions]="options">
-      <div *ngFor="let i of item.list; let idx=index" class="task__item">
+    <div class="task__list" [attr.data-id]="item.id" cdkDropList [cdkDropListData]="item.list" (cdkDropListDropped)="drop($event)">
+      <div *ngFor="let i of item.list; let idx=index" cdkDrag class="task__item">
         <label nz-checkbox [(ngModel)]="i.done" name="i.done">
           <span [ngClass]="{'task__item-done': i.done}" class="mr-sm">{{ i.title }}</span>
           <nz-tag *ngIf="i.label" [nzColor]="i.label.color">{{i.label.text}}</nz-tag>
           <nz-tag *ngIf="!i.done && i.due">{{i.due}}</nz-tag>
         </label>
         <div class="d-flex align-items-center">
-          <i nz-icon type="fullscreen" class="task__item-handle"></i>
+          <i nz-icon type="fullscreen" class="task__item-handle" cdkDragHandle></i>
           <nz-dropdown nzPlacement="bottomRight">
             <span class="dd-btn" nz-dropdown><i nz-icon type="ellipsis"></i></span>
             <ul nz-menu>
@@ -82,8 +82,8 @@
 <page-header-wrapper>
   <div nz-row nzGutter="32">
     <div nz-col nzMd="8" nzLg="8" nzXl="6">
-      <ng-container *ngIf="!pro.isMobile; else sidebox">
-        <nz-affix [nzOffsetTop]="pro.fixedHeader ? 80 : 24">
+      <ng-container *ngIf="!brand.isMobile; else sidebox">
+        <nz-affix [nzOffsetTop]="brand.fixedHeader ? 80 : 24">
           <ng-template [ngTemplateOutlet]="sidebox"></ng-template>
         </nz-affix>
       </ng-container>
@@ -98,9 +98,34 @@
             <i nz-icon type="close"></i>Clean
           </button>
         </ng-template>
-        <ng-container *ngFor="let i of list">
-          <ng-template [ngTemplateOutlet]="taskTpl" [ngTemplateOutletContext]="{ $implicit: i }"></ng-template>
-        </ng-container>
+        <div cdkDropListGroup>
+          <div *ngFor="let item of list" cdkDropList [cdkDropListData]="item.list" (cdkDropListDropped)="drop($event)" class="task__container p-lg">
+            <h3 class="task__title">{{item.title}}</h3>
+            <div class="task__list" [attr.data-id]="item.id">
+              <div *ngFor="let i of item.list; let idx=index" cdkDrag class="task__item">
+                <label nz-checkbox [(ngModel)]="i.done" name="i.done">
+                  <span [ngClass]="{'task__item-done': i.done}" class="mr-sm">{{ i.title }}</span>
+                  <nz-tag *ngIf="i.label" [nzColor]="i.label.color">{{i.label.text}}</nz-tag>
+                  <nz-tag *ngIf="!i.done && i.due">{{i.due}}</nz-tag>
+                </label>
+                <div class="d-flex align-items-center">
+                  <i nz-icon type="fullscreen" class="task__item-handle" cdkDragHandle></i>
+                  <nz-dropdown nzPlacement="bottomRight">
+                    <span class="dd-btn" nz-dropdown><i nz-icon type="ellipsis"></i></span>
+                    <ul nz-menu>
+                      <li nz-menu-item (click)="msg.success('edit')">Edit</li>
+                      <li nz-menu-item>
+                        <nz-popconfirm nzTitle="确定吗？" (nzOnConfirm)="del(item, i, idx)">
+                          <span nz-popconfirm>Remove</span>
+                        </nz-popconfirm>
+                      </li>
+                    </ul>
+                  </nz-dropdown>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </nz-card>
     </div>
   </div>

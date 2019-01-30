@@ -1,3 +1,11 @@
+// #region exports
+
+export * from './pro.types';
+export * from './pro.service';
+export { LayoutProComponent } from './pro.component';
+
+// #endregion
+
 // #region widgets
 
 import { LayoutProHeaderWidgetComponent } from './components/widget/widget.component';

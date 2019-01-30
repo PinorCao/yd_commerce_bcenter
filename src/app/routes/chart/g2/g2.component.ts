@@ -4,7 +4,7 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
 } from '@angular/core';
-import { yuan } from '@delon/util';
+import {yuan} from '@shared/utils/yuan';
 import * as format from 'date-fns/format';
 
 @Component({

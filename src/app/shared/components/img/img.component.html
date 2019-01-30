@@ -37,8 +37,8 @@
     <small class="pl-md text-grey">（按住拖动可调整顺序）</small>
     <button (click)="ok()" nz-button nzType="primary">确认所选</button>
   </ng-template>
-  <div class="file-manager" [sortablejs]="result">
-    <div class="file-item" *ngFor="let i of result" title="{{i.title}}">
+  <div class="file-manager" cdkDropList cdkDropListOrientation="horizontal" (cdkDropListDropped)="drop($event)">
+    <div class="file-item" *ngFor="let i of result" cdkDrag [title]="i.title">
       <div class="file-item__img" [ngStyle]="{'background-image': 'url(' + i.mp + ')'}"></div>
       <div class="file-item__name">{{i.title}}</div>
       <div class="file-item__pixel"><span *ngIf="i.is_img">{{i.width}}x{{i.height}}</span></div>

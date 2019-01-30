@@ -32,23 +32,23 @@
         <div class="file-item__img" *ngIf="i.is_img" [ngStyle]="{'background-image': 'url(' + i.mp + ')'}"></div>
       </ng-container>
       <div class="file-item__name">{{i.title}}</div>
-      <div class="file-item__pixel"><span *ngIf="i.is_img">{{i.width}}x{{i.height}}</span></div>
+      <!--<div class="file-item__pixel"><span *ngIf="i.is_img">{{i.width}}x{{i.height}}</span></div>-->
       <div class="file-item__time">{{i.created | _date}}</div>
       <nz-dropdown>
         <span class="dd-btn file-item__actions" nz-dropdown><i nz-icon type="ellipsis"></i></span>
         <ul nz-menu>
-          <li nz-menu-item>
+          <!--<li nz-menu-item>
             <nz-popconfirm nzTitle="确定吗？" (nzOnConfirm)="copyImg(i.id)">
               <span nz-popconfirm>Copy</span>
             </nz-popconfirm>
-          </li>
-          <li nz-menu-item (click)="copyData(i.mp, 'link')">Copy Link</li>
-          <li nz-menu-item (click)="copyData(i.mp, 'code')">Copy Code</li>
-          <li nz-menu-item (click)="rename(i)">Rename</li>
-          <li nz-menu-item (click)="move(i, idx)">Move</li>
+          </li>-->
+          <li nz-menu-item (click)="copyData(i.mp, 'link')">拷贝地址</li>
+          <!--<li nz-menu-item (click)="copyData(i.mp, 'code')">Copy Code</li>-->
+          <li nz-menu-item (click)="rename(i)">重命名</li>
+          <!--<li nz-menu-item (click)="move(i, idx)">移动</li>-->
           <li nz-menu-item>
             <nz-popconfirm nzTitle="确定吗？" (nzOnConfirm)="remove(i.id, idx)">
-              <span nz-popconfirm>Remove</span>
+              <span nz-popconfirm>删除</span>
             </nz-popconfirm>
           </li>
         </ul>

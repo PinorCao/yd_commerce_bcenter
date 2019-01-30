@@ -6,8 +6,9 @@ import {
   OnInit,
   ViewChild,
   ElementRef,
+  Inject,
 } from '@angular/core';
-import { _HttpClient } from '@delon/theme';
+import { _HttpClient, ALAIN_I18N_TOKEN } from '@delon/theme';
 import { Draggable } from 'fullcalendar';
 
 import { I18NService } from '@core/i18n/i18n.service';
@@ -18,8 +19,7 @@ import { CalendarTheme } from '../calendar.theme';
   templateUrl: './events.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CalendarEventsComponent extends CalendarTheme
-  implements OnInit, OnDestroy {
+export class CalendarEventsComponent extends CalendarTheme implements OnInit, OnDestroy {
   private draggable: Draggable;
   @ViewChild('external') private readonly externalEl: ElementRef;
   removeAfterDrop = false;
@@ -44,21 +44,24 @@ export class CalendarEventsComponent extends CalendarTheme
     },
   ];
 
-  constructor(private http: _HttpClient, zone: NgZone, i18n: I18NService) {
+  constructor(private http: _HttpClient, zone: NgZone, @Inject(ALAIN_I18N_TOKEN) i18n: I18NService) {
     super(zone, i18n);
   }
 
   private loadEvents(time: Date) {
     this.http.get(`/calendar?time=${+time}`).subscribe((res: any) => {
-      this.instance.addEventSource({
-        allDayDefault: true,
-        events: res,
+      this._executeOnStable(() => {
+        this.instance.addEventSource({
+          allDayDefault: true,
+          events: res,
+        });
       });
     });
   }
 
   ngOnInit() {
     this.options = {
+      plugins: [],
       droppable: true,
       drop: (info: any) => {
         if (!this.removeAfterDrop) return;

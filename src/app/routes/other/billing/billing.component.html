@@ -10,7 +10,7 @@
         <button nz-button nzType="primary" nzSearch><i nz-icon type="search"></i></button>
       </ng-template>
     </div>
-    <st #st [data]="url" [columns]="columns" [req]="{params: params}" [expand]="expand" rowClickTime="0" (change)="_click($event)">
+    <st #st [data]="url" [columns]="columns" [req]="{params: params}" [expand]="expand" expandRowByClick>
       <ng-template #expand let-i let-index="index" let-column="column">
         <div class="border-1 rounded-sm p-lg bg-white">
           <h3>Invoice</h3>

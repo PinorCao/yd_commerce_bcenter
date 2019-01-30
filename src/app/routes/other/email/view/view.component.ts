@@ -6,7 +6,7 @@ import {
   OnDestroy,
 } from '@angular/core';
 import { Location } from '@angular/common';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd';
 import { Subscription } from 'rxjs';
@@ -23,6 +23,7 @@ export class EmailViewComponent implements OnInit, OnDestroy {
   i: any;
 
   constructor(
+    private router: Router,
     private route: ActivatedRoute,
     private http: _HttpClient,
     private cd: ChangeDetectorRef,
@@ -38,10 +39,13 @@ export class EmailViewComponent implements OnInit, OnDestroy {
   }
 
   load() {
-    this.http.get(`/email/${this.id}`).subscribe((res: any) => {
-      this.i = res;
-      this.cd.detectChanges();
-    });
+    this.http.get(`/email/${this.id}`).subscribe(
+      (res: any) => {
+        this.i = res;
+        this.cd.detectChanges();
+      },
+      () => this.router.navigateByUrl(`/other/email`)
+    );
   }
 
   back() {

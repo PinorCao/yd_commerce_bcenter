@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import * as distanceInWordsToNow from 'date-fns/distance_in_words_to_now';
 import { NzMessageService } from 'ng-zorro-antd';
 import { NoticeItem, NoticeIconList } from '@delon/abc';
@@ -8,7 +8,8 @@ import { NoticeItem, NoticeIconList } from '@delon/abc';
  */
 @Component({
   selector: 'layout-pro-notify',
-  templateUrl: './notify.component.html'
+  templateUrl: './notify.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class LayoutProWidgetNotifyComponent {
   data: NoticeItem[] = [
@@ -40,7 +41,7 @@ export class LayoutProWidgetNotifyComponent {
   count = 5;
   loading = false;
 
-  constructor(private msg: NzMessageService) {}
+  constructor(private msg: NzMessageService, private cdr: ChangeDetectorRef) {}
 
   updateNoticeData(notices: NoticeIconList[]): NoticeItem[] {
     const data = this.data.slice();
@@ -175,6 +176,8 @@ export class LayoutProWidgetNotifyComponent {
       ]);
 
       this.loading = false;
+
+      this.cdr.detectChanges();
     }, 1000);
   }
 

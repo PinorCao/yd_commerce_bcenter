@@ -7,8 +7,8 @@ import { environment } from '@env/environment';
 import { ProLayout } from './pro.types';
 
 @Injectable({ providedIn: 'root' })
-export class ProService {
-  private notify$ = new BehaviorSubject(null);
+export class BrandService {
+  private notify$ = new BehaviorSubject<string>(null);
   private _isMobile = false;
 
   // #region fields
@@ -17,12 +17,33 @@ export class ProService {
     return this.notify$.asObservable();
   }
 
+  /**
+   * Specify width of the sidebar, If you change it, muse be synchronize change less parameter:
+   * ```less
+   * @alain-pro-sider-menu-width: 256px;
+   * ```
+   */
   readonly width = 256;
 
+  /**
+   * Specify width of the sidebar after collapsed, If you change it, muse be synchronize change less parameter:
+   * ```less
+   * @menu-collapsed-width: 80px;
+   * ```
+   */
   readonly widthInCollapsed = 80;
 
+  /**
+   * Specify height of the header, If you change it, muse be synchronize change less parameter:
+   * ```less
+   * @alain-pro-header-height: 64px;
+   * ```
+   */
   readonly headerHeight = 64;
 
+  /**
+   * Specify distance from top for automatically hidden header
+   */
   readonly autoHideHeaderTop = 300;
 
   get isMobile() {
@@ -65,17 +86,17 @@ export class ProService {
     return this.layout.onlyIcon;
   }
 
-  /** 是否顶部菜单 */
+  /** Whether the top menu */
   get isTopMenu() {
     return this.menu === 'top' && !this.isMobile;
   }
 
-  /** 是否顶部菜单 */
+  /** Whether the side menu */
   get isSideMenu() {
     return this.menu === 'side' && !this.isMobile;
   }
 
-  /** 是否固定内容 */
+  /** Whether the fixed content */
   get isFixed() {
     return this.contentWidth === 'fixed';
   }
@@ -85,19 +106,17 @@ export class ProService {
   constructor(bm: BreakpointObserver, private settings: SettingsService) {
     // fix layout data
     settings.setLayout(
-      Object.assign(
-        {
-          theme: 'dark',
-          menu: 'side',
-          contentWidth: 'fluid',
-          fixedHeader: false,
-          autoHideHeader: false,
-          fixSiderbar: false,
-          onlyIcon: true,
-        },
-        (environment as any).pro,
-        settings.layout,
-      ),
+      {
+        theme: 'dark',
+        menu: 'side',
+        contentWidth: 'fluid',
+        fixedHeader: false,
+        autoHideHeader: false,
+        fixSiderbar: false,
+        onlyIcon: true,
+        ...(environment as any).pro,
+        ...settings.layout,
+      }
     );
 
     const mobileMedia = 'only screen and (max-width: 767.99px)';
@@ -108,18 +127,15 @@ export class ProService {
   private checkMedia(value: boolean) {
     this._isMobile = value;
     this.layout.collapsed = this._isMobile;
-    this.notify$.next(null);
+    this.notify$.next('mobile');
   }
 
   setLayout(name: string | Layout, value?: any) {
     this.settings.setLayout(name, value);
-    this.notify$.next(null);
+    this.notify$.next('layout');
   }
 
   setCollapsed(status?: boolean) {
-    this.setLayout(
-      'collapsed',
-      typeof status !== 'undefined' ? status : !this.collapsed,
-    );
+    this.setLayout('collapsed', typeof status !== 'undefined' ? status : !this.collapsed);
   }
 }

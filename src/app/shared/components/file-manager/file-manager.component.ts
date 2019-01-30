@@ -2,7 +2,6 @@ import {
   Component,
   OnInit,
   Input,
-  ChangeDetectionStrategy,
   ChangeDetectorRef,
   Output,
   EventEmitter,
@@ -12,14 +11,15 @@ import { _HttpClient } from '@delon/theme';
 import { UploadFile, NzMessageService } from 'ng-zorro-antd';
 import { ArrayService, copy } from '@delon/util';
 
+import {UpdatePictureInput, PictureGroupListDto, PictureListDto, PictureServiceProxy } from '@shared/service-proxies/service-proxies';
+
 @Component({
   selector: 'file-manager',
   templateUrl: './file-manager.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FileManagerComponent implements OnInit {
   showType: 'big' | 'small' = 'big';
-  s: any = { orderby: 0, ps: 20, pi: 1, q: '' };
+  s: any = { orderby: 0, ps: 20, pi: 0, q: '', g: -1 };
   loading = false;
   list: any[] = [];
   item: any;
@@ -44,10 +44,10 @@ export class FileManagerComponent implements OnInit {
 
   constructor(
     public http: _HttpClient,
-    private cd: ChangeDetectorRef,
     private arrSrv: ArrayService,
     private msg: NzMessageService,
-  ) {}
+    private picSvc: PictureServiceProxy) {
+  }
 
   ngOnInit() {
     this.load(1);
@@ -80,12 +80,46 @@ export class FileManagerComponent implements OnInit {
       this.params,
     );
     this.loading = true;
-    this.http.get('/file', data).subscribe((res: any) => {
+
+    /*{
+      "created": '',
+        "ext": "png",
+      "height": 504,
+      "id": 14,
+      "is_img": true,
+      "mp": "https://randomuser.me/api/portraits/lego/3.jpg",
+      "parent_id": 0,
+      "size": 2699,
+      "title": "委南主土.png",
+      "type": "file",
+      "width": 587
+    }*/
+
+    this.picSvc.getPictureAsync(this.s.g, '', this.s.ps, this.s.pi * this.s.ps).subscribe(res => {
+      this.loading = false;
+      console.log(res);
+      const list = [];
+      res.items.forEach(item => {
+        list.push({
+          created: item.creationTime,
+          ext: item.name.split('.')[1],
+          id: item.id,
+          is_img: true,
+          mp: item.originalUrl,
+          parent_id: 0,
+          title: item.name,
+          type: 'file',
+        });
+      });
+      this.list = list;
+      this.total = res.totalCount;
+    });
+
+    /*this.http.get('/file', data).subscribe((res: any) => {
       this.loading = false;
       this.list = res.list;
       this.total = res.total;
-      this.cd.detectChanges();
-    });
+    });*/
   }
 
   cho(i: any) {
@@ -95,7 +129,6 @@ export class FileManagerComponent implements OnInit {
     }
     i.selected = !i.selected;
     this.selected.emit(i);
-    this.cd.detectChanges();
   }
 
   // #endregion
@@ -120,23 +153,26 @@ export class FileManagerComponent implements OnInit {
 
   renameModel = false;
   renameTitle = '';
+
   rename(i: any) {
     this.renameModel = true;
     this.item = i;
     this.renameTitle = i.title;
   }
+
   renameOk() {
-    this.http
-      .post(`/file/rename`, {
-        id: this.item.id,
-        title: this.renameTitle,
-      })
-      .subscribe(() => {
-        this.msg.success('Success');
-        this.item.title = this.renameTitle;
-        this.renameModel = false;
-        this.cd.detectChanges();
-      });
+    console.log(this.item);
+    const body:UpdatePictureInput = new UpdatePictureInput({
+      id: this.item.id,
+      groupId: this.item.parent_id,
+      name: this.renameTitle
+    });
+    this.picSvc.updatePicture(body).subscribe(res => {
+      console.log(res);
+      this.msg.success('Success');
+      this.item.title = this.renameTitle;
+      this.renameModel = false;
+    });
   }
 
   // #endregion
@@ -145,6 +181,7 @@ export class FileManagerComponent implements OnInit {
   moveModel = false;
   moveId = '';
   folderNodes: any[] = [];
+
   move(i: any) {
     this.moveModel = true;
     this.item = i;
@@ -159,9 +196,9 @@ export class FileManagerComponent implements OnInit {
           }
         },
       });
-      this.cd.detectChanges();
     });
   }
+
   moveOk() {
     this.http
       .post(`/file/move`, {
@@ -172,9 +209,9 @@ export class FileManagerComponent implements OnInit {
         this.msg.success('Success');
         this.moveModel = false;
         this.list.splice(this.list.findIndex(w => w.id === this.item.id), 1);
-        this.cd.detectChanges();
       });
   }
+
   // #endregion
 
   // #region copy
@@ -183,7 +220,6 @@ export class FileManagerComponent implements OnInit {
     this.http.post(`/file/copy/${id}`).subscribe((res: any) => {
       this.msg.success('Success');
       this.list.push(res.item);
-      this.cd.detectChanges();
     });
   }
 
@@ -196,10 +232,9 @@ export class FileManagerComponent implements OnInit {
   // #region remove
 
   remove(id: number, idx: number) {
-    this.http.delete(`/file/${id}`).subscribe(() => {
+    this.picSvc.deleteAsync([id]).subscribe(res => {
       this.msg.success('Success');
       this.list.splice(idx, 1);
-      this.cd.detectChanges();
     });
   }
 

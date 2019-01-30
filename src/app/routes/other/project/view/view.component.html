@@ -1,31 +1,3 @@
-<ng-template #taskTpl let-item>
-  <div class="task__container mb-lg">
-    <h3 class="task__title">{{item.title}}</h3>
-    <div class="task__list" [attr.data-id]="item.id" [sortablejs]="item.list" [sortablejsOptions]="options">
-      <div *ngFor="let i of item.list; let idx=index" class="task__item">
-        <label nz-checkbox [(ngModel)]="i.done" name="i.done">
-          <span [ngClass]="{'task__item-done': i.done}" class="mr-sm">{{ i.title }}</span>
-          <nz-tag *ngIf="i.label" [nzColor]="i.label.color">{{i.label.text}}</nz-tag>
-          <nz-tag *ngIf="!i.done && i.due">{{i.due}}</nz-tag>
-        </label>
-        <div class="d-flex align-items-center">
-          <i nz-icon type="fullscreen" class="task__item-handle"></i>
-          <nz-dropdown>
-            <span class="dd-btn" nz-dropdown><i nz-icon type="ellipsis"></i></span>
-            <ul nz-menu>
-              <li nz-menu-item (click)="msg.success('edit')">Edit</li>
-              <li nz-menu-item>
-                <nz-popconfirm nzTitle="确定吗？" (nzOnConfirm)="msg.success('remove')">
-                  <span nz-popconfirm>Remove</span>
-                </nz-popconfirm>
-              </li>
-            </ul>
-          </nz-dropdown>
-        </div>
-      </div>
-    </div>
-  </div>
-</ng-template>
 <ng-template #userTpl let-list let-type="type" let-title="title">
   <nz-card [nzTitle]="title" [nzExtra]="userExtra" class="ant-card__body-nopadding">
     <ng-template #userExtra>
@@ -90,7 +62,7 @@
                   <div class="text-xs text-grey">{{f.size}}</div>
                   <div>
                     <a (click)="msg.success('view')" *ngIf="f.type === 'jpg'" class="pr-sm">View</a>
-                    <a href="{{f.url}}" target="_blank">Download</a>
+                    <a [href]="f.url | url" target="_blank">Download</a>
                   </div>
                 </div>
               </div>
@@ -106,11 +78,34 @@
             </nz-tabset>
           </nz-card-tab>
           <ng-container [ngSwitch]="idx">
-            <ng-container *ngSwitchCase="0">
-              <ng-container *ngFor="let i of i.tasks">
-                <ng-template [ngTemplateOutlet]="taskTpl" [ngTemplateOutletContext]="{ $implicit: i }"></ng-template>
-              </ng-container>
-            </ng-container>
+            <div *ngSwitchCase="0" cdkDropListGroup>
+              <div *ngFor="let item of i.tasks" cdkDropList [cdkDropListData]="item.list" (cdkDropListDropped)="drop($event)" class="task__container p-lg">
+                <h3 class="task__title">{{item.title}}</h3>
+                <div class="task__list" [attr.data-id]="item.id">
+                  <div *ngFor="let i of item.list; let idx=index" cdkDrag class="task__item">
+                    <label nz-checkbox [(ngModel)]="i.done" name="i.done">
+                      <span [ngClass]="{'task__item-done': i.done}" class="mr-sm">{{ i.title }}</span>
+                      <nz-tag *ngIf="i.label" [nzColor]="i.label.color">{{i.label.text}}</nz-tag>
+                      <nz-tag *ngIf="!i.done && i.due">{{i.due}}</nz-tag>
+                    </label>
+                    <div class="d-flex align-items-center">
+                      <i nz-icon type="fullscreen" class="task__item-handle" cdkDragHandle></i>
+                      <nz-dropdown nzPlacement="bottomRight">
+                        <span class="dd-btn" nz-dropdown><i nz-icon type="ellipsis"></i></span>
+                        <ul nz-menu>
+                          <li nz-menu-item (click)="msg.success('edit')">Edit</li>
+                          <li nz-menu-item>
+                            <nz-popconfirm nzTitle="确定吗？" (nzOnConfirm)="del(item, i, idx)">
+                              <span nz-popconfirm>Remove</span>
+                            </nz-popconfirm>
+                          </li>
+                        </ul>
+                      </nz-dropdown>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
             <ng-container *ngSwitchCase="1">
               <div *ngFor="let d of i.discussions" class="d-flex mb-md">
                 <div class="text-center">

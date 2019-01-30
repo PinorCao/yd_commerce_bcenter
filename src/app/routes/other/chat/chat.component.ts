@@ -7,10 +7,10 @@ import {
   ChangeDetectorRef,
   ViewChild,
 } from '@angular/core';
-import { Subscription, timer } from 'rxjs';
-import { filter, concatMap } from 'rxjs/operators';
+import { timer, Subject } from 'rxjs';
+import { filter, concatMap, takeUntil } from 'rxjs/operators';
 import { NzMessageService } from 'ng-zorro-antd';
-import { ProService } from 'app/layout/pro/pro.service';
+import { BrandService } from '@brand';
 import { ScrollbarDirective } from '@shared/components/scrollbar/scrollbar.directive';
 
 @Component({
@@ -19,8 +19,7 @@ import { ScrollbarDirective } from '@shared/components/scrollbar/scrollbar.direc
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ChatComponent implements OnInit, OnDestroy {
-  private pro$: Subscription;
-  private msg$: Subscription;
+  private unsubscribe$ = new Subject<void>();
   private inited = false;
   userVisible = false;
   q = '';
@@ -33,26 +32,26 @@ export class ChatComponent implements OnInit, OnDestroy {
   messageScrollbar?: ScrollbarDirective;
 
   constructor(
-    public pro: ProService,
+    public brand: BrandService,
     private http: _HttpClient,
     public msg: NzMessageService,
     private cd: ChangeDetectorRef,
   ) {
-    this.pro$ = pro.notify
-      .pipe(filter(() => this.inited))
+    brand.notify
+      .pipe(takeUntil(this.unsubscribe$), filter(() => this.inited))
       .subscribe(() => this.cd.detectChanges());
   }
 
   private scrollToBottom() {
-    this.cd.detectChanges();
+    if (!this.unsubscribe$.closed) this.cd.detectChanges();
     setTimeout(() => this.messageScrollbar.scrollToBottom());
   }
 
   ngOnInit() {
     this.inited = true;
     this.findUser();
-    this.msg$ = timer(0, 1000 * 3)
-      .pipe(concatMap(() => this.http.get('/chat/message')))
+    timer(0, 1000 * 3)
+      .pipe(takeUntil(this.unsubscribe$), concatMap(() => this.http.get('/chat/message')))
       .subscribe((res: any) => {
         this.messages.push(res);
         this.scrollToBottom();
@@ -96,7 +95,8 @@ export class ChatComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.msg$.unsubscribe();
-    this.pro$.unsubscribe();
+    const { unsubscribe$ } = this;
+    unsubscribe$.next();
+    unsubscribe$.complete();
   }
 }

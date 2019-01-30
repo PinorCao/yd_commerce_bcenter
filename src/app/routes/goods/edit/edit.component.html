@@ -1,0 +1,34 @@
+<page-header-wrapper [title]="id > 0 ? 'Edit Ware #' + id : 'Add Ware'" [loading]="!i">
+  <form *ngIf="i != null" nz-form #f="ngForm" (ngSubmit)="save()" class="sf__no-error">
+    <nz-card nzTitle="Basic">
+      <div se-container>
+        <se label="名称" required error="必填项">
+          <input nz-input name="name" required maxlength="50">
+        </se>
+        <se label="广告语">
+          <input nz-input name="ad_content" maxlength="50">
+        </se>
+        <se label="加链接的文字">
+          <input nz-input name="ad_content_word" maxlength="30">
+        </se>
+        <se label="链接地址">
+          <input nz-input name="ad_content_url" maxlength="100" placeholder="必须是ng-alain.com的链接地址">
+        </se>
+        <se label="品牌" error="必填项">
+          <nz-select name="brand" required>
+            <nz-option nzLabel="品牌1" [nzValue]="1"></nz-option>
+            <nz-option nzLabel="品牌2" [nzValue]="2"></nz-option>
+            <nz-option nzLabel="品牌3" [nzValue]="3"></nz-option>
+          </nz-select>
+        </se>
+        <se label="">
+          <label nz-checkbox name="is_7return">支持7天无理由退货</label>
+        </se>
+      </div>
+    </nz-card>
+    <footer-toolbar>
+      <button type="submit" nz-button nzType="primary" [disabled]="f.invalid">Save changes</button>
+      <button type="button" nz-button (click)="cancel()">Cancel</button>
+    </footer-toolbar>
+  </form>
+</page-header-wrapper>

@@ -1,8 +1,10 @@
-import { NgZone, ViewChild, ElementRef } from '@angular/core';
+import { NgZone, ViewChild, ElementRef, Inject } from '@angular/core';
 import { Theme, defineThemeSystem, OptionsInput, Calendar } from 'fullcalendar';
 import { I18NService } from '@core/i18n/i18n.service';
+import { ALAIN_I18N_TOKEN } from '@delon/theme';
+import { take } from 'rxjs/operators';
 
-export default class AntdTheme extends Theme {}
+export default class AntdTheme extends Theme { }
 
 AntdTheme.prototype.classes = {
   widget: 'fc-unthemed',
@@ -53,10 +55,10 @@ export class CalendarTheme {
   @ViewChild('calendar') protected readonly calendarEl: ElementRef;
   protected options: OptionsInput;
 
-  constructor(private zone: NgZone, private i18n: I18NService) {}
+  constructor(private _ngZone: NgZone, @Inject(ALAIN_I18N_TOKEN) private _i18n: I18NService) { }
 
   protected init() {
-    this.zone.runOutsideAngular(() => {
+    this._executeOnStable(() => {
       const options: OptionsInput = Object.assign({
         header: {
           left: 'prev,next today',
@@ -66,7 +68,7 @@ export class CalendarTheme {
         editable: true,
         eventLimit: true,
         navLinks: true,
-        locale: this.i18n.currentLang.toLocaleLowerCase(),
+        locale: this._i18n.currentLang.toLocaleLowerCase(),
       }, this.options);
       (options as any).themeSystem = 'antd';
 
@@ -76,8 +78,16 @@ export class CalendarTheme {
   }
 
   protected destroy() {
-    this.zone.runOutsideAngular(() => {
+    this._executeOnStable(() => {
       if (this.instance) this.instance.destroy();
     });
+  }
+
+  protected _executeOnStable(fn: () => any): void {
+    if (this._ngZone.isStable) {
+      fn();
+    } else {
+      this._ngZone.onStable.asObservable().pipe(take(1)).subscribe(fn);
+    }
   }
 }

@@ -54,7 +54,7 @@
                     <div class="text-xs text-grey">{{f.size}}</div>
                     <div>
                       <a (click)="msg.success('view')" *ngIf="f.type === 'jpg'" class="pr-sm">View</a>
-                      <a [href]="f.url" target="_blank">Download</a>
+                      <a [href]="f.url | url" target="_blank">Download</a>
                     </div>
                   </div>
                 </div>

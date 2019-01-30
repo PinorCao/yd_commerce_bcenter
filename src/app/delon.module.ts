@@ -1,22 +1,7 @@
-/**
- * 进一步对基础模块的导入提炼
- * 有关模块注册指导原则请参考：https://github.com/ng-alain/ng-alain/issues/180
- */
-import {
-  NgModule,
-  Optional,
-  SkipSelf,
-  ModuleWithProviders,
-} from '@angular/core';
+import { NgModule, Optional, SkipSelf, ModuleWithProviders } from '@angular/core';
 import { throwIfAlreadyLoaded } from '@core/module-import-guard';
 
 import { AlainThemeModule } from '@delon/theme';
-import { DelonABCModule, STConfig } from '@delon/abc';
-import { DelonChartModule } from '@delon/chart';
-import { DelonAuthModule } from '@delon/auth';
-import { DelonACLModule } from '@delon/acl';
-import { DelonCacheModule } from '@delon/cache';
-import { DelonUtilModule } from '@delon/util';
 
 // #region mock
 import { DelonMockModule } from '@delon/mock';
@@ -29,15 +14,7 @@ const MOCK_MODULES = !environment.production
 
 // #region reuse-tab
 /**
- * 若需要[路由复用](https://ng-alain.com/components/reuse-tab)需要：
- * 1、增加 `REUSETAB_PROVIDES`
- * 2、在 `src/app/layout/default/default.component.html` 修改：
- *  ```html
- *  <section class="alain-default__content">
- *    <reuse-tab></reuse-tab>
- *    <router-outlet></router-outlet>
- *  </section>
- *  ```
+ * Pls refer to [reuse-tab](https://ng-alain.com/components/reuse-tab).
  */
 import { RouteReuseStrategy } from '@angular/router';
 import { ReuseTabService, ReuseTabStrategy, ReuseTabMatchMode } from '@delon/abc/reuse-tab';
@@ -54,7 +31,7 @@ const REUSETAB_PROVIDES = [
 
 import { PageHeaderConfig } from '@delon/abc';
 export function fnPageHeaderConfig(): PageHeaderConfig {
-  return Object.assign(new PageHeaderConfig(), <PageHeaderConfig>{ homeI18n: 'home', recursiveBreadcrumb: true });
+  return Object.assign(new PageHeaderConfig(), { homeI18n: 'home' });
 }
 
 import { DelonAuthConfig } from '@delon/auth';
@@ -64,14 +41,18 @@ export function fnDelonAuthConfig(): DelonAuthConfig {
   });
 }
 
+import { STConfig } from '@delon/abc';
 export function fnSTConfig(): STConfig {
-  return Object.assign(new STConfig(), <STConfig>{
-    modal: { paramsName: 'i', size: 'lg', page: { toTop: false } },
-  });
+  return {
+    ...new STConfig(),
+    ...{
+      modal: { size: 'lg' }
+    }
+  };
 }
 
 const GLOBAL_CONFIG_PROVIDES = [
-  // TIPS：@delon/abc 有大量的全局配置信息，例如设置所有 `st` 的页码默认为 `20` 行
+  // NOTICE: @delon/abc global configuration
   { provide: STConfig, useFactory: fnSTConfig },
   { provide: PageHeaderConfig, useFactory: fnPageHeaderConfig },
   { provide: DelonAuthConfig, useFactory: fnDelonAuthConfig },
@@ -82,26 +63,21 @@ const GLOBAL_CONFIG_PROVIDES = [
 @NgModule({
   imports: [
     AlainThemeModule.forRoot(),
-    DelonABCModule.forRoot(),
-    DelonChartModule.forRoot(),
-    DelonAuthModule.forRoot(),
-    DelonACLModule.forRoot(),
-    DelonCacheModule.forRoot(),
-    DelonUtilModule.forRoot(),
     // mock
     ...MOCK_MODULES,
   ],
 })
 export class DelonModule {
   constructor(
-    @Optional()
-    @SkipSelf()
-    parentModule: DelonModule,
-    reuseTabSrv: ReuseTabService,
+    @Optional() @SkipSelf() parentModule: DelonModule,
+    reuseTabService: ReuseTabService
   ) {
     throwIfAlreadyLoaded(parentModule, 'DelonModule');
-
-    reuseTabSrv.mode = ReuseTabMatchMode.MenuForce;
+    // NOTICE: Only valid for menus with reuse property
+    // Pls refer to the E-Mail demo effect
+    reuseTabService.mode = ReuseTabMatchMode.MenuForce;
+    // Shouled be trigger init, you can ingore when used `reuse-tab` component in layout component
+    reuseTabService.init();
   }
 
   static forRoot(): ModuleWithProviders {
