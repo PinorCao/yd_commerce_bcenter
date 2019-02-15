@@ -5931,7 +5931,7 @@ export class ProductServiceProxy {
      * @param input (optional) 
      * @return Success
      */
-    createOrUpdateProduct(input: CreateOrUpdateProductInput | null | undefined): Observable<void> {
+    createOrUpdateProduct(input: CreateOrUpdateProductInput | null | undefined): Observable<EntityDtoOfInt64> {
         let url_ = this.baseUrl + "/api/services/app/Product/CreateOrUpdateProduct";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -5943,6 +5943,7 @@ export class ProductServiceProxy {
             responseType: "blob",
             headers: new HttpHeaders({
                 "Content-Type": "application/json", 
+                "Accept": "application/json"
             })
         };
 
@@ -5953,14 +5954,14 @@ export class ProductServiceProxy {
                 try {
                     return this.processCreateOrUpdateProduct(<any>response_);
                 } catch (e) {
-                    return <Observable<void>><any>_observableThrow(e);
+                    return <Observable<EntityDtoOfInt64>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<void>><any>_observableThrow(response_);
+                return <Observable<EntityDtoOfInt64>><any>_observableThrow(response_);
         }));
     }
 
-    protected processCreateOrUpdateProduct(response: HttpResponseBase): Observable<void> {
+    protected processCreateOrUpdateProduct(response: HttpResponseBase): Observable<EntityDtoOfInt64> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -5969,14 +5970,17 @@ export class ProductServiceProxy {
         let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
         if (status === 200) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return _observableOf<void>(<any>null);
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? EntityDtoOfInt64.fromJS(resultData200) : new EntityDtoOfInt64();
+            return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<void>(<any>null);
+        return _observableOf<EntityDtoOfInt64>(<any>null);
     }
 
     /**
@@ -6047,7 +6051,7 @@ export class ProductAttributeServiceProxy {
      * @param input (optional) 
      * @return Success
      */
-    createOrUpdateAttribute(input: CreateOrUpdateAttributeInput | null | undefined): Observable<CreateOrUpdateAttributeOutput> {
+    createOrUpdateAttribute(input: CreateOrUpdateAttributeInput | null | undefined): Observable<EntityDtoOfInt64> {
         let url_ = this.baseUrl + "/api/services/app/ProductAttribute/CreateOrUpdateAttribute";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -6070,14 +6074,14 @@ export class ProductAttributeServiceProxy {
                 try {
                     return this.processCreateOrUpdateAttribute(<any>response_);
                 } catch (e) {
-                    return <Observable<CreateOrUpdateAttributeOutput>><any>_observableThrow(e);
+                    return <Observable<EntityDtoOfInt64>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<CreateOrUpdateAttributeOutput>><any>_observableThrow(response_);
+                return <Observable<EntityDtoOfInt64>><any>_observableThrow(response_);
         }));
     }
 
-    protected processCreateOrUpdateAttribute(response: HttpResponseBase): Observable<CreateOrUpdateAttributeOutput> {
+    protected processCreateOrUpdateAttribute(response: HttpResponseBase): Observable<EntityDtoOfInt64> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -6088,7 +6092,7 @@ export class ProductAttributeServiceProxy {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? CreateOrUpdateAttributeOutput.fromJS(resultData200) : new CreateOrUpdateAttributeOutput();
+            result200 = resultData200 ? EntityDtoOfInt64.fromJS(resultData200) : new EntityDtoOfInt64();
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -6096,7 +6100,7 @@ export class ProductAttributeServiceProxy {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<CreateOrUpdateAttributeOutput>(<any>null);
+        return _observableOf<EntityDtoOfInt64>(<any>null);
     }
 
     /**
@@ -6219,7 +6223,7 @@ export class ProductAttributeServiceProxy {
      * @param input (optional) 
      * @return Success
      */
-    createOrUpdateAttributeValue(input: CreateOrUpdateAttributeValueInput | null | undefined): Observable<CreateOrUpdateAttributeValueOutput> {
+    createOrUpdateAttributeValue(input: CreateOrUpdateAttributeValueInput | null | undefined): Observable<EntityDtoOfInt64> {
         let url_ = this.baseUrl + "/api/services/app/ProductAttribute/CreateOrUpdateAttributeValue";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -6242,14 +6246,14 @@ export class ProductAttributeServiceProxy {
                 try {
                     return this.processCreateOrUpdateAttributeValue(<any>response_);
                 } catch (e) {
-                    return <Observable<CreateOrUpdateAttributeValueOutput>><any>_observableThrow(e);
+                    return <Observable<EntityDtoOfInt64>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<CreateOrUpdateAttributeValueOutput>><any>_observableThrow(response_);
+                return <Observable<EntityDtoOfInt64>><any>_observableThrow(response_);
         }));
     }
 
-    protected processCreateOrUpdateAttributeValue(response: HttpResponseBase): Observable<CreateOrUpdateAttributeValueOutput> {
+    protected processCreateOrUpdateAttributeValue(response: HttpResponseBase): Observable<EntityDtoOfInt64> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -6260,7 +6264,7 @@ export class ProductAttributeServiceProxy {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? CreateOrUpdateAttributeValueOutput.fromJS(resultData200) : new CreateOrUpdateAttributeValueOutput();
+            result200 = resultData200 ? EntityDtoOfInt64.fromJS(resultData200) : new EntityDtoOfInt64();
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -6268,7 +6272,7 @@ export class ProductAttributeServiceProxy {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<CreateOrUpdateAttributeValueOutput>(<any>null);
+        return _observableOf<EntityDtoOfInt64>(<any>null);
     }
 }
 
@@ -19646,10 +19650,9 @@ export interface IGetProductForEditOutput {
 
 export class ProductCategoryDto implements IProductCategoryDto {
     /** 分类Id */
-    categoryId!: number | undefined;
-    /** 分类名称 */
-    name!: string | undefined;
     id!: number | undefined;
+    /** 分类名称(非必填) */
+    name!: string | undefined;
 
     constructor(data?: IProductCategoryDto) {
         if (data) {
@@ -19662,9 +19665,8 @@ export class ProductCategoryDto implements IProductCategoryDto {
 
     init(data?: any) {
         if (data) {
-            this.categoryId = data["categoryId"];
-            this.name = data["name"];
             this.id = data["id"];
+            this.name = data["name"];
         }
     }
 
@@ -19677,30 +19679,27 @@ export class ProductCategoryDto implements IProductCategoryDto {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["categoryId"] = this.categoryId;
-        data["name"] = this.name;
         data["id"] = this.id;
+        data["name"] = this.name;
         return data; 
     }
 }
 
 export interface IProductCategoryDto {
     /** 分类Id */
-    categoryId: number | undefined;
-    /** 分类名称 */
-    name: string | undefined;
     id: number | undefined;
+    /** 分类名称(非必填) */
+    name: string | undefined;
 }
 
 /** 产品图片 */
 export class ProductPictureDto implements IProductPictureDto {
     /** 图片Id */
-    pictureId!: number | undefined;
+    id!: number | undefined;
     /** 图片Url */
-    pictureUrl!: string | undefined;
+    url!: string | undefined;
     /** 排序 */
     displayOrder!: number | undefined;
-    id!: number | undefined;
 
     constructor(data?: IProductPictureDto) {
         if (data) {
@@ -19713,10 +19712,9 @@ export class ProductPictureDto implements IProductPictureDto {
 
     init(data?: any) {
         if (data) {
-            this.pictureId = data["pictureId"];
-            this.pictureUrl = data["pictureUrl"];
-            this.displayOrder = data["displayOrder"];
             this.id = data["id"];
+            this.url = data["url"];
+            this.displayOrder = data["displayOrder"];
         }
     }
 
@@ -19729,10 +19727,9 @@ export class ProductPictureDto implements IProductPictureDto {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["pictureId"] = this.pictureId;
-        data["pictureUrl"] = this.pictureUrl;
-        data["displayOrder"] = this.displayOrder;
         data["id"] = this.id;
+        data["url"] = this.url;
+        data["displayOrder"] = this.displayOrder;
         return data; 
     }
 }
@@ -19740,12 +19737,11 @@ export class ProductPictureDto implements IProductPictureDto {
 /** 产品图片 */
 export interface IProductPictureDto {
     /** 图片Id */
-    pictureId: number | undefined;
+    id: number | undefined;
     /** 图片Url */
-    pictureUrl: string | undefined;
+    url: string | undefined;
     /** 排序 */
     displayOrder: number | undefined;
-    id: number | undefined;
 }
 
 /** 商品属性 */
@@ -19753,7 +19749,7 @@ export class ProductAttributeDto implements IProductAttributeDto {
     /** 商品属性名 */
     name!: string | undefined;
     /** 预定义值/值记录 */
-    values!: PredefinedProductAttributeValueDto[] | undefined;
+    values!: ProductAttributeValueDto[] | undefined;
     /** 排序Id */
     displayOrder!: number | undefined;
     id!: number | undefined;
@@ -19773,7 +19769,7 @@ export class ProductAttributeDto implements IProductAttributeDto {
             if (data["values"] && data["values"].constructor === Array) {
                 this.values = [];
                 for (let item of data["values"])
-                    this.values.push(PredefinedProductAttributeValueDto.fromJS(item));
+                    this.values.push(ProductAttributeValueDto.fromJS(item));
             }
             this.displayOrder = data["displayOrder"];
             this.id = data["id"];
@@ -19806,7 +19802,7 @@ export interface IProductAttributeDto {
     /** 商品属性名 */
     name: string | undefined;
     /** 预定义值/值记录 */
-    values: PredefinedProductAttributeValueDto[] | undefined;
+    values: ProductAttributeValueDto[] | undefined;
     /** 排序Id */
     displayOrder: number | undefined;
     id: number | undefined;
@@ -19815,7 +19811,7 @@ export interface IProductAttributeDto {
 /** 属性组合 */
 export class AttributeCombinationDto implements IAttributeCombinationDto {
     /** 属性值 */
-    attributes!: ProductAttributeMappingDto[] | undefined;
+    attributes!: ProductAttributeDto[] | undefined;
     /** 库存 */
     stockQuantity!: number | undefined;
     /** SKU */
@@ -19842,7 +19838,7 @@ export class AttributeCombinationDto implements IAttributeCombinationDto {
             if (data["attributes"] && data["attributes"].constructor === Array) {
                 this.attributes = [];
                 for (let item of data["attributes"])
-                    this.attributes.push(ProductAttributeMappingDto.fromJS(item));
+                    this.attributes.push(ProductAttributeDto.fromJS(item));
             }
             this.stockQuantity = data["stockQuantity"];
             this.sku = data["sku"];
@@ -19880,7 +19876,7 @@ export class AttributeCombinationDto implements IAttributeCombinationDto {
 /** 属性组合 */
 export interface IAttributeCombinationDto {
     /** 属性值 */
-    attributes: ProductAttributeMappingDto[] | undefined;
+    attributes: ProductAttributeDto[] | undefined;
     /** 库存 */
     stockQuantity: number | undefined;
     /** SKU */
@@ -19894,116 +19890,10 @@ export interface IAttributeCombinationDto {
     id: number | undefined;
 }
 
-/** 预定义属性值 */
-export class PredefinedProductAttributeValueDto implements IPredefinedProductAttributeValueDto {
-    /** 值 */
-    name!: string | undefined;
-    /** 排序Id */
-    displayOrder!: number | undefined;
-    id!: number | undefined;
-
-    constructor(data?: IPredefinedProductAttributeValueDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.name = data["name"];
-            this.displayOrder = data["displayOrder"];
-            this.id = data["id"];
-        }
-    }
-
-    static fromJS(data: any): PredefinedProductAttributeValueDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new PredefinedProductAttributeValueDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["name"] = this.name;
-        data["displayOrder"] = this.displayOrder;
-        data["id"] = this.id;
-        return data; 
-    }
-}
-
-/** 预定义属性值 */
-export interface IPredefinedProductAttributeValueDto {
-    /** 值 */
-    name: string | undefined;
-    /** 排序Id */
-    displayOrder: number | undefined;
-    id: number | undefined;
-}
-
-/** 商品属性 */
-export class ProductAttributeMappingDto implements IProductAttributeMappingDto {
-    /** 预定义值/值记录 */
-    values!: ProductAttributeValueDto[] | undefined;
-    /** 排序Id */
-    displayOrder!: number | undefined;
-    id!: number | undefined;
-
-    constructor(data?: IProductAttributeMappingDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            if (data["values"] && data["values"].constructor === Array) {
-                this.values = [];
-                for (let item of data["values"])
-                    this.values.push(ProductAttributeValueDto.fromJS(item));
-            }
-            this.displayOrder = data["displayOrder"];
-            this.id = data["id"];
-        }
-    }
-
-    static fromJS(data: any): ProductAttributeMappingDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new ProductAttributeMappingDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        if (this.values && this.values.constructor === Array) {
-            data["values"] = [];
-            for (let item of this.values)
-                data["values"].push(item.toJSON());
-        }
-        data["displayOrder"] = this.displayOrder;
-        data["id"] = this.id;
-        return data; 
-    }
-}
-
-/** 商品属性 */
-export interface IProductAttributeMappingDto {
-    /** 预定义值/值记录 */
-    values: ProductAttributeValueDto[] | undefined;
-    /** 排序Id */
-    displayOrder: number | undefined;
-    id: number | undefined;
-}
-
 /** 属性值 */
 export class ProductAttributeValueDto implements IProductAttributeValueDto {
+    /** 值名称 */
+    name!: string | undefined;
     /** 图片id */
     pictureId!: number | undefined;
     /** 排序Id */
@@ -20021,6 +19911,7 @@ export class ProductAttributeValueDto implements IProductAttributeValueDto {
 
     init(data?: any) {
         if (data) {
+            this.name = data["name"];
             this.pictureId = data["pictureId"];
             this.displayOrder = data["displayOrder"];
             this.id = data["id"];
@@ -20036,6 +19927,7 @@ export class ProductAttributeValueDto implements IProductAttributeValueDto {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["name"] = this.name;
         data["pictureId"] = this.pictureId;
         data["displayOrder"] = this.displayOrder;
         data["id"] = this.id;
@@ -20045,6 +19937,8 @@ export class ProductAttributeValueDto implements IProductAttributeValueDto {
 
 /** 属性值 */
 export interface IProductAttributeValueDto {
+    /** 值名称 */
+    name: string | undefined;
     /** 图片id */
     pictureId: number | undefined;
     /** 排序Id */
@@ -20086,7 +19980,7 @@ export class CreateOrUpdateProductInput implements ICreateOrUpdateProductInput {
     /** 图片 */
     pictures!: ProductPictureDto[] | undefined;
     /** 商品属性和值 */
-    attributes!: ProductAttributeMappingDto[] | undefined;
+    attributes!: ProductAttributeDto[] | undefined;
     /** 商品属性组合 */
     attributeCombinations!: AttributeCombinationDto[] | undefined;
 
@@ -20128,7 +20022,7 @@ export class CreateOrUpdateProductInput implements ICreateOrUpdateProductInput {
             if (data["attributes"] && data["attributes"].constructor === Array) {
                 this.attributes = [];
                 for (let item of data["attributes"])
-                    this.attributes.push(ProductAttributeMappingDto.fromJS(item));
+                    this.attributes.push(ProductAttributeDto.fromJS(item));
             }
             if (data["attributeCombinations"] && data["attributeCombinations"].constructor === Array) {
                 this.attributeCombinations = [];
@@ -20219,9 +20113,45 @@ export interface ICreateOrUpdateProductInput {
     /** 图片 */
     pictures: ProductPictureDto[] | undefined;
     /** 商品属性和值 */
-    attributes: ProductAttributeMappingDto[] | undefined;
+    attributes: ProductAttributeDto[] | undefined;
     /** 商品属性组合 */
     attributeCombinations: AttributeCombinationDto[] | undefined;
+}
+
+export class EntityDtoOfInt64 implements IEntityDtoOfInt64 {
+    id!: number | undefined;
+
+    constructor(data?: IEntityDtoOfInt64) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): EntityDtoOfInt64 {
+        data = typeof data === 'object' ? data : {};
+        let result = new EntityDtoOfInt64();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface IEntityDtoOfInt64 {
+    id: number | undefined;
 }
 
 export class CreateOrUpdateAttributeInput implements ICreateOrUpdateAttributeInput {
@@ -20272,42 +20202,6 @@ export interface ICreateOrUpdateAttributeInput {
     id: number | undefined;
 }
 
-export class CreateOrUpdateAttributeOutput implements ICreateOrUpdateAttributeOutput {
-    id!: number | undefined;
-
-    constructor(data?: ICreateOrUpdateAttributeOutput) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.id = data["id"];
-        }
-    }
-
-    static fromJS(data: any): CreateOrUpdateAttributeOutput {
-        data = typeof data === 'object' ? data : {};
-        let result = new CreateOrUpdateAttributeOutput();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        return data; 
-    }
-}
-
-export interface ICreateOrUpdateAttributeOutput {
-    id: number | undefined;
-}
-
 /** 商品属性 */
 export class ProductAttributeListDto implements IProductAttributeListDto {
     /** 商品属性名 */
@@ -20345,10 +20239,60 @@ export class ProductAttributeListDto implements IProductAttributeListDto {
     }
 }
 
-/** 商品属性2 */
+/** 商品属性 */
 export interface IProductAttributeListDto {
     /** 商品属性名 */
     name: string | undefined;
+    id: number | undefined;
+}
+
+/** 预定义属性值 */
+export class PredefinedProductAttributeValueDto implements IPredefinedProductAttributeValueDto {
+    /** 值 */
+    name!: string | undefined;
+    /** 排序Id */
+    displayOrder!: number | undefined;
+    id!: number | undefined;
+
+    constructor(data?: IPredefinedProductAttributeValueDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.name = data["name"];
+            this.displayOrder = data["displayOrder"];
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): PredefinedProductAttributeValueDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new PredefinedProductAttributeValueDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["name"] = this.name;
+        data["displayOrder"] = this.displayOrder;
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+/** 预定义属性值 */
+export interface IPredefinedProductAttributeValueDto {
+    /** 值 */
+    name: string | undefined;
+    /** 排序Id */
+    displayOrder: number | undefined;
     id: number | undefined;
 }
 
@@ -20403,42 +20347,6 @@ export interface ICreateOrUpdateAttributeValueInput {
     name: string | undefined;
     /** 排序标志 */
     displayOrder: number | undefined;
-    id: number | undefined;
-}
-
-export class CreateOrUpdateAttributeValueOutput implements ICreateOrUpdateAttributeValueOutput {
-    id!: number | undefined;
-
-    constructor(data?: ICreateOrUpdateAttributeValueOutput) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.id = data["id"];
-        }
-    }
-
-    static fromJS(data: any): CreateOrUpdateAttributeValueOutput {
-        data = typeof data === 'object' ? data : {};
-        let result = new CreateOrUpdateAttributeValueOutput();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        return data; 
-    }
-}
-
-export interface ICreateOrUpdateAttributeValueOutput {
     id: number | undefined;
 }
 
@@ -26169,42 +26077,6 @@ export interface IExternalUserLoginDto {
     accessTokenOutDataTime: moment.Moment | undefined;
     /** 创建时间 */
     creationTime: moment.Moment | undefined;
-}
-
-export class EntityDtoOfInt64 implements IEntityDtoOfInt64 {
-    id!: number | undefined;
-
-    constructor(data?: IEntityDtoOfInt64) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.id = data["id"];
-        }
-    }
-
-    static fromJS(data: any): EntityDtoOfInt64 {
-        data = typeof data === 'object' ? data : {};
-        let result = new EntityDtoOfInt64();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        return data; 
-    }
-}
-
-export interface IEntityDtoOfInt64 {
-    id: number | undefined;
 }
 
 export class UpdateUserPermissionsInput implements IUpdateUserPermissionsInput {
