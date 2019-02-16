@@ -15510,8 +15510,8 @@ export interface IUploadPictureInput {
 }
 
 export class UploadPictureOutput implements IUploadPictureOutput {
-    pictureId!: number | undefined;
-    originalUrl!: string | undefined;
+    id!: number | undefined;
+    url!: string | undefined;
 
     constructor(data?: IUploadPictureOutput) {
         if (data) {
@@ -15524,8 +15524,8 @@ export class UploadPictureOutput implements IUploadPictureOutput {
 
     init(data?: any) {
         if (data) {
-            this.pictureId = data["pictureId"];
-            this.originalUrl = data["originalUrl"];
+            this.id = data["id"];
+            this.url = data["url"];
         }
     }
 
@@ -15538,15 +15538,15 @@ export class UploadPictureOutput implements IUploadPictureOutput {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["pictureId"] = this.pictureId;
-        data["originalUrl"] = this.originalUrl;
+        data["id"] = this.id;
+        data["url"] = this.url;
         return data; 
     }
 }
 
 export interface IUploadPictureOutput {
-    pictureId: number | undefined;
-    originalUrl: string | undefined;
+    id: number | undefined;
+    url: string | undefined;
 }
 
 export class HostDashboardData implements IHostDashboardData {
@@ -19896,6 +19896,8 @@ export class ProductAttributeValueDto implements IProductAttributeValueDto {
     name!: string | undefined;
     /** 图片id */
     pictureId!: number | undefined;
+    /** 图片Url */
+    pictureUrl!: string | undefined;
     /** 排序Id */
     displayOrder!: number | undefined;
     id!: number | undefined;
@@ -19913,6 +19915,7 @@ export class ProductAttributeValueDto implements IProductAttributeValueDto {
         if (data) {
             this.name = data["name"];
             this.pictureId = data["pictureId"];
+            this.pictureUrl = data["pictureUrl"];
             this.displayOrder = data["displayOrder"];
             this.id = data["id"];
         }
@@ -19929,6 +19932,7 @@ export class ProductAttributeValueDto implements IProductAttributeValueDto {
         data = typeof data === 'object' ? data : {};
         data["name"] = this.name;
         data["pictureId"] = this.pictureId;
+        data["pictureUrl"] = this.pictureUrl;
         data["displayOrder"] = this.displayOrder;
         data["id"] = this.id;
         return data; 
@@ -19941,6 +19945,8 @@ export interface IProductAttributeValueDto {
     name: string | undefined;
     /** 图片id */
     pictureId: number | undefined;
+    /** 图片Url */
+    pictureUrl: string | undefined;
     /** 排序Id */
     displayOrder: number | undefined;
     id: number | undefined;
