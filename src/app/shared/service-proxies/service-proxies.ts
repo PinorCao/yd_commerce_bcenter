@@ -19698,8 +19698,6 @@ export class ProductPictureDto implements IProductPictureDto {
     id!: number | undefined;
     /** 图片Url */
     url!: string | undefined;
-    /** 排序 */
-    displayOrder!: number | undefined;
 
     constructor(data?: IProductPictureDto) {
         if (data) {
@@ -19714,7 +19712,6 @@ export class ProductPictureDto implements IProductPictureDto {
         if (data) {
             this.id = data["id"];
             this.url = data["url"];
-            this.displayOrder = data["displayOrder"];
         }
     }
 
@@ -19729,7 +19726,6 @@ export class ProductPictureDto implements IProductPictureDto {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
         data["url"] = this.url;
-        data["displayOrder"] = this.displayOrder;
         return data; 
     }
 }
@@ -19740,8 +19736,6 @@ export interface IProductPictureDto {
     id: number | undefined;
     /** 图片Url */
     url: string | undefined;
-    /** 排序 */
-    displayOrder: number | undefined;
 }
 
 /** 商品属性 */
@@ -19750,8 +19744,6 @@ export class ProductAttributeDto implements IProductAttributeDto {
     name!: string | undefined;
     /** 预定义值/值记录 */
     values!: ProductAttributeValueDto[] | undefined;
-    /** 排序Id */
-    displayOrder!: number | undefined;
     id!: number | undefined;
 
     constructor(data?: IProductAttributeDto) {
@@ -19771,7 +19763,6 @@ export class ProductAttributeDto implements IProductAttributeDto {
                 for (let item of data["values"])
                     this.values.push(ProductAttributeValueDto.fromJS(item));
             }
-            this.displayOrder = data["displayOrder"];
             this.id = data["id"];
         }
     }
@@ -19791,7 +19782,6 @@ export class ProductAttributeDto implements IProductAttributeDto {
             for (let item of this.values)
                 data["values"].push(item.toJSON());
         }
-        data["displayOrder"] = this.displayOrder;
         data["id"] = this.id;
         return data; 
     }
@@ -19803,8 +19793,6 @@ export interface IProductAttributeDto {
     name: string | undefined;
     /** 预定义值/值记录 */
     values: ProductAttributeValueDto[] | undefined;
-    /** 排序Id */
-    displayOrder: number | undefined;
     id: number | undefined;
 }
 
@@ -19898,8 +19886,6 @@ export class ProductAttributeValueDto implements IProductAttributeValueDto {
     pictureId!: number | undefined;
     /** 图片Url */
     pictureUrl!: string | undefined;
-    /** 排序Id */
-    displayOrder!: number | undefined;
     id!: number | undefined;
 
     constructor(data?: IProductAttributeValueDto) {
@@ -19916,7 +19902,6 @@ export class ProductAttributeValueDto implements IProductAttributeValueDto {
             this.name = data["name"];
             this.pictureId = data["pictureId"];
             this.pictureUrl = data["pictureUrl"];
-            this.displayOrder = data["displayOrder"];
             this.id = data["id"];
         }
     }
@@ -19933,7 +19918,6 @@ export class ProductAttributeValueDto implements IProductAttributeValueDto {
         data["name"] = this.name;
         data["pictureId"] = this.pictureId;
         data["pictureUrl"] = this.pictureUrl;
-        data["displayOrder"] = this.displayOrder;
         data["id"] = this.id;
         return data; 
     }
@@ -19947,8 +19931,6 @@ export interface IProductAttributeValueDto {
     pictureId: number | undefined;
     /** 图片Url */
     pictureUrl: string | undefined;
-    /** 排序Id */
-    displayOrder: number | undefined;
     id: number | undefined;
 }
 
@@ -19968,7 +19950,7 @@ export class CreateOrUpdateProductInput implements ICreateOrUpdateProductInput {
     /** 库存数量 */
     stockQuantity!: number | undefined;
     /** 低库存通知（暂不实现） */
-    notifyAdminForQuantityBelow!: number | undefined;
+    notifyQuantityBelow!: number | undefined;
     /** 售价 */
     price!: number | undefined;
     /** 货物成本/进货价 */
@@ -20008,7 +19990,7 @@ export class CreateOrUpdateProductInput implements ICreateOrUpdateProductInput {
             this.sku = data["sku"];
             this.thirdPartySku = data["thirdPartySku"];
             this.stockQuantity = data["stockQuantity"];
-            this.notifyAdminForQuantityBelow = data["notifyAdminForQuantityBelow"];
+            this.notifyQuantityBelow = data["notifyQuantityBelow"];
             this.price = data["price"];
             this.goodCost = data["goodCost"];
             this.weight = data["weight"];
@@ -20054,7 +20036,7 @@ export class CreateOrUpdateProductInput implements ICreateOrUpdateProductInput {
         data["sku"] = this.sku;
         data["thirdPartySku"] = this.thirdPartySku;
         data["stockQuantity"] = this.stockQuantity;
-        data["notifyAdminForQuantityBelow"] = this.notifyAdminForQuantityBelow;
+        data["notifyQuantityBelow"] = this.notifyQuantityBelow;
         data["price"] = this.price;
         data["goodCost"] = this.goodCost;
         data["weight"] = this.weight;
@@ -20101,7 +20083,7 @@ export interface ICreateOrUpdateProductInput {
     /** 库存数量 */
     stockQuantity: number | undefined;
     /** 低库存通知（暂不实现） */
-    notifyAdminForQuantityBelow: number | undefined;
+    notifyQuantityBelow: number | undefined;
     /** 售价 */
     price: number | undefined;
     /** 货物成本/进货价 */
