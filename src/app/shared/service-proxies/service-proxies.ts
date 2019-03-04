@@ -1944,6 +1944,254 @@ export class CommonLookupServiceProxy {
 }
 
 @Injectable()
+export class CustomerServiceProxy {
+    private http: HttpClient;
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * 获取所有客户
+     * @param name (optional) 名称
+     * @param phoneNumber (optional) 电话号码
+     * @param consumesForm (optional) 消费金额（起始）
+     * @param consumesTo (optional) 消费金额（结束）
+     * @param sorting (optional) 
+     * @param maxResultCount (optional) 
+     * @param skipCount (optional) 
+     * @return Success
+     */
+    getCustomers(name: string | null | undefined, phoneNumber: string | null | undefined, consumesForm: number | null | undefined, consumesTo: number | null | undefined, sorting: string | null | undefined, maxResultCount: number | null | undefined, skipCount: number | null | undefined): Observable<PagedResultDtoOfCustomerListDto> {
+        let url_ = this.baseUrl + "/api/services/app/Customer/GetCustomers?";
+        if (name !== undefined)
+            url_ += "Name=" + encodeURIComponent("" + name) + "&"; 
+        if (phoneNumber !== undefined)
+            url_ += "PhoneNumber=" + encodeURIComponent("" + phoneNumber) + "&"; 
+        if (consumesForm !== undefined)
+            url_ += "ConsumesForm=" + encodeURIComponent("" + consumesForm) + "&"; 
+        if (consumesTo !== undefined)
+            url_ += "ConsumesTo=" + encodeURIComponent("" + consumesTo) + "&"; 
+        if (sorting !== undefined)
+            url_ += "Sorting=" + encodeURIComponent("" + sorting) + "&"; 
+        if (maxResultCount !== undefined)
+            url_ += "MaxResultCount=" + encodeURIComponent("" + maxResultCount) + "&"; 
+        if (skipCount !== undefined)
+            url_ += "SkipCount=" + encodeURIComponent("" + skipCount) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetCustomers(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetCustomers(<any>response_);
+                } catch (e) {
+                    return <Observable<PagedResultDtoOfCustomerListDto>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<PagedResultDtoOfCustomerListDto>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetCustomers(response: HttpResponseBase): Observable<PagedResultDtoOfCustomerListDto> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? PagedResultDtoOfCustomerListDto.fromJS(resultData200) : new PagedResultDtoOfCustomerListDto();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<PagedResultDtoOfCustomerListDto>(<any>null);
+    }
+
+    /**
+     * 获取客户详情
+     * @param id (optional) 
+     * @return Success
+     */
+    getCustomerForEdit(id: number | null | undefined): Observable<CustomerDetailDto> {
+        let url_ = this.baseUrl + "/api/services/app/Customer/GetCustomerForEdit?";
+        if (id !== undefined)
+            url_ += "Id=" + encodeURIComponent("" + id) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetCustomerForEdit(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetCustomerForEdit(<any>response_);
+                } catch (e) {
+                    return <Observable<CustomerDetailDto>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<CustomerDetailDto>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetCustomerForEdit(response: HttpResponseBase): Observable<CustomerDetailDto> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? CustomerDetailDto.fromJS(resultData200) : new CustomerDetailDto();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<CustomerDetailDto>(<any>null);
+    }
+
+    /**
+     * 创建或更新客户
+     * @param input (optional) 
+     * @return Success
+     */
+    createOrUpdateCustomer(input: CreateOrUpdateCustomerInput | null | undefined): Observable<EntityDtoOfInt64> {
+        let url_ = this.baseUrl + "/api/services/app/Customer/CreateOrUpdateCustomer";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processCreateOrUpdateCustomer(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processCreateOrUpdateCustomer(<any>response_);
+                } catch (e) {
+                    return <Observable<EntityDtoOfInt64>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<EntityDtoOfInt64>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processCreateOrUpdateCustomer(response: HttpResponseBase): Observable<EntityDtoOfInt64> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? EntityDtoOfInt64.fromJS(resultData200) : new EntityDtoOfInt64();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<EntityDtoOfInt64>(<any>null);
+    }
+
+    /**
+     * 删除客户
+     * @param ids (optional) 
+     * @return Success
+     */
+    deleteCustomer(ids: number[] | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/app/Customer/DeleteCustomer?";
+        if (ids !== undefined)
+            ids && ids.forEach(item => { url_ += "Ids=" + encodeURIComponent("" + item) + "&"; });
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+            })
+        };
+
+        return this.http.request("delete", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processDeleteCustomer(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processDeleteCustomer(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processDeleteCustomer(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+}
+
+@Injectable()
 export class EditionServiceProxy {
     private http: HttpClient;
     private baseUrl: string;
@@ -3878,7 +4126,7 @@ export class LogisticsServiceProxy {
     }
 
     /**
-     * 获取所有物流
+     * 获取所有物流（平台）
      * @param name (optional) 快递名称
      * @param sorting (optional) 
      * @param maxResultCount (optional) 
@@ -4053,7 +4301,7 @@ export class LogisticsServiceProxy {
     }
 
     /**
-     * 创建或更新物流
+     * 添加或更新物流
      * @param input (optional) 
      * @return Success
      */
@@ -4161,14 +4409,14 @@ export class LogisticsServiceProxy {
     }
 
     /**
-     * 获取所有租户物流
+     * 获取所有租户自选物流
      * @param name (optional) 快递名称
      * @param sorting (optional) 
      * @param maxResultCount (optional) 
      * @param skipCount (optional) 
      * @return Success
      */
-    getTenantLogisticses(name: string | null | undefined, sorting: string | null | undefined, maxResultCount: number | null | undefined, skipCount: number | null | undefined): Observable<PagedResultDtoOfLogisticsListDto> {
+    getTenantLogisticses(name: string | null | undefined, sorting: string | null | undefined, maxResultCount: number | null | undefined, skipCount: number | null | undefined): Observable<PagedResultDtoOfTenantLogisticsDto> {
         let url_ = this.baseUrl + "/api/services/app/Logistics/GetTenantLogisticses?";
         if (name !== undefined)
             url_ += "Name=" + encodeURIComponent("" + name) + "&"; 
@@ -4195,14 +4443,14 @@ export class LogisticsServiceProxy {
                 try {
                     return this.processGetTenantLogisticses(<any>response_);
                 } catch (e) {
-                    return <Observable<PagedResultDtoOfLogisticsListDto>><any>_observableThrow(e);
+                    return <Observable<PagedResultDtoOfTenantLogisticsDto>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<PagedResultDtoOfLogisticsListDto>><any>_observableThrow(response_);
+                return <Observable<PagedResultDtoOfTenantLogisticsDto>><any>_observableThrow(response_);
         }));
     }
 
-    protected processGetTenantLogisticses(response: HttpResponseBase): Observable<PagedResultDtoOfLogisticsListDto> {
+    protected processGetTenantLogisticses(response: HttpResponseBase): Observable<PagedResultDtoOfTenantLogisticsDto> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -4213,7 +4461,7 @@ export class LogisticsServiceProxy {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? PagedResultDtoOfLogisticsListDto.fromJS(resultData200) : new PagedResultDtoOfLogisticsListDto();
+            result200 = resultData200 ? PagedResultDtoOfTenantLogisticsDto.fromJS(resultData200) : new PagedResultDtoOfTenantLogisticsDto();
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -4221,11 +4469,11 @@ export class LogisticsServiceProxy {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<PagedResultDtoOfLogisticsListDto>(<any>null);
+        return _observableOf<PagedResultDtoOfTenantLogisticsDto>(<any>null);
     }
 
     /**
-     * 获取所有可用物流(下拉框)
+     * 获取所有可用自选物流(下拉框)
      * @return Success
      */
     getTenantLogisticsSelectList(): Observable<SelectListItemDto[]> {
@@ -4336,11 +4584,11 @@ export class LogisticsServiceProxy {
     }
 
     /**
-     * 创建或更新物流
+     * 添加或更新自选物流
      * @param input (optional) 
      * @return Success
      */
-    createOrUpdateTenantLogistics(input: CreateOrUpdateLogisticsInput | null | undefined): Observable<EntityDtoOfInt64> {
+    createOrUpdateTenantLogistics(input: CreateOrUpdateTenantLogisticsInput | null | undefined): Observable<EntityDtoOfInt64> {
         let url_ = this.baseUrl + "/api/services/app/Logistics/CreateOrUpdateTenantLogistics";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -15656,6 +15904,318 @@ export interface IGetDefaultEditionNameOutput {
     name: string | undefined;
 }
 
+export class PagedResultDtoOfCustomerListDto implements IPagedResultDtoOfCustomerListDto {
+    totalCount!: number | undefined;
+    items!: CustomerListDto[] | undefined;
+
+    constructor(data?: IPagedResultDtoOfCustomerListDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.totalCount = data["totalCount"];
+            if (data["items"] && data["items"].constructor === Array) {
+                this.items = [];
+                for (let item of data["items"])
+                    this.items.push(CustomerListDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): PagedResultDtoOfCustomerListDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new PagedResultDtoOfCustomerListDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["totalCount"] = this.totalCount;
+        if (this.items && this.items.constructor === Array) {
+            data["items"] = [];
+            for (let item of this.items)
+                data["items"].push(item.toJSON());
+        }
+        return data; 
+    }
+}
+
+export interface IPagedResultDtoOfCustomerListDto {
+    totalCount: number | undefined;
+    items: CustomerListDto[] | undefined;
+}
+
+export class CustomerListDto implements ICustomerListDto {
+    /** 头像链接 */
+    avatarUrl!: string | undefined;
+    /** 客户名称 */
+    name!: string | undefined;
+    /** 电话号码 */
+    phoneNumber!: string | undefined;
+    /** 消费总额 */
+    totalConsumes!: number | undefined;
+    /** 购买频次 */
+    totalOrderNum!: number | undefined;
+    /** 备注 */
+    remark!: string | undefined;
+    /** 首次购买时间/创建时间 */
+    createOn!: moment.Moment | undefined;
+    id!: number | undefined;
+
+    constructor(data?: ICustomerListDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.avatarUrl = data["avatarUrl"];
+            this.name = data["name"];
+            this.phoneNumber = data["phoneNumber"];
+            this.totalConsumes = data["totalConsumes"];
+            this.totalOrderNum = data["totalOrderNum"];
+            this.remark = data["remark"];
+            this.createOn = data["createOn"] ? moment(data["createOn"].toString()) : <any>undefined;
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): CustomerListDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new CustomerListDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["avatarUrl"] = this.avatarUrl;
+        data["name"] = this.name;
+        data["phoneNumber"] = this.phoneNumber;
+        data["totalConsumes"] = this.totalConsumes;
+        data["totalOrderNum"] = this.totalOrderNum;
+        data["remark"] = this.remark;
+        data["createOn"] = this.createOn ? this.createOn.toISOString() : <any>undefined;
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface ICustomerListDto {
+    /** 头像链接 */
+    avatarUrl: string | undefined;
+    /** 客户名称 */
+    name: string | undefined;
+    /** 电话号码 */
+    phoneNumber: string | undefined;
+    /** 消费总额 */
+    totalConsumes: number | undefined;
+    /** 购买频次 */
+    totalOrderNum: number | undefined;
+    /** 备注 */
+    remark: string | undefined;
+    /** 首次购买时间/创建时间 */
+    createOn: moment.Moment | undefined;
+    id: number | undefined;
+}
+
+export class CustomerDetailDto implements ICustomerDetailDto {
+    /** 头像链接 */
+    avatarUrl!: string | undefined;
+    /** 客户名称 */
+    name!: string | undefined;
+    /** 电话号码 */
+    phoneNumber!: string | undefined;
+    /** 消费总额 */
+    totalConsumes!: number | undefined;
+    /** 购买频次 */
+    totalOrderNum!: number | undefined;
+    /** 备注 */
+    remark!: string | undefined;
+    /** 首次购买时间/创建时间 */
+    createOn!: moment.Moment | undefined;
+    id!: number | undefined;
+
+    constructor(data?: ICustomerDetailDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.avatarUrl = data["avatarUrl"];
+            this.name = data["name"];
+            this.phoneNumber = data["phoneNumber"];
+            this.totalConsumes = data["totalConsumes"];
+            this.totalOrderNum = data["totalOrderNum"];
+            this.remark = data["remark"];
+            this.createOn = data["createOn"] ? moment(data["createOn"].toString()) : <any>undefined;
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): CustomerDetailDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new CustomerDetailDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["avatarUrl"] = this.avatarUrl;
+        data["name"] = this.name;
+        data["phoneNumber"] = this.phoneNumber;
+        data["totalConsumes"] = this.totalConsumes;
+        data["totalOrderNum"] = this.totalOrderNum;
+        data["remark"] = this.remark;
+        data["createOn"] = this.createOn ? this.createOn.toISOString() : <any>undefined;
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface ICustomerDetailDto {
+    /** 头像链接 */
+    avatarUrl: string | undefined;
+    /** 客户名称 */
+    name: string | undefined;
+    /** 电话号码 */
+    phoneNumber: string | undefined;
+    /** 消费总额 */
+    totalConsumes: number | undefined;
+    /** 购买频次 */
+    totalOrderNum: number | undefined;
+    /** 备注 */
+    remark: string | undefined;
+    /** 首次购买时间/创建时间 */
+    createOn: moment.Moment | undefined;
+    id: number | undefined;
+}
+
+export class CreateOrUpdateCustomerInput implements ICreateOrUpdateCustomerInput {
+    /** 头像Id */
+    avatarPictureId!: number | undefined;
+    /** 客户名称 */
+    name!: string | undefined;
+    /** 电话号码 */
+    phoneNumber!: string | undefined;
+    /** 消费总额 */
+    totalConsumes!: number | undefined;
+    /** 购买频次 */
+    totalOrderNum!: number | undefined;
+    /** 备注 */
+    remark!: string | undefined;
+    id!: number | undefined;
+
+    constructor(data?: ICreateOrUpdateCustomerInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.avatarPictureId = data["avatarPictureId"];
+            this.name = data["name"];
+            this.phoneNumber = data["phoneNumber"];
+            this.totalConsumes = data["totalConsumes"];
+            this.totalOrderNum = data["totalOrderNum"];
+            this.remark = data["remark"];
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): CreateOrUpdateCustomerInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new CreateOrUpdateCustomerInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["avatarPictureId"] = this.avatarPictureId;
+        data["name"] = this.name;
+        data["phoneNumber"] = this.phoneNumber;
+        data["totalConsumes"] = this.totalConsumes;
+        data["totalOrderNum"] = this.totalOrderNum;
+        data["remark"] = this.remark;
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface ICreateOrUpdateCustomerInput {
+    /** 头像Id */
+    avatarPictureId: number | undefined;
+    /** 客户名称 */
+    name: string | undefined;
+    /** 电话号码 */
+    phoneNumber: string | undefined;
+    /** 消费总额 */
+    totalConsumes: number | undefined;
+    /** 购买频次 */
+    totalOrderNum: number | undefined;
+    /** 备注 */
+    remark: string | undefined;
+    id: number | undefined;
+}
+
+export class EntityDtoOfInt64 implements IEntityDtoOfInt64 {
+    id!: number | undefined;
+
+    constructor(data?: IEntityDtoOfInt64) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): EntityDtoOfInt64 {
+        data = typeof data === 'object' ? data : {};
+        let result = new EntityDtoOfInt64();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface IEntityDtoOfInt64 {
+    id: number | undefined;
+}
+
 export class ListResultDtoOfEditionListDto implements IListResultDtoOfEditionListDto {
     items!: EditionListDto[] | undefined;
 
@@ -18933,7 +19493,7 @@ export interface IGetLogisticsForEditOutput {
 }
 
 export class CreateOrUpdateLogisticsInput implements ICreateOrUpdateLogisticsInput {
-    /** 物流Id或租户物流Id */
+    /** 物流Id */
     id!: number | undefined;
     /** 快递名称 */
     name!: string | undefined;
@@ -18982,7 +19542,7 @@ export class CreateOrUpdateLogisticsInput implements ICreateOrUpdateLogisticsInp
 }
 
 export interface ICreateOrUpdateLogisticsInput {
-    /** 物流Id或租户物流Id */
+    /** 物流Id */
     id: number | undefined;
     /** 快递名称 */
     name: string | undefined;
@@ -18994,10 +19554,111 @@ export interface ICreateOrUpdateLogisticsInput {
     displayOrder: number | undefined;
 }
 
-export class EntityDtoOfInt64 implements IEntityDtoOfInt64 {
+export class PagedResultDtoOfTenantLogisticsDto implements IPagedResultDtoOfTenantLogisticsDto {
+    totalCount!: number | undefined;
+    items!: TenantLogisticsDto[] | undefined;
+
+    constructor(data?: IPagedResultDtoOfTenantLogisticsDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.totalCount = data["totalCount"];
+            if (data["items"] && data["items"].constructor === Array) {
+                this.items = [];
+                for (let item of data["items"])
+                    this.items.push(TenantLogisticsDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): PagedResultDtoOfTenantLogisticsDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new PagedResultDtoOfTenantLogisticsDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["totalCount"] = this.totalCount;
+        if (this.items && this.items.constructor === Array) {
+            data["items"] = [];
+            for (let item of this.items)
+                data["items"].push(item.toJSON());
+        }
+        return data; 
+    }
+}
+
+export interface IPagedResultDtoOfTenantLogisticsDto {
+    totalCount: number | undefined;
+    items: TenantLogisticsDto[] | undefined;
+}
+
+export class TenantLogisticsDto implements ITenantLogisticsDto {
+    /** 快递名称 */
+    name!: string | undefined;
+    /** 排序 */
+    displayOrder!: number | undefined;
     id!: number | undefined;
 
-    constructor(data?: IEntityDtoOfInt64) {
+    constructor(data?: ITenantLogisticsDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.name = data["name"];
+            this.displayOrder = data["displayOrder"];
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): TenantLogisticsDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new TenantLogisticsDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["name"] = this.name;
+        data["displayOrder"] = this.displayOrder;
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface ITenantLogisticsDto {
+    /** 快递名称 */
+    name: string | undefined;
+    /** 排序 */
+    displayOrder: number | undefined;
+    id: number | undefined;
+}
+
+export class CreateOrUpdateTenantLogisticsInput implements ICreateOrUpdateTenantLogisticsInput {
+    /** 自选物流Id */
+    id!: number | undefined;
+    /** 平台物流Id */
+    logisticsId!: number | undefined;
+    /** 排序(用户绑定物流可以自定义排序) */
+    displayOrder!: number | undefined;
+
+    constructor(data?: ICreateOrUpdateTenantLogisticsInput) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -19009,12 +19670,14 @@ export class EntityDtoOfInt64 implements IEntityDtoOfInt64 {
     init(data?: any) {
         if (data) {
             this.id = data["id"];
+            this.logisticsId = data["logisticsId"];
+            this.displayOrder = data["displayOrder"];
         }
     }
 
-    static fromJS(data: any): EntityDtoOfInt64 {
+    static fromJS(data: any): CreateOrUpdateTenantLogisticsInput {
         data = typeof data === 'object' ? data : {};
-        let result = new EntityDtoOfInt64();
+        let result = new CreateOrUpdateTenantLogisticsInput();
         result.init(data);
         return result;
     }
@@ -19022,12 +19685,19 @@ export class EntityDtoOfInt64 implements IEntityDtoOfInt64 {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
+        data["logisticsId"] = this.logisticsId;
+        data["displayOrder"] = this.displayOrder;
         return data; 
     }
 }
 
-export interface IEntityDtoOfInt64 {
+export interface ICreateOrUpdateTenantLogisticsInput {
+    /** 自选物流Id */
     id: number | undefined;
+    /** 平台物流Id */
+    logisticsId: number | undefined;
+    /** 排序(用户绑定物流可以自定义排序) */
+    displayOrder: number | undefined;
 }
 
 export class TokensListDto implements ITokensListDto {
@@ -20373,19 +21043,19 @@ export interface IShipmentItemDto {
 }
 
 export class CreateOrUpdateOrderInput implements ICreateOrUpdateOrderInput {
-    /** 订单号（为空则自动生成） */
+    /** 订单号（缺省自动生成） */
     orderNumber!: string | undefined;
     /** 店铺Id */
     storeId!: string | undefined;
-    /** 订单状态10 = WaitConfirm ; 20 = Processing ; 30 = Complete ; 40 = Cancelled */
+    /** 订单状态(缺省为待确认)10 = WaitConfirm ; 20 = Processing ; 30 = Complete ; 40 = Cancelled */
     orderStatus!: CreateOrUpdateOrderInputOrderStatus | undefined;
-    /** 支付状态10 = Pending ; 20 = Authorized ; 30 = Paid ; 35 = PartiallyRefunded ; 40 = Refunded */
+    /** 支付状态(缺省为未支付)10 = Pending ; 20 = Authorized ; 30 = Paid ; 35 = PartiallyRefunded ; 40 = Refunded */
     paymentStatus!: CreateOrUpdateOrderInputPaymentStatus | undefined;
-    /** 物流状态0 = NoTrace ; 1 = Taked ; 2 = OnPassag ; 3 = Received ; 4 = Issue ; 10 = ShippingNotRequired ; 20 = NotYetShipped ; 25 = PartiallyShipped ; 201 = DestinationCity ; 202 = Delivering ; 404 = IssueWithReject ; 500 = Cancel ; 600 = Intercept */
+    /** 物流状态(缺省为未发货）0 = NoTrace ; 1 = Taked ; 2 = OnPassag ; 3 = Received ; 4 = Issue ; 10 = ShippingNotRequired ; 20 = NotYetShipped ; 25 = PartiallyShipped ; 201 = DestinationCity ; 202 = Delivering ; 404 = IssueWithReject ; 500 = Cancel ; 600 = Intercept */
     shippingStatus!: CreateOrUpdateOrderInputShippingStatus | undefined;
-    /** 订单类型1 = PayOnline ; 2 = PayOnDelivery */
+    /** 订单类型（缺省为货到付款）1 = PayOnline ; 2 = PayOnDelivery */
     orderType!: CreateOrUpdateOrderInputOrderType | undefined;
-    /** 订单来源10 = Self ; 20 = FxgAd ; 30 = FxgPd ; 40 = Tenant ; 50 = YouZan */
+    /** 订单来源（缺省为后台自建）10 = Self ; 20 = FxgAd ; 30 = FxgPd ; 40 = Tenant ; 50 = YouZan */
     orderSource!: CreateOrUpdateOrderInputOrderSource | undefined;
     /** 管理员备注 */
     adminComment!: string | undefined;
@@ -20399,7 +21069,7 @@ export class CreateOrUpdateOrderInput implements ICreateOrUpdateOrderInput {
     shippingDistrictId!: number | undefined;
     /** 收货地址(详细信息) */
     shippingAddress!: string | undefined;
-    /** 收货地址(电话) */
+    /** 收货地址(电话,自动查找对应客户) */
     shippingPhoneNumber!: string | undefined;
     /** 收货地址(姓名) */
     shippingName!: string | undefined;
@@ -20509,19 +21179,19 @@ export class CreateOrUpdateOrderInput implements ICreateOrUpdateOrderInput {
 }
 
 export interface ICreateOrUpdateOrderInput {
-    /** 订单号（为空则自动生成） */
+    /** 订单号（缺省自动生成） */
     orderNumber: string | undefined;
     /** 店铺Id */
     storeId: string | undefined;
-    /** 订单状态10 = WaitConfirm ; 20 = Processing ; 30 = Complete ; 40 = Cancelled */
+    /** 订单状态(缺省为待确认)10 = WaitConfirm ; 20 = Processing ; 30 = Complete ; 40 = Cancelled */
     orderStatus: CreateOrUpdateOrderInputOrderStatus | undefined;
-    /** 支付状态10 = Pending ; 20 = Authorized ; 30 = Paid ; 35 = PartiallyRefunded ; 40 = Refunded */
+    /** 支付状态(缺省为未支付)10 = Pending ; 20 = Authorized ; 30 = Paid ; 35 = PartiallyRefunded ; 40 = Refunded */
     paymentStatus: CreateOrUpdateOrderInputPaymentStatus | undefined;
-    /** 物流状态0 = NoTrace ; 1 = Taked ; 2 = OnPassag ; 3 = Received ; 4 = Issue ; 10 = ShippingNotRequired ; 20 = NotYetShipped ; 25 = PartiallyShipped ; 201 = DestinationCity ; 202 = Delivering ; 404 = IssueWithReject ; 500 = Cancel ; 600 = Intercept */
+    /** 物流状态(缺省为未发货）0 = NoTrace ; 1 = Taked ; 2 = OnPassag ; 3 = Received ; 4 = Issue ; 10 = ShippingNotRequired ; 20 = NotYetShipped ; 25 = PartiallyShipped ; 201 = DestinationCity ; 202 = Delivering ; 404 = IssueWithReject ; 500 = Cancel ; 600 = Intercept */
     shippingStatus: CreateOrUpdateOrderInputShippingStatus | undefined;
-    /** 订单类型1 = PayOnline ; 2 = PayOnDelivery */
+    /** 订单类型（缺省为货到付款）1 = PayOnline ; 2 = PayOnDelivery */
     orderType: CreateOrUpdateOrderInputOrderType | undefined;
-    /** 订单来源10 = Self ; 20 = FxgAd ; 30 = FxgPd ; 40 = Tenant ; 50 = YouZan */
+    /** 订单来源（缺省为后台自建）10 = Self ; 20 = FxgAd ; 30 = FxgPd ; 40 = Tenant ; 50 = YouZan */
     orderSource: CreateOrUpdateOrderInputOrderSource | undefined;
     /** 管理员备注 */
     adminComment: string | undefined;
@@ -20535,7 +21205,7 @@ export interface ICreateOrUpdateOrderInput {
     shippingDistrictId: number | undefined;
     /** 收货地址(详细信息) */
     shippingAddress: string | undefined;
-    /** 收货地址(电话) */
+    /** 收货地址(电话,自动查找对应客户) */
     shippingPhoneNumber: string | undefined;
     /** 收货地址(姓名) */
     shippingName: string | undefined;
@@ -20567,11 +21237,11 @@ export class OrderItemDto implements IOrderItemDto {
     productId!: number | undefined;
     /** 数量 */
     quantity!: number | undefined;
-    /** 单价 */
+    /** 单价(缺省自动计算) */
     unitPrice!: number | undefined;
-    /** 价格（小计） */
+    /** 价格(小计，缺省自动计算) */
     price!: number | undefined;
-    /** 折扣 */
+    /** 折扣(缺省自动计算) */
     discountAmount!: number | undefined;
     /** 属性值（如果有） */
     attributes!: ProductAttributeDto[] | undefined;
@@ -20635,11 +21305,11 @@ export interface IOrderItemDto {
     productId: number | undefined;
     /** 数量 */
     quantity: number | undefined;
-    /** 单价 */
+    /** 单价(缺省自动计算) */
     unitPrice: number | undefined;
-    /** 价格（小计） */
+    /** 价格(小计，缺省自动计算) */
     price: number | undefined;
-    /** 折扣 */
+    /** 折扣(缺省自动计算) */
     discountAmount: number | undefined;
     /** 属性值（如果有） */
     attributes: ProductAttributeDto[] | undefined;
@@ -24848,8 +25518,11 @@ export interface ITrackingDto {
 }
 
 export class TrackingItemDto implements ITrackingItemDto {
+    /** 物流信息条目 */
     station!: string | undefined;
+    /** 时间 */
     time!: string | undefined;
+    /** 备注 */
     remark!: string | undefined;
 
     constructor(data?: ITrackingItemDto) {
@@ -24886,8 +25559,11 @@ export class TrackingItemDto implements ITrackingItemDto {
 }
 
 export interface ITrackingItemDto {
+    /** 物流信息条目 */
     station: string | undefined;
+    /** 时间 */
     time: string | undefined;
+    /** 备注 */
     remark: string | undefined;
 }
 
