@@ -9801,6 +9801,53 @@ export class StateServiceServiceProxy {
     }
 
     /**
+     * @return Success
+     */
+    importState(): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/app/StateService/ImportState";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processImportState(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processImportState(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processImportState(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
      * 获取所有省份
      * @param sorting (optional) 
      * @param maxResultCount (optional) 
@@ -10473,6 +10520,60 @@ export class StateServiceServiceProxy {
             }));
         }
         return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @param filepath (optional) 
+     * @return Success
+     */
+    getFileJson(filepath: string | null | undefined): Observable<string> {
+        let url_ = this.baseUrl + "/api/services/app/StateService/GetFileJson?";
+        if (filepath !== undefined)
+            url_ += "filepath=" + encodeURIComponent("" + filepath) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetFileJson(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetFileJson(<any>response_);
+                } catch (e) {
+                    return <Observable<string>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<string>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetFileJson(response: HttpResponseBase): Observable<string> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 !== undefined ? resultData200 : <any>null;
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<string>(<any>null);
     }
 }
 
@@ -21046,7 +21147,7 @@ export class CreateOrUpdateOrderInput implements ICreateOrUpdateOrderInput {
     /** 订单号（缺省自动生成） */
     orderNumber!: string | undefined;
     /** 店铺Id */
-    storeId!: string | undefined;
+    storeId!: number | undefined;
     /** 订单状态(缺省为待确认)10 = WaitConfirm ; 20 = Processing ; 30 = Complete ; 40 = Cancelled */
     orderStatus!: CreateOrUpdateOrderInputOrderStatus | undefined;
     /** 支付状态(缺省为未支付)10 = Pending ; 20 = Authorized ; 30 = Paid ; 35 = PartiallyRefunded ; 40 = Refunded */
@@ -21055,7 +21156,7 @@ export class CreateOrUpdateOrderInput implements ICreateOrUpdateOrderInput {
     shippingStatus!: CreateOrUpdateOrderInputShippingStatus | undefined;
     /** 订单类型（缺省为货到付款）1 = PayOnline ; 2 = PayOnDelivery */
     orderType!: CreateOrUpdateOrderInputOrderType | undefined;
-    /** 订单来源（缺省为后台自建）10 = Self ; 20 = FxgAd ; 30 = FxgPd ; 40 = Tenant ; 50 = YouZan */
+    /** 订单来源（缺省优先店铺设置，店铺id为空则为后台自建）10 = Self ; 20 = FxgAd ; 30 = FxgPd ; 40 = Tenant ; 50 = YouZan */
     orderSource!: CreateOrUpdateOrderInputOrderSource | undefined;
     /** 管理员备注 */
     adminComment!: string | undefined;
@@ -21182,7 +21283,7 @@ export interface ICreateOrUpdateOrderInput {
     /** 订单号（缺省自动生成） */
     orderNumber: string | undefined;
     /** 店铺Id */
-    storeId: string | undefined;
+    storeId: number | undefined;
     /** 订单状态(缺省为待确认)10 = WaitConfirm ; 20 = Processing ; 30 = Complete ; 40 = Cancelled */
     orderStatus: CreateOrUpdateOrderInputOrderStatus | undefined;
     /** 支付状态(缺省为未支付)10 = Pending ; 20 = Authorized ; 30 = Paid ; 35 = PartiallyRefunded ; 40 = Refunded */
@@ -21191,7 +21292,7 @@ export interface ICreateOrUpdateOrderInput {
     shippingStatus: CreateOrUpdateOrderInputShippingStatus | undefined;
     /** 订单类型（缺省为货到付款）1 = PayOnline ; 2 = PayOnDelivery */
     orderType: CreateOrUpdateOrderInputOrderType | undefined;
-    /** 订单来源（缺省为后台自建）10 = Self ; 20 = FxgAd ; 30 = FxgPd ; 40 = Tenant ; 50 = YouZan */
+    /** 订单来源（缺省优先店铺设置，店铺id为空则为后台自建）10 = Self ; 20 = FxgAd ; 30 = FxgPd ; 40 = Tenant ; 50 = YouZan */
     orderSource: CreateOrUpdateOrderInputOrderSource | undefined;
     /** 管理员备注 */
     adminComment: string | undefined;
