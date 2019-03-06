@@ -5111,7 +5111,7 @@ export class OrderServiceProxy {
      * @param receivedOn_ToDate (optional) 
      * @param shippingName (optional) 收件人姓名
      * @param phoneNumber (optional) 电话号码
-     * @param proviceId (optional) 省份Id
+     * @param provinceId (optional) 省份Id
      * @param cityId (optional) 城市Id
      * @param districtId (optional) 区域Id
      * @param orderStatuses (optional) 订单状态
@@ -5124,7 +5124,7 @@ export class OrderServiceProxy {
      * @param skipCount (optional) 
      * @return Success
      */
-    getOrders(productIds: number[] | null | undefined, logisticsNumber: string | null | undefined, orderNumber: string | null | undefined, createdOn_FormDate: moment.Moment | null | undefined, createdOn_ToDate: moment.Moment | null | undefined, receivedOn_FormDate: moment.Moment | null | undefined, receivedOn_ToDate: moment.Moment | null | undefined, shippingName: string | null | undefined, phoneNumber: string | null | undefined, proviceId: number | null | undefined, cityId: number | null | undefined, districtId: number | null | undefined, orderStatuses: OrderStatuses[] | null | undefined, paymentStatuses: PaymentStatuses[] | null | undefined, shippingStatuses: ShippingStatuses[] | null | undefined, orderTypes: OrderTypes[] | null | undefined, orderSource: OrderSource[] | null | undefined, sorting: string | null | undefined, maxResultCount: number | null | undefined, skipCount: number | null | undefined): Observable<PagedResultDtoOfOrderListDto> {
+    getOrders(productIds: number[] | null | undefined, logisticsNumber: string | null | undefined, orderNumber: string | null | undefined, createdOn_FormDate: moment.Moment | null | undefined, createdOn_ToDate: moment.Moment | null | undefined, receivedOn_FormDate: moment.Moment | null | undefined, receivedOn_ToDate: moment.Moment | null | undefined, shippingName: string | null | undefined, phoneNumber: string | null | undefined, provinceId: number | null | undefined, cityId: number | null | undefined, districtId: number | null | undefined, orderStatuses: OrderStatuses[] | null | undefined, paymentStatuses: PaymentStatuses[] | null | undefined, shippingStatuses: ShippingStatuses[] | null | undefined, orderTypes: OrderTypes[] | null | undefined, orderSource: OrderSource[] | null | undefined, sorting: string | null | undefined, maxResultCount: number | null | undefined, skipCount: number | null | undefined): Observable<PagedResultDtoOfOrderListDto> {
         let url_ = this.baseUrl + "/api/services/app/Order/GetOrders?";
         if (productIds !== undefined)
             productIds && productIds.forEach(item => { url_ += "ProductIds=" + encodeURIComponent("" + item) + "&"; });
@@ -5144,8 +5144,8 @@ export class OrderServiceProxy {
             url_ += "ShippingName=" + encodeURIComponent("" + shippingName) + "&"; 
         if (phoneNumber !== undefined)
             url_ += "PhoneNumber=" + encodeURIComponent("" + phoneNumber) + "&"; 
-        if (proviceId !== undefined)
-            url_ += "ProviceId=" + encodeURIComponent("" + proviceId) + "&"; 
+        if (provinceId !== undefined)
+            url_ += "ProvinceId=" + encodeURIComponent("" + provinceId) + "&"; 
         if (cityId !== undefined)
             url_ += "CityId=" + encodeURIComponent("" + cityId) + "&"; 
         if (districtId !== undefined)
@@ -20629,9 +20629,9 @@ export class OrderDetailDto implements IOrderDetailDto {
     /** 客户备注 */
     customerComment!: string | undefined;
     /** 收货地址(省份) */
-    shippingProvice!: string | undefined;
+    shippingProvince!: string | undefined;
     /** 收货地址(省份id) */
-    shippingProviceId!: number | undefined;
+    shippingProvinceId!: number | undefined;
     /** 收货地址(城市) */
     shippingCity!: string | undefined;
     /** 收货地址(城市Id) */
@@ -20702,8 +20702,8 @@ export class OrderDetailDto implements IOrderDetailDto {
             this.orderSource = data["orderSource"];
             this.adminComment = data["adminComment"];
             this.customerComment = data["customerComment"];
-            this.shippingProvice = data["shippingProvice"];
-            this.shippingProviceId = data["shippingProviceId"];
+            this.shippingProvince = data["shippingProvince"];
+            this.shippingProvinceId = data["shippingProvinceId"];
             this.shippingCity = data["shippingCity"];
             this.shippingCityId = data["shippingCityId"];
             this.shippingDistrict = data["shippingDistrict"];
@@ -20761,8 +20761,8 @@ export class OrderDetailDto implements IOrderDetailDto {
         data["orderSource"] = this.orderSource;
         data["adminComment"] = this.adminComment;
         data["customerComment"] = this.customerComment;
-        data["shippingProvice"] = this.shippingProvice;
-        data["shippingProviceId"] = this.shippingProviceId;
+        data["shippingProvince"] = this.shippingProvince;
+        data["shippingProvinceId"] = this.shippingProvinceId;
         data["shippingCity"] = this.shippingCity;
         data["shippingCityId"] = this.shippingCityId;
         data["shippingDistrict"] = this.shippingDistrict;
@@ -20829,9 +20829,9 @@ export interface IOrderDetailDto {
     /** 客户备注 */
     customerComment: string | undefined;
     /** 收货地址(省份) */
-    shippingProvice: string | undefined;
+    shippingProvince: string | undefined;
     /** 收货地址(省份id) */
-    shippingProviceId: number | undefined;
+    shippingProvinceId: number | undefined;
     /** 收货地址(城市) */
     shippingCity: string | undefined;
     /** 收货地址(城市Id) */
@@ -21163,7 +21163,7 @@ export class CreateOrUpdateOrderInput implements ICreateOrUpdateOrderInput {
     /** 客户备注 */
     customerComment!: string | undefined;
     /** 收货地址(省份id) */
-    shippingProviceId!: number | undefined;
+    shippingProvinceId!: number | undefined;
     /** 收货地址(城市Id) */
     shippingCityId!: number | undefined;
     /** 收货地址(区域/县Id) */
@@ -21214,7 +21214,7 @@ export class CreateOrUpdateOrderInput implements ICreateOrUpdateOrderInput {
             this.orderSource = data["orderSource"];
             this.adminComment = data["adminComment"];
             this.customerComment = data["customerComment"];
-            this.shippingProviceId = data["shippingProviceId"];
+            this.shippingProvinceId = data["shippingProvinceId"];
             this.shippingCityId = data["shippingCityId"];
             this.shippingDistrictId = data["shippingDistrictId"];
             this.shippingAddress = data["shippingAddress"];
@@ -21255,7 +21255,7 @@ export class CreateOrUpdateOrderInput implements ICreateOrUpdateOrderInput {
         data["orderSource"] = this.orderSource;
         data["adminComment"] = this.adminComment;
         data["customerComment"] = this.customerComment;
-        data["shippingProviceId"] = this.shippingProviceId;
+        data["shippingProvinceId"] = this.shippingProvinceId;
         data["shippingCityId"] = this.shippingCityId;
         data["shippingDistrictId"] = this.shippingDistrictId;
         data["shippingAddress"] = this.shippingAddress;
@@ -21299,7 +21299,7 @@ export interface ICreateOrUpdateOrderInput {
     /** 客户备注 */
     customerComment: string | undefined;
     /** 收货地址(省份id) */
-    shippingProviceId: number | undefined;
+    shippingProvinceId: number | undefined;
     /** 收货地址(城市Id) */
     shippingCityId: number | undefined;
     /** 收货地址(区域/县Id) */
