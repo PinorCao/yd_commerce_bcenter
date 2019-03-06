@@ -23306,7 +23306,7 @@ export class GetProductForEditOutput implements IGetProductForEditOutput {
     /** 库存数量 */
     stockQuantity!: number | undefined;
     /** 低库存通知（暂不实现） */
-    notifyAdminForQuantityBelow!: number | undefined;
+    notifyQuantityBelow!: number | undefined;
     /** 售价 */
     price!: number | undefined;
     /** 货物成本/进货价 */
@@ -23346,7 +23346,7 @@ export class GetProductForEditOutput implements IGetProductForEditOutput {
             this.sku = data["sku"];
             this.thirdPartySku = data["thirdPartySku"];
             this.stockQuantity = data["stockQuantity"];
-            this.notifyAdminForQuantityBelow = data["notifyAdminForQuantityBelow"];
+            this.notifyQuantityBelow = data["notifyQuantityBelow"];
             this.price = data["price"];
             this.goodCost = data["goodCost"];
             this.weight = data["weight"];
@@ -23392,7 +23392,7 @@ export class GetProductForEditOutput implements IGetProductForEditOutput {
         data["sku"] = this.sku;
         data["thirdPartySku"] = this.thirdPartySku;
         data["stockQuantity"] = this.stockQuantity;
-        data["notifyAdminForQuantityBelow"] = this.notifyAdminForQuantityBelow;
+        data["notifyQuantityBelow"] = this.notifyQuantityBelow;
         data["price"] = this.price;
         data["goodCost"] = this.goodCost;
         data["weight"] = this.weight;
@@ -23438,7 +23438,7 @@ export interface IGetProductForEditOutput {
     /** 库存数量 */
     stockQuantity: number | undefined;
     /** 低库存通知（暂不实现） */
-    notifyAdminForQuantityBelow: number | undefined;
+    notifyQuantityBelow: number | undefined;
     /** 售价 */
     price: number | undefined;
     /** 货物成本/进货价 */
