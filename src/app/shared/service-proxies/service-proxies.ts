@@ -21174,9 +21174,9 @@ export class CreateOrUpdateOrderInput implements ICreateOrUpdateOrderInput {
     shippingPhoneNumber!: string | undefined;
     /** 收货地址(姓名) */
     shippingName!: string | undefined;
-    /** 订单小计 */
+    /** 订单小计(子订单小计) */
     subtotalAmount!: number | undefined;
-    /** 订单总额 */
+    /** 订单总额(订单金额，折算所有后) */
     totalAmount!: number | undefined;
     /** 货运费用 */
     shippingAmount!: number | undefined;
@@ -21310,9 +21310,9 @@ export interface ICreateOrUpdateOrderInput {
     shippingPhoneNumber: string | undefined;
     /** 收货地址(姓名) */
     shippingName: string | undefined;
-    /** 订单小计 */
+    /** 订单小计(子订单小计) */
     subtotalAmount: number | undefined;
-    /** 订单总额 */
+    /** 订单总额(订单金额，折算所有后) */
     totalAmount: number | undefined;
     /** 货运费用 */
     shippingAmount: number | undefined;
