@@ -5118,13 +5118,13 @@ export class OrderServiceProxy {
      * @param paymentStatuses (optional) 付款状态
      * @param shippingStatuses (optional) 发货状态
      * @param orderTypes (optional) 订单类型
-     * @param orderSource (optional) 订单来源
+     * @param orderSources (optional) 订单来源
      * @param sorting (optional) 
      * @param maxResultCount (optional) 
      * @param skipCount (optional) 
      * @return Success
      */
-    getOrders(productIds: number[] | null | undefined, logisticsNumber: string | null | undefined, orderNumber: string | null | undefined, createdOn_FormDate: moment.Moment | null | undefined, createdOn_ToDate: moment.Moment | null | undefined, receivedOn_FormDate: moment.Moment | null | undefined, receivedOn_ToDate: moment.Moment | null | undefined, shippingName: string | null | undefined, phoneNumber: string | null | undefined, provinceId: number | null | undefined, cityId: number | null | undefined, districtId: number | null | undefined, orderStatuses: OrderStatuses[] | null | undefined, paymentStatuses: PaymentStatuses[] | null | undefined, shippingStatuses: ShippingStatuses[] | null | undefined, orderTypes: OrderTypes[] | null | undefined, orderSource: OrderSource[] | null | undefined, sorting: string | null | undefined, maxResultCount: number | null | undefined, skipCount: number | null | undefined): Observable<PagedResultDtoOfOrderListDto> {
+    getOrders(productIds: number[] | null | undefined, logisticsNumber: string | null | undefined, orderNumber: string | null | undefined, createdOn_FormDate: moment.Moment | null | undefined, createdOn_ToDate: moment.Moment | null | undefined, receivedOn_FormDate: moment.Moment | null | undefined, receivedOn_ToDate: moment.Moment | null | undefined, shippingName: string | null | undefined, phoneNumber: string | null | undefined, provinceId: number | null | undefined, cityId: number | null | undefined, districtId: number | null | undefined, orderStatuses: OrderStatuses[] | null | undefined, paymentStatuses: PaymentStatuses[] | null | undefined, shippingStatuses: ShippingStatuses[] | null | undefined, orderTypes: OrderTypes[] | null | undefined, orderSources: OrderSources[] | null | undefined, sorting: string | null | undefined, maxResultCount: number | null | undefined, skipCount: number | null | undefined): Observable<PagedResultDtoOfOrderListDto> {
         let url_ = this.baseUrl + "/api/services/app/Order/GetOrders?";
         if (productIds !== undefined)
             productIds && productIds.forEach(item => { url_ += "ProductIds=" + encodeURIComponent("" + item) + "&"; });
@@ -5158,8 +5158,8 @@ export class OrderServiceProxy {
             shippingStatuses && shippingStatuses.forEach(item => { url_ += "ShippingStatuses=" + encodeURIComponent("" + item) + "&"; });
         if (orderTypes !== undefined)
             orderTypes && orderTypes.forEach(item => { url_ += "OrderTypes=" + encodeURIComponent("" + item) + "&"; });
-        if (orderSource !== undefined)
-            orderSource && orderSource.forEach(item => { url_ += "OrderSource=" + encodeURIComponent("" + item) + "&"; });
+        if (orderSources !== undefined)
+            orderSources && orderSources.forEach(item => { url_ += "OrderSources=" + encodeURIComponent("" + item) + "&"; });
         if (sorting !== undefined)
             url_ += "Sorting=" + encodeURIComponent("" + sorting) + "&"; 
         if (maxResultCount !== undefined)
@@ -5265,6 +5265,61 @@ export class OrderServiceProxy {
             }));
         }
         return _observableOf<OrderDetailDto>(<any>null);
+    }
+
+    /**
+     * 获取订单详情(包含商品属性)
+     * @param orderId (optional) 
+     * @return Success
+     */
+    getOrderForEdit(orderId: number | null | undefined): Observable<GetOrderForEditOutput> {
+        let url_ = this.baseUrl + "/api/services/app/Order/GetOrderForEdit?";
+        if (orderId !== undefined)
+            url_ += "orderId=" + encodeURIComponent("" + orderId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetOrderForEdit(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetOrderForEdit(<any>response_);
+                } catch (e) {
+                    return <Observable<GetOrderForEditOutput>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<GetOrderForEditOutput>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetOrderForEdit(response: HttpResponseBase): Observable<GetOrderForEditOutput> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? GetOrderForEditOutput.fromJS(resultData200) : new GetOrderForEditOutput();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<GetOrderForEditOutput>(<any>null);
     }
 
     /**
@@ -7018,6 +7073,54 @@ export class ProductServiceProxy {
     constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
         this.http = http;
         this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * 获取商品的属性及值
+     * @return Success
+     */
+    productSync(): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/app/Product/ProductSync";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processProductSync(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processProductSync(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processProductSync(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
     }
 
     /**
@@ -9798,53 +9901,6 @@ export class StateServiceServiceProxy {
     constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
         this.http = http;
         this.baseUrl = baseUrl ? baseUrl : "";
-    }
-
-    /**
-     * @return Success
-     */
-    importState(): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/app/StateService/ImportState";
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-            })
-        };
-
-        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processImportState(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processImportState(<any>response_);
-                } catch (e) {
-                    return <Observable<void>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<void>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processImportState(response: HttpResponseBase): Observable<void> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return _observableOf<void>(<any>null);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<void>(<any>null);
     }
 
     /**
@@ -20372,7 +20428,7 @@ export class OrderListDto implements IOrderListDto {
     orderStatus!: OrderListDtoOrderStatus | undefined;
     /** 支付状态 */
     paymentStatusString!: string | undefined;
-    /** 支付状态10 = Pending ; 20 = Authorized ; 30 = Paid ; 35 = PartiallyRefunded ; 40 = Refunded */
+    /** 支付状态10 = Pending ; 30 = Paid ; 35 = PartiallyRefunded ; 40 = Refunded */
     paymentStatus!: OrderListDtoPaymentStatus | undefined;
     /** 物流状态 */
     shippingStatusString!: string | undefined;
@@ -20492,7 +20548,7 @@ export interface IOrderListDto {
     orderStatus: OrderListDtoOrderStatus | undefined;
     /** 支付状态 */
     paymentStatusString: string | undefined;
-    /** 支付状态10 = Pending ; 20 = Authorized ; 30 = Paid ; 35 = PartiallyRefunded ; 40 = Refunded */
+    /** 支付状态10 = Pending ; 30 = Paid ; 35 = PartiallyRefunded ; 40 = Refunded */
     paymentStatus: OrderListDtoPaymentStatus | undefined;
     /** 物流状态 */
     shippingStatusString: string | undefined;
@@ -20610,7 +20666,7 @@ export class OrderDetailDto implements IOrderDetailDto {
     orderStatus!: OrderDetailDtoOrderStatus | undefined;
     /** 支付状态 */
     paymentStatusString!: string | undefined;
-    /** 支付状态10 = Pending ; 20 = Authorized ; 30 = Paid ; 35 = PartiallyRefunded ; 40 = Refunded */
+    /** 支付状态10 = Pending ; 30 = Paid ; 35 = PartiallyRefunded ; 40 = Refunded */
     paymentStatus!: OrderDetailDtoPaymentStatus | undefined;
     /** 物流状态 */
     shippingStatusString!: string | undefined;
@@ -20672,8 +20728,6 @@ export class OrderDetailDto implements IOrderDetailDto {
     refundedAmount!: number | undefined;
     /** 子订单 */
     items!: OrderDetailItemDto[] | undefined;
-    /** 发货记录 */
-    shipments!: ShipmentDto[] | undefined;
     id!: number | undefined;
 
     constructor(data?: IOrderDetailDto) {
@@ -20727,11 +20781,6 @@ export class OrderDetailDto implements IOrderDetailDto {
                 this.items = [];
                 for (let item of data["items"])
                     this.items.push(OrderDetailItemDto.fromJS(item));
-            }
-            if (data["shipments"] && data["shipments"].constructor === Array) {
-                this.shipments = [];
-                for (let item of data["shipments"])
-                    this.shipments.push(ShipmentDto.fromJS(item));
             }
             this.id = data["id"];
         }
@@ -20787,11 +20836,6 @@ export class OrderDetailDto implements IOrderDetailDto {
             for (let item of this.items)
                 data["items"].push(item.toJSON());
         }
-        if (this.shipments && this.shipments.constructor === Array) {
-            data["shipments"] = [];
-            for (let item of this.shipments)
-                data["shipments"].push(item.toJSON());
-        }
         data["id"] = this.id;
         return data; 
     }
@@ -20810,7 +20854,7 @@ export interface IOrderDetailDto {
     orderStatus: OrderDetailDtoOrderStatus | undefined;
     /** 支付状态 */
     paymentStatusString: string | undefined;
-    /** 支付状态10 = Pending ; 20 = Authorized ; 30 = Paid ; 35 = PartiallyRefunded ; 40 = Refunded */
+    /** 支付状态10 = Pending ; 30 = Paid ; 35 = PartiallyRefunded ; 40 = Refunded */
     paymentStatus: OrderDetailDtoPaymentStatus | undefined;
     /** 物流状态 */
     shippingStatusString: string | undefined;
@@ -20872,8 +20916,6 @@ export interface IOrderDetailDto {
     refundedAmount: number | undefined;
     /** 子订单 */
     items: OrderDetailItemDto[] | undefined;
-    /** 发货记录 */
-    shipments: ShipmentDto[] | undefined;
     id: number | undefined;
 }
 
@@ -20967,197 +21009,21 @@ export interface IOrderDetailItemDto {
     id: number | undefined;
 }
 
-export class ShipmentDto implements IShipmentDto {
+export class GetOrderForEditOutput implements IGetOrderForEditOutput {
     /** 订单号 */
     orderNumber!: string | undefined;
-    /** 快递单号 */
-    trackingNumber!: string | undefined;
-    /** 快递Id */
-    logisticsId!: number | undefined;
-    /** 快递名称 */
-    logisticsName!: string | undefined;
-    /** 发货状态0 = NoTrace ; 1 = Taked ; 2 = OnPassag ; 3 = Received ; 4 = Issue ; 10 = ShippingNotRequired ; 20 = NotYetShipped ; 25 = PartiallyShipped ; 201 = DestinationCity ; 202 = Delivering ; 404 = IssueWithReject ; 500 = Cancel ; 600 = Intercept */
-    status!: ShipmentDtoStatus | undefined;
-    /** 发货时间 */
-    deliveryOd!: moment.Moment | undefined;
-    /** 签收时间 */
-    receivedOn!: moment.Moment | undefined;
-    /** 备注 */
-    adminComment!: string | undefined;
-    /** 重量(如果有) */
-    totalWeight!: number | undefined;
-    /** 体积(如果有) */
-    totalVolume!: number | undefined;
-    /** 发货条目 */
-    items!: ShipmentItemDto[] | undefined;
-    id!: number | undefined;
-
-    constructor(data?: IShipmentDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.orderNumber = data["orderNumber"];
-            this.trackingNumber = data["trackingNumber"];
-            this.logisticsId = data["logisticsId"];
-            this.logisticsName = data["logisticsName"];
-            this.status = data["status"];
-            this.deliveryOd = data["deliveryOd"] ? moment(data["deliveryOd"].toString()) : <any>undefined;
-            this.receivedOn = data["receivedOn"] ? moment(data["receivedOn"].toString()) : <any>undefined;
-            this.adminComment = data["adminComment"];
-            this.totalWeight = data["totalWeight"];
-            this.totalVolume = data["totalVolume"];
-            if (data["items"] && data["items"].constructor === Array) {
-                this.items = [];
-                for (let item of data["items"])
-                    this.items.push(ShipmentItemDto.fromJS(item));
-            }
-            this.id = data["id"];
-        }
-    }
-
-    static fromJS(data: any): ShipmentDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new ShipmentDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["orderNumber"] = this.orderNumber;
-        data["trackingNumber"] = this.trackingNumber;
-        data["logisticsId"] = this.logisticsId;
-        data["logisticsName"] = this.logisticsName;
-        data["status"] = this.status;
-        data["deliveryOd"] = this.deliveryOd ? this.deliveryOd.toISOString() : <any>undefined;
-        data["receivedOn"] = this.receivedOn ? this.receivedOn.toISOString() : <any>undefined;
-        data["adminComment"] = this.adminComment;
-        data["totalWeight"] = this.totalWeight;
-        data["totalVolume"] = this.totalVolume;
-        if (this.items && this.items.constructor === Array) {
-            data["items"] = [];
-            for (let item of this.items)
-                data["items"].push(item.toJSON());
-        }
-        data["id"] = this.id;
-        return data; 
-    }
-}
-
-export interface IShipmentDto {
-    /** 订单号 */
-    orderNumber: string | undefined;
-    /** 快递单号 */
-    trackingNumber: string | undefined;
-    /** 快递Id */
-    logisticsId: number | undefined;
-    /** 快递名称 */
-    logisticsName: string | undefined;
-    /** 发货状态0 = NoTrace ; 1 = Taked ; 2 = OnPassag ; 3 = Received ; 4 = Issue ; 10 = ShippingNotRequired ; 20 = NotYetShipped ; 25 = PartiallyShipped ; 201 = DestinationCity ; 202 = Delivering ; 404 = IssueWithReject ; 500 = Cancel ; 600 = Intercept */
-    status: ShipmentDtoStatus | undefined;
-    /** 发货时间 */
-    deliveryOd: moment.Moment | undefined;
-    /** 签收时间 */
-    receivedOn: moment.Moment | undefined;
-    /** 备注 */
-    adminComment: string | undefined;
-    /** 重量(如果有) */
-    totalWeight: number | undefined;
-    /** 体积(如果有) */
-    totalVolume: number | undefined;
-    /** 发货条目 */
-    items: ShipmentItemDto[] | undefined;
-    id: number | undefined;
-}
-
-export class ShipmentItemDto implements IShipmentItemDto {
-    /** 商品名称 */
-    productName!: string | undefined;
-    /** Sku */
-    sku!: string | undefined;
-    /** 属性 */
-    attributeInfo!: string | undefined;
-    /** 订单item id */
-    orderItemId!: number | undefined;
-    /** 数量 */
-    quantity!: number | undefined;
-    id!: number | undefined;
-
-    constructor(data?: IShipmentItemDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.productName = data["productName"];
-            this.sku = data["sku"];
-            this.attributeInfo = data["attributeInfo"];
-            this.orderItemId = data["orderItemId"];
-            this.quantity = data["quantity"];
-            this.id = data["id"];
-        }
-    }
-
-    static fromJS(data: any): ShipmentItemDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new ShipmentItemDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["productName"] = this.productName;
-        data["sku"] = this.sku;
-        data["attributeInfo"] = this.attributeInfo;
-        data["orderItemId"] = this.orderItemId;
-        data["quantity"] = this.quantity;
-        data["id"] = this.id;
-        return data; 
-    }
-}
-
-export interface IShipmentItemDto {
-    /** 商品名称 */
-    productName: string | undefined;
-    /** Sku */
-    sku: string | undefined;
-    /** 属性 */
-    attributeInfo: string | undefined;
-    /** 订单item id */
-    orderItemId: number | undefined;
-    /** 数量 */
-    quantity: number | undefined;
-    id: number | undefined;
-}
-
-export class CreateOrUpdateOrderInput implements ICreateOrUpdateOrderInput {
-    /** 订单号（缺省自动生成） */
-    orderNumber!: string | undefined;
-    /** 店铺Id */
-    storeId!: number | undefined;
-    /** 订单状态(缺省为待确认)10 = WaitConfirm ; 20 = Processing ; 30 = Complete ; 40 = Cancelled */
-    orderStatus!: CreateOrUpdateOrderInputOrderStatus | undefined;
-    /** 支付状态(缺省为未支付)10 = Pending ; 20 = Authorized ; 30 = Paid ; 35 = PartiallyRefunded ; 40 = Refunded */
-    paymentStatus!: CreateOrUpdateOrderInputPaymentStatus | undefined;
-    /** 物流状态(缺省为未发货）0 = NoTrace ; 1 = Taked ; 2 = OnPassag ; 3 = Received ; 4 = Issue ; 10 = ShippingNotRequired ; 20 = NotYetShipped ; 25 = PartiallyShipped ; 201 = DestinationCity ; 202 = Delivering ; 404 = IssueWithReject ; 500 = Cancel ; 600 = Intercept */
-    shippingStatus!: CreateOrUpdateOrderInputShippingStatus | undefined;
-    /** 订单类型（缺省为货到付款）1 = PayOnline ; 2 = PayOnDelivery */
-    orderType!: CreateOrUpdateOrderInputOrderType | undefined;
-    /** 订单来源（缺省优先店铺设置，店铺id为空则为后台自建）10 = Self ; 20 = FxgAd ; 30 = FxgPd ; 40 = Tenant ; 50 = YouZan */
-    orderSource!: CreateOrUpdateOrderInputOrderSource | undefined;
+    /** 店铺 */
+    storeId!: string | undefined;
+    /** 订单状态10 = WaitConfirm ; 20 = Processing ; 30 = Complete ; 40 = Cancelled */
+    orderStatus!: GetOrderForEditOutputOrderStatus | undefined;
+    /** 支付状态10 = Pending ; 30 = Paid ; 35 = PartiallyRefunded ; 40 = Refunded */
+    paymentStatus!: GetOrderForEditOutputPaymentStatus | undefined;
+    /** 物流状态0 = NoTrace ; 1 = Taked ; 2 = OnPassag ; 3 = Received ; 4 = Issue ; 10 = ShippingNotRequired ; 20 = NotYetShipped ; 25 = PartiallyShipped ; 201 = DestinationCity ; 202 = Delivering ; 404 = IssueWithReject ; 500 = Cancel ; 600 = Intercept */
+    shippingStatus!: GetOrderForEditOutputShippingStatus | undefined;
+    /** 订单类型Id1 = PayOnline ; 2 = PayOnDelivery */
+    orderType!: GetOrderForEditOutputOrderType | undefined;
+    /** 订单来源Id10 = Self ; 20 = FxgAd ; 30 = FxgPd ; 40 = Tenant ; 50 = YouZan */
+    orderSource!: GetOrderForEditOutputOrderSource | undefined;
     /** 管理员备注 */
     adminComment!: string | undefined;
     /** 客户备注 */
@@ -21170,17 +21036,25 @@ export class CreateOrUpdateOrderInput implements ICreateOrUpdateOrderInput {
     shippingDistrictId!: number | undefined;
     /** 收货地址(详细信息) */
     shippingAddress!: string | undefined;
-    /** 收货地址(电话,自动查找对应客户) */
+    /** 收货地址(电话) */
     shippingPhoneNumber!: string | undefined;
     /** 收货地址(姓名) */
     shippingName!: string | undefined;
-    /** 订单小计(子订单小计) */
+    /** 创建时间 */
+    createOn!: moment.Moment | undefined;
+    /** 付款时间(已付款状态才有值) */
+    paidOn!: moment.Moment | undefined;
+    /** 签收时间(已签收状态才有值) */
+    receivedOn!: moment.Moment | undefined;
+    /** 下单Ip地址 */
+    ipAddress!: string | undefined;
+    /** 订单小计 */
     subtotalAmount!: number | undefined;
-    /** 订单总额(订单金额，折算所有后) */
+    /** 订单总额 */
     totalAmount!: number | undefined;
     /** 货运费用 */
     shippingAmount!: number | undefined;
-    /** 订单提成/佣金 */
+    /** 订单提成金额 */
     rewardAmount!: number | undefined;
     /** 支付方式附加费（货到付款手续费） */
     paymentMethodAdditionalFee!: number | undefined;
@@ -21190,11 +21064,10 @@ export class CreateOrUpdateOrderInput implements ICreateOrUpdateOrderInput {
     subTotalDiscountAmount!: number | undefined;
     /** 退款金额 */
     refundedAmount!: number | undefined;
-    /** 子订单(商品) */
+    /** 子订单 */
     items!: OrderItemDto[] | undefined;
-    id!: number | undefined;
 
-    constructor(data?: ICreateOrUpdateOrderInput) {
+    constructor(data?: IGetOrderForEditOutput) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -21220,6 +21093,10 @@ export class CreateOrUpdateOrderInput implements ICreateOrUpdateOrderInput {
             this.shippingAddress = data["shippingAddress"];
             this.shippingPhoneNumber = data["shippingPhoneNumber"];
             this.shippingName = data["shippingName"];
+            this.createOn = data["createOn"] ? moment(data["createOn"].toString()) : <any>undefined;
+            this.paidOn = data["paidOn"] ? moment(data["paidOn"].toString()) : <any>undefined;
+            this.receivedOn = data["receivedOn"] ? moment(data["receivedOn"].toString()) : <any>undefined;
+            this.ipAddress = data["ipAddress"];
             this.subtotalAmount = data["subtotalAmount"];
             this.totalAmount = data["totalAmount"];
             this.shippingAmount = data["shippingAmount"];
@@ -21233,13 +21110,12 @@ export class CreateOrUpdateOrderInput implements ICreateOrUpdateOrderInput {
                 for (let item of data["items"])
                     this.items.push(OrderItemDto.fromJS(item));
             }
-            this.id = data["id"];
         }
     }
 
-    static fromJS(data: any): CreateOrUpdateOrderInput {
+    static fromJS(data: any): GetOrderForEditOutput {
         data = typeof data === 'object' ? data : {};
-        let result = new CreateOrUpdateOrderInput();
+        let result = new GetOrderForEditOutput();
         result.init(data);
         return result;
     }
@@ -21261,6 +21137,10 @@ export class CreateOrUpdateOrderInput implements ICreateOrUpdateOrderInput {
         data["shippingAddress"] = this.shippingAddress;
         data["shippingPhoneNumber"] = this.shippingPhoneNumber;
         data["shippingName"] = this.shippingName;
+        data["createOn"] = this.createOn ? this.createOn.toISOString() : <any>undefined;
+        data["paidOn"] = this.paidOn ? this.paidOn.toISOString() : <any>undefined;
+        data["receivedOn"] = this.receivedOn ? this.receivedOn.toISOString() : <any>undefined;
+        data["ipAddress"] = this.ipAddress;
         data["subtotalAmount"] = this.subtotalAmount;
         data["totalAmount"] = this.totalAmount;
         data["shippingAmount"] = this.shippingAmount;
@@ -21274,26 +21154,25 @@ export class CreateOrUpdateOrderInput implements ICreateOrUpdateOrderInput {
             for (let item of this.items)
                 data["items"].push(item.toJSON());
         }
-        data["id"] = this.id;
         return data; 
     }
 }
 
-export interface ICreateOrUpdateOrderInput {
-    /** 订单号（缺省自动生成） */
+export interface IGetOrderForEditOutput {
+    /** 订单号 */
     orderNumber: string | undefined;
-    /** 店铺Id */
-    storeId: number | undefined;
-    /** 订单状态(缺省为待确认)10 = WaitConfirm ; 20 = Processing ; 30 = Complete ; 40 = Cancelled */
-    orderStatus: CreateOrUpdateOrderInputOrderStatus | undefined;
-    /** 支付状态(缺省为未支付)10 = Pending ; 20 = Authorized ; 30 = Paid ; 35 = PartiallyRefunded ; 40 = Refunded */
-    paymentStatus: CreateOrUpdateOrderInputPaymentStatus | undefined;
-    /** 物流状态(缺省为未发货）0 = NoTrace ; 1 = Taked ; 2 = OnPassag ; 3 = Received ; 4 = Issue ; 10 = ShippingNotRequired ; 20 = NotYetShipped ; 25 = PartiallyShipped ; 201 = DestinationCity ; 202 = Delivering ; 404 = IssueWithReject ; 500 = Cancel ; 600 = Intercept */
-    shippingStatus: CreateOrUpdateOrderInputShippingStatus | undefined;
-    /** 订单类型（缺省为货到付款）1 = PayOnline ; 2 = PayOnDelivery */
-    orderType: CreateOrUpdateOrderInputOrderType | undefined;
-    /** 订单来源（缺省优先店铺设置，店铺id为空则为后台自建）10 = Self ; 20 = FxgAd ; 30 = FxgPd ; 40 = Tenant ; 50 = YouZan */
-    orderSource: CreateOrUpdateOrderInputOrderSource | undefined;
+    /** 店铺 */
+    storeId: string | undefined;
+    /** 订单状态10 = WaitConfirm ; 20 = Processing ; 30 = Complete ; 40 = Cancelled */
+    orderStatus: GetOrderForEditOutputOrderStatus | undefined;
+    /** 支付状态10 = Pending ; 30 = Paid ; 35 = PartiallyRefunded ; 40 = Refunded */
+    paymentStatus: GetOrderForEditOutputPaymentStatus | undefined;
+    /** 物流状态0 = NoTrace ; 1 = Taked ; 2 = OnPassag ; 3 = Received ; 4 = Issue ; 10 = ShippingNotRequired ; 20 = NotYetShipped ; 25 = PartiallyShipped ; 201 = DestinationCity ; 202 = Delivering ; 404 = IssueWithReject ; 500 = Cancel ; 600 = Intercept */
+    shippingStatus: GetOrderForEditOutputShippingStatus | undefined;
+    /** 订单类型Id1 = PayOnline ; 2 = PayOnDelivery */
+    orderType: GetOrderForEditOutputOrderType | undefined;
+    /** 订单来源Id10 = Self ; 20 = FxgAd ; 30 = FxgPd ; 40 = Tenant ; 50 = YouZan */
+    orderSource: GetOrderForEditOutputOrderSource | undefined;
     /** 管理员备注 */
     adminComment: string | undefined;
     /** 客户备注 */
@@ -21306,17 +21185,25 @@ export interface ICreateOrUpdateOrderInput {
     shippingDistrictId: number | undefined;
     /** 收货地址(详细信息) */
     shippingAddress: string | undefined;
-    /** 收货地址(电话,自动查找对应客户) */
+    /** 收货地址(电话) */
     shippingPhoneNumber: string | undefined;
     /** 收货地址(姓名) */
     shippingName: string | undefined;
-    /** 订单小计(子订单小计) */
+    /** 创建时间 */
+    createOn: moment.Moment | undefined;
+    /** 付款时间(已付款状态才有值) */
+    paidOn: moment.Moment | undefined;
+    /** 签收时间(已签收状态才有值) */
+    receivedOn: moment.Moment | undefined;
+    /** 下单Ip地址 */
+    ipAddress: string | undefined;
+    /** 订单小计 */
     subtotalAmount: number | undefined;
-    /** 订单总额(订单金额，折算所有后) */
+    /** 订单总额 */
     totalAmount: number | undefined;
     /** 货运费用 */
     shippingAmount: number | undefined;
-    /** 订单提成/佣金 */
+    /** 订单提成金额 */
     rewardAmount: number | undefined;
     /** 支付方式附加费（货到付款手续费） */
     paymentMethodAdditionalFee: number | undefined;
@@ -21326,9 +21213,8 @@ export interface ICreateOrUpdateOrderInput {
     subTotalDiscountAmount: number | undefined;
     /** 退款金额 */
     refundedAmount: number | undefined;
-    /** 子订单(商品) */
+    /** 子订单 */
     items: OrderItemDto[] | undefined;
-    id: number | undefined;
 }
 
 export class OrderItemDto implements IOrderItemDto {
@@ -21531,6 +21417,194 @@ export interface IProductAttributeValueDto {
     id: number | undefined;
 }
 
+export class CreateOrUpdateOrderInput implements ICreateOrUpdateOrderInput {
+    /** 订单号（缺省自动生成） */
+    orderNumber!: string | undefined;
+    /** 店铺Id */
+    storeId!: number | undefined;
+    /** 订单状态(缺省为待确认)10 = WaitConfirm ; 20 = Processing ; 30 = Complete ; 40 = Cancelled */
+    orderStatus!: CreateOrUpdateOrderInputOrderStatus | undefined;
+    /** 支付状态(缺省为未支付)10 = Pending ; 30 = Paid ; 35 = PartiallyRefunded ; 40 = Refunded */
+    paymentStatus!: CreateOrUpdateOrderInputPaymentStatus | undefined;
+    /** 物流状态(缺省为未发货）0 = NoTrace ; 1 = Taked ; 2 = OnPassag ; 3 = Received ; 4 = Issue ; 10 = ShippingNotRequired ; 20 = NotYetShipped ; 25 = PartiallyShipped ; 201 = DestinationCity ; 202 = Delivering ; 404 = IssueWithReject ; 500 = Cancel ; 600 = Intercept */
+    shippingStatus!: CreateOrUpdateOrderInputShippingStatus | undefined;
+    /** 订单类型（缺省为货到付款）1 = PayOnline ; 2 = PayOnDelivery */
+    orderType!: CreateOrUpdateOrderInputOrderType | undefined;
+    /** 订单来源（缺省优先店铺设置，店铺id为空则为后台自建）10 = Self ; 20 = FxgAd ; 30 = FxgPd ; 40 = Tenant ; 50 = YouZan */
+    orderSource!: CreateOrUpdateOrderInputOrderSource | undefined;
+    /** 管理员备注 */
+    adminComment!: string | undefined;
+    /** 客户备注 */
+    customerComment!: string | undefined;
+    /** 收货地址(省份id) */
+    shippingProvinceId!: number | undefined;
+    /** 收货地址(城市Id) */
+    shippingCityId!: number | undefined;
+    /** 收货地址(区域/县Id) */
+    shippingDistrictId!: number | undefined;
+    /** 收货地址(详细信息) */
+    shippingAddress!: string | undefined;
+    /** 收货地址(电话,自动查找对应客户) */
+    shippingPhoneNumber!: string | undefined;
+    /** 收货地址(姓名) */
+    shippingName!: string | undefined;
+    /** 订单小计(子订单小计) */
+    subtotalAmount!: number | undefined;
+    /** 订单总额(订单金额，折算所有后) */
+    totalAmount!: number | undefined;
+    /** 货运费用 */
+    shippingAmount!: number | undefined;
+    /** 订单提成/佣金 */
+    rewardAmount!: number | undefined;
+    /** 支付方式附加费（货到付款手续费） */
+    paymentMethodAdditionalFee!: number | undefined;
+    /** 订单折扣（适用于订单总额） */
+    discountAmount!: number | undefined;
+    /** 订单折扣总额 */
+    subTotalDiscountAmount!: number | undefined;
+    /** 退款金额 */
+    refundedAmount!: number | undefined;
+    /** 子订单(商品) */
+    items!: OrderItemDto[] | undefined;
+    id!: number | undefined;
+
+    constructor(data?: ICreateOrUpdateOrderInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.orderNumber = data["orderNumber"];
+            this.storeId = data["storeId"];
+            this.orderStatus = data["orderStatus"];
+            this.paymentStatus = data["paymentStatus"];
+            this.shippingStatus = data["shippingStatus"];
+            this.orderType = data["orderType"];
+            this.orderSource = data["orderSource"];
+            this.adminComment = data["adminComment"];
+            this.customerComment = data["customerComment"];
+            this.shippingProvinceId = data["shippingProvinceId"];
+            this.shippingCityId = data["shippingCityId"];
+            this.shippingDistrictId = data["shippingDistrictId"];
+            this.shippingAddress = data["shippingAddress"];
+            this.shippingPhoneNumber = data["shippingPhoneNumber"];
+            this.shippingName = data["shippingName"];
+            this.subtotalAmount = data["subtotalAmount"];
+            this.totalAmount = data["totalAmount"];
+            this.shippingAmount = data["shippingAmount"];
+            this.rewardAmount = data["rewardAmount"];
+            this.paymentMethodAdditionalFee = data["paymentMethodAdditionalFee"];
+            this.discountAmount = data["discountAmount"];
+            this.subTotalDiscountAmount = data["subTotalDiscountAmount"];
+            this.refundedAmount = data["refundedAmount"];
+            if (data["items"] && data["items"].constructor === Array) {
+                this.items = [];
+                for (let item of data["items"])
+                    this.items.push(OrderItemDto.fromJS(item));
+            }
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): CreateOrUpdateOrderInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new CreateOrUpdateOrderInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["orderNumber"] = this.orderNumber;
+        data["storeId"] = this.storeId;
+        data["orderStatus"] = this.orderStatus;
+        data["paymentStatus"] = this.paymentStatus;
+        data["shippingStatus"] = this.shippingStatus;
+        data["orderType"] = this.orderType;
+        data["orderSource"] = this.orderSource;
+        data["adminComment"] = this.adminComment;
+        data["customerComment"] = this.customerComment;
+        data["shippingProvinceId"] = this.shippingProvinceId;
+        data["shippingCityId"] = this.shippingCityId;
+        data["shippingDistrictId"] = this.shippingDistrictId;
+        data["shippingAddress"] = this.shippingAddress;
+        data["shippingPhoneNumber"] = this.shippingPhoneNumber;
+        data["shippingName"] = this.shippingName;
+        data["subtotalAmount"] = this.subtotalAmount;
+        data["totalAmount"] = this.totalAmount;
+        data["shippingAmount"] = this.shippingAmount;
+        data["rewardAmount"] = this.rewardAmount;
+        data["paymentMethodAdditionalFee"] = this.paymentMethodAdditionalFee;
+        data["discountAmount"] = this.discountAmount;
+        data["subTotalDiscountAmount"] = this.subTotalDiscountAmount;
+        data["refundedAmount"] = this.refundedAmount;
+        if (this.items && this.items.constructor === Array) {
+            data["items"] = [];
+            for (let item of this.items)
+                data["items"].push(item.toJSON());
+        }
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface ICreateOrUpdateOrderInput {
+    /** 订单号（缺省自动生成） */
+    orderNumber: string | undefined;
+    /** 店铺Id */
+    storeId: number | undefined;
+    /** 订单状态(缺省为待确认)10 = WaitConfirm ; 20 = Processing ; 30 = Complete ; 40 = Cancelled */
+    orderStatus: CreateOrUpdateOrderInputOrderStatus | undefined;
+    /** 支付状态(缺省为未支付)10 = Pending ; 30 = Paid ; 35 = PartiallyRefunded ; 40 = Refunded */
+    paymentStatus: CreateOrUpdateOrderInputPaymentStatus | undefined;
+    /** 物流状态(缺省为未发货）0 = NoTrace ; 1 = Taked ; 2 = OnPassag ; 3 = Received ; 4 = Issue ; 10 = ShippingNotRequired ; 20 = NotYetShipped ; 25 = PartiallyShipped ; 201 = DestinationCity ; 202 = Delivering ; 404 = IssueWithReject ; 500 = Cancel ; 600 = Intercept */
+    shippingStatus: CreateOrUpdateOrderInputShippingStatus | undefined;
+    /** 订单类型（缺省为货到付款）1 = PayOnline ; 2 = PayOnDelivery */
+    orderType: CreateOrUpdateOrderInputOrderType | undefined;
+    /** 订单来源（缺省优先店铺设置，店铺id为空则为后台自建）10 = Self ; 20 = FxgAd ; 30 = FxgPd ; 40 = Tenant ; 50 = YouZan */
+    orderSource: CreateOrUpdateOrderInputOrderSource | undefined;
+    /** 管理员备注 */
+    adminComment: string | undefined;
+    /** 客户备注 */
+    customerComment: string | undefined;
+    /** 收货地址(省份id) */
+    shippingProvinceId: number | undefined;
+    /** 收货地址(城市Id) */
+    shippingCityId: number | undefined;
+    /** 收货地址(区域/县Id) */
+    shippingDistrictId: number | undefined;
+    /** 收货地址(详细信息) */
+    shippingAddress: string | undefined;
+    /** 收货地址(电话,自动查找对应客户) */
+    shippingPhoneNumber: string | undefined;
+    /** 收货地址(姓名) */
+    shippingName: string | undefined;
+    /** 订单小计(子订单小计) */
+    subtotalAmount: number | undefined;
+    /** 订单总额(订单金额，折算所有后) */
+    totalAmount: number | undefined;
+    /** 货运费用 */
+    shippingAmount: number | undefined;
+    /** 订单提成/佣金 */
+    rewardAmount: number | undefined;
+    /** 支付方式附加费（货到付款手续费） */
+    paymentMethodAdditionalFee: number | undefined;
+    /** 订单折扣（适用于订单总额） */
+    discountAmount: number | undefined;
+    /** 订单折扣总额 */
+    subTotalDiscountAmount: number | undefined;
+    /** 退款金额 */
+    refundedAmount: number | undefined;
+    /** 子订单(商品) */
+    items: OrderItemDto[] | undefined;
+    id: number | undefined;
+}
+
 export class ChangeOrderStatusInputOfOrderStatus implements IChangeOrderStatusInputOfOrderStatus {
     /** id数组 */
     ids!: Ids[] | undefined;
@@ -21646,7 +21720,7 @@ export interface IChangeOrderStatusInputOfShippingStatus {
 export class ChangeOrderStatusInputOfPaymentStatus implements IChangeOrderStatusInputOfPaymentStatus {
     /** id数组 */
     ids!: Ids3[] | undefined;
-    /** 状态10 = Pending ; 20 = Authorized ; 30 = Paid ; 35 = PartiallyRefunded ; 40 = Refunded */
+    /** 状态10 = Pending ; 30 = Paid ; 35 = PartiallyRefunded ; 40 = Refunded */
     stauts!: ChangeOrderStatusInputOfPaymentStatusStauts | undefined;
     id!: number | undefined;
 
@@ -21694,7 +21768,7 @@ export class ChangeOrderStatusInputOfPaymentStatus implements IChangeOrderStatus
 export interface IChangeOrderStatusInputOfPaymentStatus {
     /** id数组 */
     ids: Ids3[] | undefined;
-    /** 状态10 = Pending ; 20 = Authorized ; 30 = Paid ; 35 = PartiallyRefunded ; 40 = Refunded */
+    /** 状态10 = Pending ; 30 = Paid ; 35 = PartiallyRefunded ; 40 = Refunded */
     stauts: ChangeOrderStatusInputOfPaymentStatusStauts | undefined;
     id: number | undefined;
 }
@@ -25341,6 +25415,182 @@ export interface IShipmentListDto {
     receivedOn: moment.Moment | undefined;
     /** 备注 */
     adminComment: string | undefined;
+    id: number | undefined;
+}
+
+export class ShipmentDto implements IShipmentDto {
+    /** 订单号 */
+    orderNumber!: string | undefined;
+    /** 快递单号 */
+    trackingNumber!: string | undefined;
+    /** 快递Id */
+    logisticsId!: number | undefined;
+    /** 快递名称 */
+    logisticsName!: string | undefined;
+    /** 发货状态0 = NoTrace ; 1 = Taked ; 2 = OnPassag ; 3 = Received ; 4 = Issue ; 10 = ShippingNotRequired ; 20 = NotYetShipped ; 25 = PartiallyShipped ; 201 = DestinationCity ; 202 = Delivering ; 404 = IssueWithReject ; 500 = Cancel ; 600 = Intercept */
+    status!: ShipmentDtoStatus | undefined;
+    /** 发货时间 */
+    deliveryOd!: moment.Moment | undefined;
+    /** 签收时间 */
+    receivedOn!: moment.Moment | undefined;
+    /** 备注 */
+    adminComment!: string | undefined;
+    /** 重量(如果有) */
+    totalWeight!: number | undefined;
+    /** 体积(如果有) */
+    totalVolume!: number | undefined;
+    /** 发货条目 */
+    items!: ShipmentItemDto[] | undefined;
+    id!: number | undefined;
+
+    constructor(data?: IShipmentDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.orderNumber = data["orderNumber"];
+            this.trackingNumber = data["trackingNumber"];
+            this.logisticsId = data["logisticsId"];
+            this.logisticsName = data["logisticsName"];
+            this.status = data["status"];
+            this.deliveryOd = data["deliveryOd"] ? moment(data["deliveryOd"].toString()) : <any>undefined;
+            this.receivedOn = data["receivedOn"] ? moment(data["receivedOn"].toString()) : <any>undefined;
+            this.adminComment = data["adminComment"];
+            this.totalWeight = data["totalWeight"];
+            this.totalVolume = data["totalVolume"];
+            if (data["items"] && data["items"].constructor === Array) {
+                this.items = [];
+                for (let item of data["items"])
+                    this.items.push(ShipmentItemDto.fromJS(item));
+            }
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): ShipmentDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new ShipmentDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["orderNumber"] = this.orderNumber;
+        data["trackingNumber"] = this.trackingNumber;
+        data["logisticsId"] = this.logisticsId;
+        data["logisticsName"] = this.logisticsName;
+        data["status"] = this.status;
+        data["deliveryOd"] = this.deliveryOd ? this.deliveryOd.toISOString() : <any>undefined;
+        data["receivedOn"] = this.receivedOn ? this.receivedOn.toISOString() : <any>undefined;
+        data["adminComment"] = this.adminComment;
+        data["totalWeight"] = this.totalWeight;
+        data["totalVolume"] = this.totalVolume;
+        if (this.items && this.items.constructor === Array) {
+            data["items"] = [];
+            for (let item of this.items)
+                data["items"].push(item.toJSON());
+        }
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface IShipmentDto {
+    /** 订单号 */
+    orderNumber: string | undefined;
+    /** 快递单号 */
+    trackingNumber: string | undefined;
+    /** 快递Id */
+    logisticsId: number | undefined;
+    /** 快递名称 */
+    logisticsName: string | undefined;
+    /** 发货状态0 = NoTrace ; 1 = Taked ; 2 = OnPassag ; 3 = Received ; 4 = Issue ; 10 = ShippingNotRequired ; 20 = NotYetShipped ; 25 = PartiallyShipped ; 201 = DestinationCity ; 202 = Delivering ; 404 = IssueWithReject ; 500 = Cancel ; 600 = Intercept */
+    status: ShipmentDtoStatus | undefined;
+    /** 发货时间 */
+    deliveryOd: moment.Moment | undefined;
+    /** 签收时间 */
+    receivedOn: moment.Moment | undefined;
+    /** 备注 */
+    adminComment: string | undefined;
+    /** 重量(如果有) */
+    totalWeight: number | undefined;
+    /** 体积(如果有) */
+    totalVolume: number | undefined;
+    /** 发货条目 */
+    items: ShipmentItemDto[] | undefined;
+    id: number | undefined;
+}
+
+export class ShipmentItemDto implements IShipmentItemDto {
+    /** 商品名称 */
+    productName!: string | undefined;
+    /** Sku */
+    sku!: string | undefined;
+    /** 属性 */
+    attributeInfo!: string | undefined;
+    /** 订单item id */
+    orderItemId!: number | undefined;
+    /** 数量 */
+    quantity!: number | undefined;
+    id!: number | undefined;
+
+    constructor(data?: IShipmentItemDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.productName = data["productName"];
+            this.sku = data["sku"];
+            this.attributeInfo = data["attributeInfo"];
+            this.orderItemId = data["orderItemId"];
+            this.quantity = data["quantity"];
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): ShipmentItemDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new ShipmentItemDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["productName"] = this.productName;
+        data["sku"] = this.sku;
+        data["attributeInfo"] = this.attributeInfo;
+        data["orderItemId"] = this.orderItemId;
+        data["quantity"] = this.quantity;
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface IShipmentItemDto {
+    /** 商品名称 */
+    productName: string | undefined;
+    /** Sku */
+    sku: string | undefined;
+    /** 属性 */
+    attributeInfo: string | undefined;
+    /** 订单item id */
+    orderItemId: number | undefined;
+    /** 数量 */
+    quantity: number | undefined;
     id: number | undefined;
 }
 
@@ -30469,7 +30719,6 @@ export enum OrderStatuses {
 
 export enum PaymentStatuses {
     _10 = 10, 
-    _20 = 20, 
     _30 = 30, 
     _35 = 35, 
     _40 = 40, 
@@ -30496,7 +30745,7 @@ export enum OrderTypes {
     _2 = 2, 
 }
 
-export enum OrderSource {
+export enum OrderSources {
     _10 = 10, 
     _20 = 20, 
     _30 = 30, 
@@ -30675,7 +30924,6 @@ export enum OrderListDtoOrderStatus {
 
 export enum OrderListDtoPaymentStatus {
     _10 = 10, 
-    _20 = 20, 
     _30 = 30, 
     _35 = 35, 
     _40 = 40, 
@@ -30719,7 +30967,6 @@ export enum OrderDetailDtoOrderStatus {
 
 export enum OrderDetailDtoPaymentStatus {
     _10 = 10, 
-    _20 = 20, 
     _30 = 30, 
     _35 = 35, 
     _40 = 40, 
@@ -30754,7 +31001,21 @@ export enum OrderDetailDtoOrderSource {
     _50 = 50, 
 }
 
-export enum ShipmentDtoStatus {
+export enum GetOrderForEditOutputOrderStatus {
+    _10 = 10, 
+    _20 = 20, 
+    _30 = 30, 
+    _40 = 40, 
+}
+
+export enum GetOrderForEditOutputPaymentStatus {
+    _10 = 10, 
+    _30 = 30, 
+    _35 = 35, 
+    _40 = 40, 
+}
+
+export enum GetOrderForEditOutputShippingStatus {
     _0 = 0, 
     _1 = 1, 
     _2 = 2, 
@@ -30770,6 +31031,19 @@ export enum ShipmentDtoStatus {
     _600 = 600, 
 }
 
+export enum GetOrderForEditOutputOrderType {
+    _1 = 1, 
+    _2 = 2, 
+}
+
+export enum GetOrderForEditOutputOrderSource {
+    _10 = 10, 
+    _20 = 20, 
+    _30 = 30, 
+    _40 = 40, 
+    _50 = 50, 
+}
+
 export enum CreateOrUpdateOrderInputOrderStatus {
     _10 = 10, 
     _20 = 20, 
@@ -30779,7 +31053,6 @@ export enum CreateOrUpdateOrderInputOrderStatus {
 
 export enum CreateOrUpdateOrderInputPaymentStatus {
     _10 = 10, 
-    _20 = 20, 
     _30 = 30, 
     _35 = 35, 
     _40 = 40, 
@@ -30862,7 +31135,6 @@ export enum ChangeOrderStatusInputOfShippingStatusStauts {
 
 export enum Ids3 {
     _10 = 10, 
-    _20 = 20, 
     _30 = 30, 
     _35 = 35, 
     _40 = 40, 
@@ -30870,7 +31142,6 @@ export enum Ids3 {
 
 export enum ChangeOrderStatusInputOfPaymentStatusStauts {
     _10 = 10, 
-    _20 = 20, 
     _30 = 30, 
     _35 = 35, 
     _40 = 40, 
@@ -30903,6 +31174,22 @@ export enum CurrentUserProfileEditDtoGender {
     _0 = 0, 
     _1 = 1, 
     _2 = 2, 
+}
+
+export enum ShipmentDtoStatus {
+    _0 = 0, 
+    _1 = 1, 
+    _2 = 2, 
+    _3 = 3, 
+    _4 = 4, 
+    _10 = 10, 
+    _20 = 20, 
+    _25 = 25, 
+    _201 = 201, 
+    _202 = 202, 
+    _404 = 404, 
+    _500 = 500, 
+    _600 = 600, 
 }
 
 export enum GetShipmentForEditOutputStatus {
