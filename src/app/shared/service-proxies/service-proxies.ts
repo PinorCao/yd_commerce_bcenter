@@ -9064,7 +9064,7 @@ export class ShipmentServiceProxy {
     }
 
     /**
-     * 获取订单发货记录详情
+     * 获取订单的发货记录
      * @param orderId (optional) 
      * @return Success
      */
@@ -9284,6 +9284,59 @@ export class ShipmentServiceProxy {
         }
         return _observableOf<void>(<any>null);
     }
+
+    /**
+     * 快速发货
+     * @param input (optional) 
+     * @return Success
+     */
+    quickDelivery(input: QuickDeliveryInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/app/Shipment/QuickDelivery";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processQuickDelivery(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processQuickDelivery(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processQuickDelivery(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
 }
 
 @Injectable()
@@ -9301,7 +9354,7 @@ export class ShippingTrackerServiceProxy {
      * 获取物流跟踪详情
      * @param orderId (optional) 订单Id(订单/物流Id二传一)
      * @param shipmentId (optional) 发货记录Id(订单/物流Id二传一)
-     * @param refresh (optional) 是否刷新物流跟踪信息(请求第三方)
+     * @param refresh (optional) 强制刷新(请求第三方)
      * @return Success
      */
     getShipmentTracking(orderId: number | null | undefined, shipmentId: number | null | undefined, refresh: boolean | null | undefined): Observable<TrackingDto> {
@@ -25480,16 +25533,26 @@ export interface IPagedResultDtoOfShipmentListDto {
 }
 
 export class ShipmentListDto implements IShipmentListDto {
+    /** 订单Id */
+    orderId!: number | undefined;
     /** 订单号 */
     orderNumber!: string | undefined;
     /** 快递单号 */
-    trackingNumber!: string | undefined;
+    logisticsNumber!: string | undefined;
     /** 快递名称 */
     logisticsName!: string | undefined;
-    /** 订单状态 */
-    status!: string | undefined;
+    /** 发货状态0 = NoTrace ; 1 = Taked ; 2 = OnPassag ; 3 = Received ; 4 = Issue ; 10 = ShippingNotRequired ; 20 = NotYetShipped ; 25 = PartiallyShipped ; 201 = DestinationCity ; 202 = Delivering ; 404 = IssueWithReject ; 500 = Cancel ; 600 = Intercept */
+    status!: ShipmentListDtoStatus | undefined;
+    /** 发货状态 */
+    statusString!: string | undefined;
+    /** 收货姓名 */
+    shippingName!: string | undefined;
+    /** 收货电话 */
+    shippingPhoneNumber!: string | undefined;
+    /** 收货地址 */
+    shippingAddress!: string | undefined;
     /** 发货时间 */
-    deliveryOd!: moment.Moment | undefined;
+    deliveryOn!: moment.Moment | undefined;
     /** 签收时间 */
     receivedOn!: moment.Moment | undefined;
     /** 备注 */
@@ -25507,11 +25570,16 @@ export class ShipmentListDto implements IShipmentListDto {
 
     init(data?: any) {
         if (data) {
+            this.orderId = data["orderId"];
             this.orderNumber = data["orderNumber"];
-            this.trackingNumber = data["trackingNumber"];
+            this.logisticsNumber = data["logisticsNumber"];
             this.logisticsName = data["logisticsName"];
             this.status = data["status"];
-            this.deliveryOd = data["deliveryOd"] ? moment(data["deliveryOd"].toString()) : <any>undefined;
+            this.statusString = data["statusString"];
+            this.shippingName = data["shippingName"];
+            this.shippingPhoneNumber = data["shippingPhoneNumber"];
+            this.shippingAddress = data["shippingAddress"];
+            this.deliveryOn = data["deliveryOn"] ? moment(data["deliveryOn"].toString()) : <any>undefined;
             this.receivedOn = data["receivedOn"] ? moment(data["receivedOn"].toString()) : <any>undefined;
             this.adminComment = data["adminComment"];
             this.id = data["id"];
@@ -25527,11 +25595,16 @@ export class ShipmentListDto implements IShipmentListDto {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["orderId"] = this.orderId;
         data["orderNumber"] = this.orderNumber;
-        data["trackingNumber"] = this.trackingNumber;
+        data["logisticsNumber"] = this.logisticsNumber;
         data["logisticsName"] = this.logisticsName;
         data["status"] = this.status;
-        data["deliveryOd"] = this.deliveryOd ? this.deliveryOd.toISOString() : <any>undefined;
+        data["statusString"] = this.statusString;
+        data["shippingName"] = this.shippingName;
+        data["shippingPhoneNumber"] = this.shippingPhoneNumber;
+        data["shippingAddress"] = this.shippingAddress;
+        data["deliveryOn"] = this.deliveryOn ? this.deliveryOn.toISOString() : <any>undefined;
         data["receivedOn"] = this.receivedOn ? this.receivedOn.toISOString() : <any>undefined;
         data["adminComment"] = this.adminComment;
         data["id"] = this.id;
@@ -25540,16 +25613,26 @@ export class ShipmentListDto implements IShipmentListDto {
 }
 
 export interface IShipmentListDto {
+    /** 订单Id */
+    orderId: number | undefined;
     /** 订单号 */
     orderNumber: string | undefined;
     /** 快递单号 */
-    trackingNumber: string | undefined;
+    logisticsNumber: string | undefined;
     /** 快递名称 */
     logisticsName: string | undefined;
-    /** 订单状态 */
-    status: string | undefined;
+    /** 发货状态0 = NoTrace ; 1 = Taked ; 2 = OnPassag ; 3 = Received ; 4 = Issue ; 10 = ShippingNotRequired ; 20 = NotYetShipped ; 25 = PartiallyShipped ; 201 = DestinationCity ; 202 = Delivering ; 404 = IssueWithReject ; 500 = Cancel ; 600 = Intercept */
+    status: ShipmentListDtoStatus | undefined;
+    /** 发货状态 */
+    statusString: string | undefined;
+    /** 收货姓名 */
+    shippingName: string | undefined;
+    /** 收货电话 */
+    shippingPhoneNumber: string | undefined;
+    /** 收货地址 */
+    shippingAddress: string | undefined;
     /** 发货时间 */
-    deliveryOd: moment.Moment | undefined;
+    deliveryOn: moment.Moment | undefined;
     /** 签收时间 */
     receivedOn: moment.Moment | undefined;
     /** 备注 */
@@ -25558,20 +25641,30 @@ export interface IShipmentListDto {
 }
 
 export class ShipmentDto implements IShipmentDto {
+    /** 订单Id */
+    orderId!: number | undefined;
     /** 订单号 */
     orderNumber!: string | undefined;
     /** 快递单号 */
-    trackingNumber!: string | undefined;
+    logisticsNumber!: string | undefined;
     /** 快递Id */
     logisticsId!: number | undefined;
     /** 快递名称 */
     logisticsName!: string | undefined;
     /** 发货状态0 = NoTrace ; 1 = Taked ; 2 = OnPassag ; 3 = Received ; 4 = Issue ; 10 = ShippingNotRequired ; 20 = NotYetShipped ; 25 = PartiallyShipped ; 201 = DestinationCity ; 202 = Delivering ; 404 = IssueWithReject ; 500 = Cancel ; 600 = Intercept */
     status!: ShipmentDtoStatus | undefined;
+    /** 发货状态 */
+    statusString!: string | undefined;
     /** 发货时间 */
-    deliveryOd!: moment.Moment | undefined;
+    deliveryOn!: moment.Moment | undefined;
     /** 签收时间 */
     receivedOn!: moment.Moment | undefined;
+    /** 收货姓名 */
+    shippingName!: string | undefined;
+    /** 收货电话 */
+    shippingPhoneNumber!: string | undefined;
+    /** 收货地址 */
+    shippingAddress!: string | undefined;
     /** 备注 */
     adminComment!: string | undefined;
     /** 重量(如果有) */
@@ -25593,13 +25686,18 @@ export class ShipmentDto implements IShipmentDto {
 
     init(data?: any) {
         if (data) {
+            this.orderId = data["orderId"];
             this.orderNumber = data["orderNumber"];
-            this.trackingNumber = data["trackingNumber"];
+            this.logisticsNumber = data["logisticsNumber"];
             this.logisticsId = data["logisticsId"];
             this.logisticsName = data["logisticsName"];
             this.status = data["status"];
-            this.deliveryOd = data["deliveryOd"] ? moment(data["deliveryOd"].toString()) : <any>undefined;
+            this.statusString = data["statusString"];
+            this.deliveryOn = data["deliveryOn"] ? moment(data["deliveryOn"].toString()) : <any>undefined;
             this.receivedOn = data["receivedOn"] ? moment(data["receivedOn"].toString()) : <any>undefined;
+            this.shippingName = data["shippingName"];
+            this.shippingPhoneNumber = data["shippingPhoneNumber"];
+            this.shippingAddress = data["shippingAddress"];
             this.adminComment = data["adminComment"];
             this.totalWeight = data["totalWeight"];
             this.totalVolume = data["totalVolume"];
@@ -25621,13 +25719,18 @@ export class ShipmentDto implements IShipmentDto {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["orderId"] = this.orderId;
         data["orderNumber"] = this.orderNumber;
-        data["trackingNumber"] = this.trackingNumber;
+        data["logisticsNumber"] = this.logisticsNumber;
         data["logisticsId"] = this.logisticsId;
         data["logisticsName"] = this.logisticsName;
         data["status"] = this.status;
-        data["deliveryOd"] = this.deliveryOd ? this.deliveryOd.toISOString() : <any>undefined;
+        data["statusString"] = this.statusString;
+        data["deliveryOn"] = this.deliveryOn ? this.deliveryOn.toISOString() : <any>undefined;
         data["receivedOn"] = this.receivedOn ? this.receivedOn.toISOString() : <any>undefined;
+        data["shippingName"] = this.shippingName;
+        data["shippingPhoneNumber"] = this.shippingPhoneNumber;
+        data["shippingAddress"] = this.shippingAddress;
         data["adminComment"] = this.adminComment;
         data["totalWeight"] = this.totalWeight;
         data["totalVolume"] = this.totalVolume;
@@ -25642,20 +25745,30 @@ export class ShipmentDto implements IShipmentDto {
 }
 
 export interface IShipmentDto {
+    /** 订单Id */
+    orderId: number | undefined;
     /** 订单号 */
     orderNumber: string | undefined;
     /** 快递单号 */
-    trackingNumber: string | undefined;
+    logisticsNumber: string | undefined;
     /** 快递Id */
     logisticsId: number | undefined;
     /** 快递名称 */
     logisticsName: string | undefined;
     /** 发货状态0 = NoTrace ; 1 = Taked ; 2 = OnPassag ; 3 = Received ; 4 = Issue ; 10 = ShippingNotRequired ; 20 = NotYetShipped ; 25 = PartiallyShipped ; 201 = DestinationCity ; 202 = Delivering ; 404 = IssueWithReject ; 500 = Cancel ; 600 = Intercept */
     status: ShipmentDtoStatus | undefined;
+    /** 发货状态 */
+    statusString: string | undefined;
     /** 发货时间 */
-    deliveryOd: moment.Moment | undefined;
+    deliveryOn: moment.Moment | undefined;
     /** 签收时间 */
     receivedOn: moment.Moment | undefined;
+    /** 收货姓名 */
+    shippingName: string | undefined;
+    /** 收货电话 */
+    shippingPhoneNumber: string | undefined;
+    /** 收货地址 */
+    shippingAddress: string | undefined;
     /** 备注 */
     adminComment: string | undefined;
     /** 重量(如果有) */
@@ -25670,8 +25783,6 @@ export interface IShipmentDto {
 export class ShipmentItemDto implements IShipmentItemDto {
     /** 商品名称 */
     productName!: string | undefined;
-    /** Sku */
-    sku!: string | undefined;
     /** 属性 */
     attributeInfo!: string | undefined;
     /** 订单item id */
@@ -25692,7 +25803,6 @@ export class ShipmentItemDto implements IShipmentItemDto {
     init(data?: any) {
         if (data) {
             this.productName = data["productName"];
-            this.sku = data["sku"];
             this.attributeInfo = data["attributeInfo"];
             this.orderItemId = data["orderItemId"];
             this.quantity = data["quantity"];
@@ -25710,7 +25820,6 @@ export class ShipmentItemDto implements IShipmentItemDto {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["productName"] = this.productName;
-        data["sku"] = this.sku;
         data["attributeInfo"] = this.attributeInfo;
         data["orderItemId"] = this.orderItemId;
         data["quantity"] = this.quantity;
@@ -25722,8 +25831,6 @@ export class ShipmentItemDto implements IShipmentItemDto {
 export interface IShipmentItemDto {
     /** 商品名称 */
     productName: string | undefined;
-    /** Sku */
-    sku: string | undefined;
     /** 属性 */
     attributeInfo: string | undefined;
     /** 订单item id */
@@ -25939,6 +26046,62 @@ export interface ICreateOrUpdateShipmentInput {
     /** 发货条目 */
     items: ShipmentItemDto[] | undefined;
     id: number | undefined;
+}
+
+export class QuickDeliveryInput implements IQuickDeliveryInput {
+    /** 订单Id */
+    orderId!: number | undefined;
+    /** 租户自选物流Id */
+    logisticsId!: number | undefined;
+    /** 物流单号 */
+    logisticsNumber!: string | undefined;
+    /** 备注 */
+    adminComment!: string | undefined;
+
+    constructor(data?: IQuickDeliveryInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.orderId = data["orderId"];
+            this.logisticsId = data["logisticsId"];
+            this.logisticsNumber = data["logisticsNumber"];
+            this.adminComment = data["adminComment"];
+        }
+    }
+
+    static fromJS(data: any): QuickDeliveryInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new QuickDeliveryInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["orderId"] = this.orderId;
+        data["logisticsId"] = this.logisticsId;
+        data["logisticsNumber"] = this.logisticsNumber;
+        data["adminComment"] = this.adminComment;
+        return data; 
+    }
+}
+
+export interface IQuickDeliveryInput {
+    /** 订单Id */
+    orderId: number | undefined;
+    /** 租户自选物流Id */
+    logisticsId: number | undefined;
+    /** 物流单号 */
+    logisticsNumber: string | undefined;
+    /** 备注 */
+    adminComment: string | undefined;
 }
 
 /** 物流跟踪详情 */
@@ -31313,6 +31476,22 @@ export enum CurrentUserProfileEditDtoGender {
     _0 = 0, 
     _1 = 1, 
     _2 = 2, 
+}
+
+export enum ShipmentListDtoStatus {
+    _0 = 0, 
+    _1 = 1, 
+    _2 = 2, 
+    _3 = 3, 
+    _4 = 4, 
+    _10 = 10, 
+    _20 = 20, 
+    _25 = 25, 
+    _201 = 201, 
+    _202 = 202, 
+    _404 = 404, 
+    _500 = 500, 
+    _600 = 600, 
 }
 
 export enum ShipmentDtoStatus {
