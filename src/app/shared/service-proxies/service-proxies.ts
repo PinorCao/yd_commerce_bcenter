@@ -1497,7 +1497,7 @@ export class CategoryServiceProxy {
      * 获取所有可用分类(下拉框)
      * @return Success
      */
-    getCategorySelectList(): Observable<SelectListItemDto[]> {
+    getCategorySelectList(): Observable<SelectListItemDtoOfInt64[]> {
         let url_ = this.baseUrl + "/api/services/app/Category/GetCategorySelectList";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -1516,14 +1516,14 @@ export class CategoryServiceProxy {
                 try {
                     return this.processGetCategorySelectList(<any>response_);
                 } catch (e) {
-                    return <Observable<SelectListItemDto[]>><any>_observableThrow(e);
+                    return <Observable<SelectListItemDtoOfInt64[]>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<SelectListItemDto[]>><any>_observableThrow(response_);
+                return <Observable<SelectListItemDtoOfInt64[]>><any>_observableThrow(response_);
         }));
     }
 
-    protected processGetCategorySelectList(response: HttpResponseBase): Observable<SelectListItemDto[]> {
+    protected processGetCategorySelectList(response: HttpResponseBase): Observable<SelectListItemDtoOfInt64[]> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -1537,7 +1537,7 @@ export class CategoryServiceProxy {
             if (resultData200 && resultData200.constructor === Array) {
                 result200 = [];
                 for (let item of resultData200)
-                    result200.push(SelectListItemDto.fromJS(item));
+                    result200.push(SelectListItemDtoOfInt64.fromJS(item));
             }
             return _observableOf(result200);
             }));
@@ -1546,7 +1546,7 @@ export class CategoryServiceProxy {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<SelectListItemDto[]>(<any>null);
+        return _observableOf<SelectListItemDtoOfInt64[]>(<any>null);
     }
 
     /**
@@ -1884,12 +1884,12 @@ export class CommonLookupServiceProxy {
     }
 
     /**
-     * 根据枚举名称获取下拉框数据源
+     * 根据枚举名称获取下拉框数据源(值类型)
      * @param enumName (optional) 枚举类型名称
      * @return Success
      */
-    getEnumSelectItemSource(enumName: string | null | undefined): Observable<SelectListItemDto[]> {
-        let url_ = this.baseUrl + "/api/services/app/CommonLookup/GetEnumSelectItemSource?";
+    getEnumSelectItem(enumName: string | null | undefined): Observable<SelectListItemDtoOfInt32[]> {
+        let url_ = this.baseUrl + "/api/services/app/CommonLookup/GetEnumSelectItem?";
         if (enumName !== undefined)
             url_ += "enumName=" + encodeURIComponent("" + enumName) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
@@ -1903,20 +1903,20 @@ export class CommonLookupServiceProxy {
         };
 
         return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetEnumSelectItemSource(response_);
+            return this.processGetEnumSelectItem(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processGetEnumSelectItemSource(<any>response_);
+                    return this.processGetEnumSelectItem(<any>response_);
                 } catch (e) {
-                    return <Observable<SelectListItemDto[]>><any>_observableThrow(e);
+                    return <Observable<SelectListItemDtoOfInt32[]>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<SelectListItemDto[]>><any>_observableThrow(response_);
+                return <Observable<SelectListItemDtoOfInt32[]>><any>_observableThrow(response_);
         }));
     }
 
-    protected processGetEnumSelectItemSource(response: HttpResponseBase): Observable<SelectListItemDto[]> {
+    protected processGetEnumSelectItem(response: HttpResponseBase): Observable<SelectListItemDtoOfInt32[]> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -1930,7 +1930,7 @@ export class CommonLookupServiceProxy {
             if (resultData200 && resultData200.constructor === Array) {
                 result200 = [];
                 for (let item of resultData200)
-                    result200.push(SelectListItemDto.fromJS(item));
+                    result200.push(SelectListItemDtoOfInt32.fromJS(item));
             }
             return _observableOf(result200);
             }));
@@ -1939,7 +1939,66 @@ export class CommonLookupServiceProxy {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<SelectListItemDto[]>(<any>null);
+        return _observableOf<SelectListItemDtoOfInt32[]>(<any>null);
+    }
+
+    /**
+     * 根据枚举名称获取下拉框数据源(字符串)
+     * @param enumName (optional) 枚举类型名称
+     * @return Success
+     */
+    getEnumSelectItemString(enumName: string | null | undefined): Observable<SelectListItemDtoOfString[]> {
+        let url_ = this.baseUrl + "/api/services/app/CommonLookup/GetEnumSelectItemString?";
+        if (enumName !== undefined)
+            url_ += "enumName=" + encodeURIComponent("" + enumName) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetEnumSelectItemString(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetEnumSelectItemString(<any>response_);
+                } catch (e) {
+                    return <Observable<SelectListItemDtoOfString[]>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<SelectListItemDtoOfString[]>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetEnumSelectItemString(response: HttpResponseBase): Observable<SelectListItemDtoOfString[]> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(SelectListItemDtoOfString.fromJS(item));
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<SelectListItemDtoOfString[]>(<any>null);
     }
 }
 
@@ -4193,7 +4252,7 @@ export class LogisticsServiceProxy {
      * 获取所有可用物流(下拉框)
      * @return Success
      */
-    getLogisticsSelectList(): Observable<SelectListItemDto[]> {
+    getLogisticsSelectList(): Observable<SelectListItemDtoOfInt64[]> {
         let url_ = this.baseUrl + "/api/services/app/Logistics/GetLogisticsSelectList";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -4212,14 +4271,14 @@ export class LogisticsServiceProxy {
                 try {
                     return this.processGetLogisticsSelectList(<any>response_);
                 } catch (e) {
-                    return <Observable<SelectListItemDto[]>><any>_observableThrow(e);
+                    return <Observable<SelectListItemDtoOfInt64[]>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<SelectListItemDto[]>><any>_observableThrow(response_);
+                return <Observable<SelectListItemDtoOfInt64[]>><any>_observableThrow(response_);
         }));
     }
 
-    protected processGetLogisticsSelectList(response: HttpResponseBase): Observable<SelectListItemDto[]> {
+    protected processGetLogisticsSelectList(response: HttpResponseBase): Observable<SelectListItemDtoOfInt64[]> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -4233,7 +4292,7 @@ export class LogisticsServiceProxy {
             if (resultData200 && resultData200.constructor === Array) {
                 result200 = [];
                 for (let item of resultData200)
-                    result200.push(SelectListItemDto.fromJS(item));
+                    result200.push(SelectListItemDtoOfInt64.fromJS(item));
             }
             return _observableOf(result200);
             }));
@@ -4242,7 +4301,7 @@ export class LogisticsServiceProxy {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<SelectListItemDto[]>(<any>null);
+        return _observableOf<SelectListItemDtoOfInt64[]>(<any>null);
     }
 
     /**
@@ -4476,7 +4535,7 @@ export class LogisticsServiceProxy {
      * 获取所有可用自选物流(下拉框)
      * @return Success
      */
-    getTenantLogisticsSelectList(): Observable<SelectListItemDto[]> {
+    getTenantLogisticsSelectList(): Observable<SelectListItemDtoOfInt64[]> {
         let url_ = this.baseUrl + "/api/services/app/Logistics/GetTenantLogisticsSelectList";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -4495,14 +4554,14 @@ export class LogisticsServiceProxy {
                 try {
                     return this.processGetTenantLogisticsSelectList(<any>response_);
                 } catch (e) {
-                    return <Observable<SelectListItemDto[]>><any>_observableThrow(e);
+                    return <Observable<SelectListItemDtoOfInt64[]>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<SelectListItemDto[]>><any>_observableThrow(response_);
+                return <Observable<SelectListItemDtoOfInt64[]>><any>_observableThrow(response_);
         }));
     }
 
-    protected processGetTenantLogisticsSelectList(response: HttpResponseBase): Observable<SelectListItemDto[]> {
+    protected processGetTenantLogisticsSelectList(response: HttpResponseBase): Observable<SelectListItemDtoOfInt64[]> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -4516,7 +4575,7 @@ export class LogisticsServiceProxy {
             if (resultData200 && resultData200.constructor === Array) {
                 result200 = [];
                 for (let item of resultData200)
-                    result200.push(SelectListItemDto.fromJS(item));
+                    result200.push(SelectListItemDtoOfInt64.fromJS(item));
             }
             return _observableOf(result200);
             }));
@@ -4525,7 +4584,7 @@ export class LogisticsServiceProxy {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<SelectListItemDto[]>(<any>null);
+        return _observableOf<SelectListItemDtoOfInt64[]>(<any>null);
     }
 
     /**
@@ -7194,7 +7253,7 @@ export class ProductServiceProxy {
      * 获取所有可用商品(下拉框)
      * @return Success
      */
-    getProductSelectList(): Observable<SelectListItemDto[]> {
+    getProductSelectList(): Observable<SelectListItemDtoOfInt64[]> {
         let url_ = this.baseUrl + "/api/services/app/Product/GetProductSelectList";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -7213,14 +7272,14 @@ export class ProductServiceProxy {
                 try {
                     return this.processGetProductSelectList(<any>response_);
                 } catch (e) {
-                    return <Observable<SelectListItemDto[]>><any>_observableThrow(e);
+                    return <Observable<SelectListItemDtoOfInt64[]>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<SelectListItemDto[]>><any>_observableThrow(response_);
+                return <Observable<SelectListItemDtoOfInt64[]>><any>_observableThrow(response_);
         }));
     }
 
-    protected processGetProductSelectList(response: HttpResponseBase): Observable<SelectListItemDto[]> {
+    protected processGetProductSelectList(response: HttpResponseBase): Observable<SelectListItemDtoOfInt64[]> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -7234,7 +7293,7 @@ export class ProductServiceProxy {
             if (resultData200 && resultData200.constructor === Array) {
                 result200 = [];
                 for (let item of resultData200)
-                    result200.push(SelectListItemDto.fromJS(item));
+                    result200.push(SelectListItemDtoOfInt64.fromJS(item));
             }
             return _observableOf(result200);
             }));
@@ -7243,7 +7302,7 @@ export class ProductServiceProxy {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<SelectListItemDto[]>(<any>null);
+        return _observableOf<SelectListItemDtoOfInt64[]>(<any>null);
     }
 
     /**
@@ -9624,7 +9683,7 @@ export class SMSTemplateServiceProxy {
      * 获取所有可用短信模板(下拉框)
      * @return Success
      */
-    getAvailableSMSTemplates(): Observable<SelectListItemDto[]> {
+    getAvailableSMSTemplates(): Observable<SelectListItemDtoOfInt64[]> {
         let url_ = this.baseUrl + "/api/services/app/SMSTemplate/GetAvailableSMSTemplates";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -9643,14 +9702,14 @@ export class SMSTemplateServiceProxy {
                 try {
                     return this.processGetAvailableSMSTemplates(<any>response_);
                 } catch (e) {
-                    return <Observable<SelectListItemDto[]>><any>_observableThrow(e);
+                    return <Observable<SelectListItemDtoOfInt64[]>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<SelectListItemDto[]>><any>_observableThrow(response_);
+                return <Observable<SelectListItemDtoOfInt64[]>><any>_observableThrow(response_);
         }));
     }
 
-    protected processGetAvailableSMSTemplates(response: HttpResponseBase): Observable<SelectListItemDto[]> {
+    protected processGetAvailableSMSTemplates(response: HttpResponseBase): Observable<SelectListItemDtoOfInt64[]> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -9664,7 +9723,7 @@ export class SMSTemplateServiceProxy {
             if (resultData200 && resultData200.constructor === Array) {
                 result200 = [];
                 for (let item of resultData200)
-                    result200.push(SelectListItemDto.fromJS(item));
+                    result200.push(SelectListItemDtoOfInt64.fromJS(item));
             }
             return _observableOf(result200);
             }));
@@ -9673,7 +9732,7 @@ export class SMSTemplateServiceProxy {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<SelectListItemDto[]>(<any>null);
+        return _observableOf<SelectListItemDtoOfInt64[]>(<any>null);
     }
 
     /**
@@ -9968,7 +10027,7 @@ export class StateServiceServiceProxy {
      * 获取所有可用省份(下拉框)
      * @return Success
      */
-    getProvinceSelectList(): Observable<SelectListItemDto[]> {
+    getProvinceSelectList(): Observable<SelectListItemDtoOfInt32[]> {
         let url_ = this.baseUrl + "/api/services/app/StateService/GetProvinceSelectList";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -9987,14 +10046,14 @@ export class StateServiceServiceProxy {
                 try {
                     return this.processGetProvinceSelectList(<any>response_);
                 } catch (e) {
-                    return <Observable<SelectListItemDto[]>><any>_observableThrow(e);
+                    return <Observable<SelectListItemDtoOfInt32[]>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<SelectListItemDto[]>><any>_observableThrow(response_);
+                return <Observable<SelectListItemDtoOfInt32[]>><any>_observableThrow(response_);
         }));
     }
 
-    protected processGetProvinceSelectList(response: HttpResponseBase): Observable<SelectListItemDto[]> {
+    protected processGetProvinceSelectList(response: HttpResponseBase): Observable<SelectListItemDtoOfInt32[]> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -10008,7 +10067,7 @@ export class StateServiceServiceProxy {
             if (resultData200 && resultData200.constructor === Array) {
                 result200 = [];
                 for (let item of resultData200)
-                    result200.push(SelectListItemDto.fromJS(item));
+                    result200.push(SelectListItemDtoOfInt32.fromJS(item));
             }
             return _observableOf(result200);
             }));
@@ -10017,7 +10076,7 @@ export class StateServiceServiceProxy {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<SelectListItemDto[]>(<any>null);
+        return _observableOf<SelectListItemDtoOfInt32[]>(<any>null);
     }
 
     /**
@@ -10193,7 +10252,7 @@ export class StateServiceServiceProxy {
      * @param provinceId (optional) 省份id
      * @return Success
      */
-    getCitySelectList(provinceId: number | null | undefined): Observable<SelectListItemDto[]> {
+    getCitySelectList(provinceId: number | null | undefined): Observable<SelectListItemDtoOfInt32[]> {
         let url_ = this.baseUrl + "/api/services/app/StateService/GetCitySelectList?";
         if (provinceId !== undefined)
             url_ += "provinceId=" + encodeURIComponent("" + provinceId) + "&"; 
@@ -10214,14 +10273,14 @@ export class StateServiceServiceProxy {
                 try {
                     return this.processGetCitySelectList(<any>response_);
                 } catch (e) {
-                    return <Observable<SelectListItemDto[]>><any>_observableThrow(e);
+                    return <Observable<SelectListItemDtoOfInt32[]>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<SelectListItemDto[]>><any>_observableThrow(response_);
+                return <Observable<SelectListItemDtoOfInt32[]>><any>_observableThrow(response_);
         }));
     }
 
-    protected processGetCitySelectList(response: HttpResponseBase): Observable<SelectListItemDto[]> {
+    protected processGetCitySelectList(response: HttpResponseBase): Observable<SelectListItemDtoOfInt32[]> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -10235,7 +10294,7 @@ export class StateServiceServiceProxy {
             if (resultData200 && resultData200.constructor === Array) {
                 result200 = [];
                 for (let item of resultData200)
-                    result200.push(SelectListItemDto.fromJS(item));
+                    result200.push(SelectListItemDtoOfInt32.fromJS(item));
             }
             return _observableOf(result200);
             }));
@@ -10244,7 +10303,7 @@ export class StateServiceServiceProxy {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<SelectListItemDto[]>(<any>null);
+        return _observableOf<SelectListItemDtoOfInt32[]>(<any>null);
     }
 
     /**
@@ -10420,7 +10479,7 @@ export class StateServiceServiceProxy {
      * @param cityId (optional) 城市id
      * @return Success
      */
-    getDistrictSelectList(cityId: number | null | undefined): Observable<SelectListItemDto[]> {
+    getDistrictSelectList(cityId: number | null | undefined): Observable<SelectListItemDtoOfInt32[]> {
         let url_ = this.baseUrl + "/api/services/app/StateService/GetDistrictSelectList?";
         if (cityId !== undefined)
             url_ += "cityId=" + encodeURIComponent("" + cityId) + "&"; 
@@ -10441,14 +10500,14 @@ export class StateServiceServiceProxy {
                 try {
                     return this.processGetDistrictSelectList(<any>response_);
                 } catch (e) {
-                    return <Observable<SelectListItemDto[]>><any>_observableThrow(e);
+                    return <Observable<SelectListItemDtoOfInt32[]>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<SelectListItemDto[]>><any>_observableThrow(response_);
+                return <Observable<SelectListItemDtoOfInt32[]>><any>_observableThrow(response_);
         }));
     }
 
-    protected processGetDistrictSelectList(response: HttpResponseBase): Observable<SelectListItemDto[]> {
+    protected processGetDistrictSelectList(response: HttpResponseBase): Observable<SelectListItemDtoOfInt32[]> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -10462,7 +10521,7 @@ export class StateServiceServiceProxy {
             if (resultData200 && resultData200.constructor === Array) {
                 result200 = [];
                 for (let item of resultData200)
-                    result200.push(SelectListItemDto.fromJS(item));
+                    result200.push(SelectListItemDtoOfInt32.fromJS(item));
             }
             return _observableOf(result200);
             }));
@@ -10471,7 +10530,7 @@ export class StateServiceServiceProxy {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<SelectListItemDto[]>(<any>null);
+        return _observableOf<SelectListItemDtoOfInt32[]>(<any>null);
     }
 
     /**
@@ -10715,7 +10774,7 @@ export class StoreServiceProxy {
      * 获取所有可用店铺(下拉框)
      * @return Success
      */
-    getStoreSelectList(): Observable<SelectListItemDto[]> {
+    getStoreSelectList(): Observable<SelectListItemDtoOfInt64[]> {
         let url_ = this.baseUrl + "/api/services/app/Store/GetStoreSelectList";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -10734,14 +10793,14 @@ export class StoreServiceProxy {
                 try {
                     return this.processGetStoreSelectList(<any>response_);
                 } catch (e) {
-                    return <Observable<SelectListItemDto[]>><any>_observableThrow(e);
+                    return <Observable<SelectListItemDtoOfInt64[]>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<SelectListItemDto[]>><any>_observableThrow(response_);
+                return <Observable<SelectListItemDtoOfInt64[]>><any>_observableThrow(response_);
         }));
     }
 
-    protected processGetStoreSelectList(response: HttpResponseBase): Observable<SelectListItemDto[]> {
+    protected processGetStoreSelectList(response: HttpResponseBase): Observable<SelectListItemDtoOfInt64[]> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -10755,7 +10814,7 @@ export class StoreServiceProxy {
             if (resultData200 && resultData200.constructor === Array) {
                 result200 = [];
                 for (let item of resultData200)
-                    result200.push(SelectListItemDto.fromJS(item));
+                    result200.push(SelectListItemDtoOfInt64.fromJS(item));
             }
             return _observableOf(result200);
             }));
@@ -10764,7 +10823,7 @@ export class StoreServiceProxy {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<SelectListItemDto[]>(<any>null);
+        return _observableOf<SelectListItemDtoOfInt64[]>(<any>null);
     }
 
     /**
@@ -15653,11 +15712,11 @@ export interface ICategoryListDto {
     displayOrder: number | undefined;
 }
 
-export class SelectListItemDto implements ISelectListItemDto {
+export class SelectListItemDtoOfInt64 implements ISelectListItemDtoOfInt64 {
     text!: string | undefined;
-    value!: string | undefined;
+    value!: number | undefined;
 
-    constructor(data?: ISelectListItemDto) {
+    constructor(data?: ISelectListItemDtoOfInt64) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -15673,9 +15732,9 @@ export class SelectListItemDto implements ISelectListItemDto {
         }
     }
 
-    static fromJS(data: any): SelectListItemDto {
+    static fromJS(data: any): SelectListItemDtoOfInt64 {
         data = typeof data === 'object' ? data : {};
-        let result = new SelectListItemDto();
+        let result = new SelectListItemDtoOfInt64();
         result.init(data);
         return result;
     }
@@ -15688,9 +15747,9 @@ export class SelectListItemDto implements ISelectListItemDto {
     }
 }
 
-export interface ISelectListItemDto {
+export interface ISelectListItemDtoOfInt64 {
     text: string | undefined;
-    value: string | undefined;
+    value: number | undefined;
 }
 
 export class GetCategoryForEditOutput implements IGetCategoryForEditOutput {
@@ -16059,6 +16118,86 @@ export class GetDefaultEditionNameOutput implements IGetDefaultEditionNameOutput
 
 export interface IGetDefaultEditionNameOutput {
     name: string | undefined;
+}
+
+export class SelectListItemDtoOfInt32 implements ISelectListItemDtoOfInt32 {
+    text!: string | undefined;
+    value!: number | undefined;
+
+    constructor(data?: ISelectListItemDtoOfInt32) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.text = data["text"];
+            this.value = data["value"];
+        }
+    }
+
+    static fromJS(data: any): SelectListItemDtoOfInt32 {
+        data = typeof data === 'object' ? data : {};
+        let result = new SelectListItemDtoOfInt32();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["text"] = this.text;
+        data["value"] = this.value;
+        return data; 
+    }
+}
+
+export interface ISelectListItemDtoOfInt32 {
+    text: string | undefined;
+    value: number | undefined;
+}
+
+export class SelectListItemDtoOfString implements ISelectListItemDtoOfString {
+    text!: string | undefined;
+    value!: string | undefined;
+
+    constructor(data?: ISelectListItemDtoOfString) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.text = data["text"];
+            this.value = data["value"];
+        }
+    }
+
+    static fromJS(data: any): SelectListItemDtoOfString {
+        data = typeof data === 'object' ? data : {};
+        let result = new SelectListItemDtoOfString();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["text"] = this.text;
+        data["value"] = this.value;
+        return data; 
+    }
+}
+
+export interface ISelectListItemDtoOfString {
+    text: string | undefined;
+    value: string | undefined;
 }
 
 export class PagedResultDtoOfCustomerListDto implements IPagedResultDtoOfCustomerListDto {
