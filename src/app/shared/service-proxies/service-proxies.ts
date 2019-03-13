@@ -21205,7 +21205,7 @@ export class GetOrderForEditOutput implements IGetOrderForEditOutput {
     /** 订单号 */
     orderNumber!: string | undefined;
     /** 店铺 */
-    storeId!: string | undefined;
+    storeId!: number | undefined;
     /** 订单状态10 = WaitConfirm ; 20 = Processing ; 30 = Complete ; 40 = Cancelled */
     orderStatus!: GetOrderForEditOutputOrderStatus | undefined;
     /** 支付状态10 = Pending ; 30 = Paid ; 35 = PartiallyRefunded ; 40 = Refunded */
@@ -21354,7 +21354,7 @@ export interface IGetOrderForEditOutput {
     /** 订单号 */
     orderNumber: string | undefined;
     /** 店铺 */
-    storeId: string | undefined;
+    storeId: number | undefined;
     /** 订单状态10 = WaitConfirm ; 20 = Processing ; 30 = Complete ; 40 = Cancelled */
     orderStatus: GetOrderForEditOutputOrderStatus | undefined;
     /** 支付状态10 = Pending ; 30 = Paid ; 35 = PartiallyRefunded ; 40 = Refunded */
