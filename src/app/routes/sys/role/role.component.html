@@ -15,7 +15,7 @@
       <nz-card nzTitle="编辑">
         <form nz-form #f="ngForm" se-container="1" (ngSubmit)="save()">
           <se label="名称" required>
-            <input nz-input [(ngModel)]="item.text" name="item.text">
+            <input nz-input [(ngModel)]="item.displayName" name="item.displayName">
           </se>
           <se label="授权">
             <nz-tree [nzData]="permission" [nzCheckedKeys]="item.permission" nzExpandAll [nzCheckable]="true"
@@ -38,6 +38,5 @@
       </nz-popconfirm>
       <div *ngIf="delDisabled">删除</div>
     </li>
-    <li nz-menu-item (click)="add(item)">添加子项</li>
   </ul>
 </ng-template>

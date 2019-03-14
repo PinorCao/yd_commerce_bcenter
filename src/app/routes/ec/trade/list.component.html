@@ -34,7 +34,7 @@
           </td>
           <td>
             <ng-container *ngFor="let g of i.wares; let first=first">
-              <a [ngClass]="{'pl-sm': !first}" nz-tooltip="{{g.title}}，数量：{{g.num}}，价格：{{g.price | _currency}}"
+              <a *ngFor="let g of i.wares; let first=first" [ngClass]="{'pl-sm': !first}" nz-tooltip="{{g.title}}，数量：{{g.num}}，价格：{{g.price | _currency}}"
                 routerLink="/ec/ware/{{g.ware_id}}">
                 <img src="{{g.mp}}" height="32" width="32" />
               </a>

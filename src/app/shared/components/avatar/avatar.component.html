@@ -2,7 +2,9 @@
            nzAction="https://up-z0.qiniup.com"
            nzName="avatar"
            nzListType="picture-card"
-           [nzShowUploadList]="false"
+           [nzShowUploadList]="true"
+           [(nzFileList)]="fileList"
+           [nzShowButton]="fileList.length < 1"
            [nzBeforeUpload]="beforeUpload"
            [nzCustomRequest]="nzCustomRequest"
            (nzChange)="handleChange($event)">

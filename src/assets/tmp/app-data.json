@@ -60,6 +60,40 @@
           ]
         },
         {
+          "_text": "订单管理",
+          "i18n": "menu.order",
+          "icon": "anticon anticon-radar-chart",
+          "children": [
+            {
+              "_text": "查找订单",
+              "link": "/order/list",
+              "i18n": "menu.order.list"
+            },
+            {
+              "_text": "创建订单",
+              "link": "/order/edit/0",
+              "i18n": "menu.order.add"
+            }
+          ]
+        },
+        {
+          "_text": "物流管理",
+          "i18n": "menu.order",
+          "icon": "anticon anticon-radar-chart",
+          "children": [
+            {
+              "_text": "发货单查询",
+              "link": "/shipment/list",
+              "i18n": "menu.shipment.list"
+            },
+            {
+              "_text": "创建发货记录",
+              "link": "/shipment/edit/0",
+              "i18n": "menu.order.add"
+            }
+          ]
+        },
+        {
           "_text": "店铺管理",
           "i18n": "menu.store",
           "icon": "anticon anticon-shop",
@@ -72,10 +106,26 @@
           "link": "/files"
         },
         {
-          "_text": "系统设置",
-          "i18n": "menu.settings",
+          "_text": "系统",
+          "i18n": "menu.system",
           "icon": "anticon anticon-setting",
-          "link": "/settings"
+          "children": [
+            {
+              "_text": "角色",
+              "link": "/sys/role",
+              "i18n": "menu.system.role"
+            },
+            {
+              "_text": "权限",
+              "link": "/sys/permission",
+              "i18n": "menu.system.permission"
+            },
+            {
+              "_text": "设置",
+              "link": "/sys/settings",
+              "i18n": "menu.system.settings"
+            }
+          ]
         }
       ]
     }

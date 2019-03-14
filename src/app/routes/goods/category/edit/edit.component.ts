@@ -8,8 +8,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { NzMessageService } from 'ng-zorro-antd';
 import {
   CategoryServiceProxy,
-  CreateOrUpdateCategoryInput,
-  SelectListItemDto
+  CreateOrUpdateCategoryInput
 } from '@shared/service-proxies/service-proxies';
 import { LocationStrategy } from '@angular/common';
 
@@ -22,7 +21,7 @@ export class GoodsCategoryEditComponent implements OnInit, OnDestroy {
 
   loading = false;
 
-  categories: SelectListItemDto[];
+  categories: any[];
   category = new CreateOrUpdateCategoryInput({
     id: this.route.snapshot.params['id'],
     name: '',

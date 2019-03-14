@@ -1,60 +1,70 @@
-import { Component, Input, Output, OnInit, EventEmitter } from '@angular/core';
+import {Component, Input, Output, OnInit, EventEmitter} from '@angular/core';
 import {
   CreateOrUpdateAttributeInput,
   CreateOrUpdateAttributeValueInput,
-  ProductAttributeMappingDto,
   ProductAttributeServiceProxy,
+  ProductAttributeDto,
+  ProductAttributeValueDto
 } from '@shared/service-proxies/service-proxies';
 
 const isAttrsExist = (name, attrs) => {
   let res = false;
-  attrs.forEach(attr => {
-    if (attr.name === name) {
-      res = true;
-    }
-  });
+  if (attrs) {
+    attrs.forEach(attr => {
+      if (attr.name === name) {
+        res = true;
+      }
+    });
+  }
   return res;
 };
 
 @Component({
   selector: 'app-goods-sku-attr',
   templateUrl: './attr.component.html',
+  styleUrls: ['./attr.component.scss']
 })
 
 export class GoodsSkuAttrComponent implements OnInit {
+  @Input() index = 0;
   @Input() attributes = [];
-  @Output() attrChange = new EventEmitter();
-
-  attribute = new CreateOrUpdateAttributeInput({
+  @Output() attributeChange = new EventEmitter();
+  @Input() attribute: ProductAttributeDto = new ProductAttributeDto({
     id: 0,
-    displayOrder: 0,
     name: '',
+    values: [
+      new ProductAttributeValueDto({
+        id: 0,
+        name: '',
+        pictureId: 0,
+        pictureUrl: ''
+      }),
+    ]
   });
-  _attrValues;
-  attrValues: CreateOrUpdateAttributeValueInput[] = [
-    new CreateOrUpdateAttributeValueInput({
-      id: 0,
-      attributeId: this.attribute.id,
-      displayOrder: 0,
-      name: '',
-    }),
-  ];
+  attributeValues;
+  showPicture = false;
 
   constructor(private attributeSvc: ProductAttributeServiceProxy) {
   }
 
   ngOnInit() {
+    if (this.attribute.id) {
+      this.getValues();
+    }
+    if (this.attribute.values[0] && this.attribute.values[0].pictureUrl) {
+      this.showPicture = true;
+    }
   }
 
   onChange(item) {
     this.attribute.id = item.nzValue;
     this.attribute.name = item.nzLabel;
-    this.attrValues = [
-      new CreateOrUpdateAttributeValueInput({
+    this.attribute.values = [
+      new ProductAttributeValueDto({
         id: 0,
-        attributeId: this.attribute.id,
-        displayOrder: 0,
+        pictureId: 0,
         name: '',
+        pictureUrl: ''
       }),
     ];
     this.getValues();
@@ -62,36 +72,31 @@ export class GoodsSkuAttrComponent implements OnInit {
 
   getValues() {
     this.attributeSvc.getAttributeValues(this.attribute.id).subscribe(res => {
-      this._attrValues = res;
+      this.attributeValues = res;
     });
   }
 
   valueChange(e, i) {
-    this.attrValues[i].id = e.id;
-    this.attrValues[i].attributeId = e.attributeId;
-    this.attrValues[i].name = e.name;
     this.getValues();
-    this.attrChange.emit({
-      id: this.attribute.id,
-      displayOrder: 0,
-      name: this.attribute.name,
-      values: (() => {
-        const attrValues = [];
-        this.attrValues.map((item) => {
-          attrValues.push({ pictureId: 0, displayOrder: 0, id: item.id, name: item.name });
-        });
-        return attrValues;
-      })(),
-    });
+    if (e) {
+      this.attribute.values[i].id = e.id;
+      this.attribute.values[i].name = e.name;
+      this.attribute.values[i].pictureUrl = e.pictureUrl;
+    } else {
+      this.attribute.values = this.attribute.values.filter(value => value.id !== this.attribute.values[i].id)
+    }
+    this.attributeChange.emit(this.attribute.values);
   }
 
   addValue() {
-    this.attrValues.push(new CreateOrUpdateAttributeValueInput({
-      id: 0,
-      attributeId: this.attribute.id,
-      displayOrder: 0,
-      name: '',
-    }));
+    this.attribute.values.push(
+      new ProductAttributeValueDto({
+        id: 0,
+        pictureId: 0,
+        name: '',
+        pictureUrl: ''
+      }),
+    );
   }
 
   editAttribute(name) {
@@ -100,21 +105,31 @@ export class GoodsSkuAttrComponent implements OnInit {
     }
     this.attribute.id = 0;
     this.attribute.name = name;
-    this.attributeSvc.createOrUpdateAttribute(this.attribute).subscribe(res => {
+    /*this.attributeSvc.createOrUpdateAttribute(this.attribute).subscribe(res => {
       this.attribute.id = res.id;
-      this.attrChange.emit({
+      this.attributeChange.emit({
         id: this.attribute.id,
         displayOrder: 0,
         name: this.attribute.name,
         values: (() => {
-          const attrValues = [];
-          this.attrValues.map((item) => {
-            attrValues.push({ pictureId: 0, displayOrder: 0, id: item.id, name: item.name });
+          const attributeValues = [];
+          this.attribute.values.map((item) => {
+            attributeValues.push({
+              pictureId: 0,
+              displayOrder: 0,
+              id: item.id,
+              name: item.name,
+              pictureUrl: item.pictureUrl
+            });
           });
-          return attrValues;
+          return attributeValues;
         })(),
       });
-    });
+    });*/
+  }
+
+  del() {
+    this.attributeChange.emit(null);
   }
 
   onBlur(target) {

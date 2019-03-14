@@ -8,8 +8,7 @@ import { Router } from '@angular/router';
 import { NzMessageService, NzModalService } from 'ng-zorro-antd';
 import {
   CategoryListDto,
-  CategoryServiceProxy,
-  SelectListItemDto,
+  CategoryServiceProxy
 } from '@shared/service-proxies/service-proxies';
 import { STChange, STColumn, STComponent, STData } from '@delon/abc';
 import { _HttpClient } from '@delon/theme';
@@ -46,7 +45,7 @@ export class GoodsCategoryListComponent implements OnInit {
     },
   ];
   data: CategoryListDto[] = [];
-  categories: SelectListItemDto[] = [];
+  categories: any[] = [];
   loading = false;
   @ViewChild('st')
   st: STComponent;

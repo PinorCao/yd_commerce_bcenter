@@ -46,6 +46,7 @@
     "@ngx-translate/core": "^11.0.1",
     "@ngx-translate/http-loader": "^4.0.0",
     "@swimlane/ngx-charts": "^10.0.0",
+    "@tinymce/tinymce-angular": "^3.0.0",
     "@types/jquery": "^3.2.12",
     "@types/lodash": "^4.14.62",
     "@types/moment": "^2.13.0",

@@ -3,28 +3,29 @@ import {
   OnInit,
   OnDestroy,
   AfterViewInit,
-  ElementRef,
+  ElementRef
 } from '@angular/core';
-import { Router } from '@angular/router';
-import { fromEvent, Subscription } from 'rxjs';
-import { debounceTime } from 'rxjs/operators';
+import {Router} from '@angular/router';
+import {fromEvent, Subscription} from 'rxjs';
+import {debounceTime} from 'rxjs/operators';
 
-import { SettingsService } from './settings.service';
-import { SmsService } from '@core/service/sms.service';
-import { NzMessageService } from 'ng-zorro-antd';
+import {SettingsService} from './settings.service';
+import {SmsService} from '@core/service/sms.service';
+import {NzMessageService} from 'ng-zorro-antd';
 import {
   SMSTemplateListDto,
   HostSettingsEditDto,
-  HostSettingsServiceProxy,
+  HostSettingsServiceProxy
 } from '@shared/service-proxies/service-proxies';
-import { forEach } from '@angular/router/src/utils/collection';
+import {forEach} from '@angular/router/src/utils/collection';
+
 
 @Component({
-  selector: 'app-settings',
+  selector: 'app-sys-settings',
   templateUrl: './settings.component.html',
-  styleUrls: ['./settings.component.less'],
+  styleUrls: ['./settings.component.less']
 })
-export class SettingsComponent implements OnInit, AfterViewInit, OnDestroy {
+export class SysSettingsComponent implements OnInit, AfterViewInit, OnDestroy {
   private resize$: Subscription;
   mode = 'inline';
   title: string;
@@ -67,7 +68,7 @@ export class SettingsComponent implements OnInit, AfterViewInit, OnDestroy {
   private resize() {
     const el = this.el.nativeElement as HTMLElement;
     let mode = 'inline';
-    const { offsetWidth } = el;
+    const {offsetWidth} = el;
     if (offsetWidth < 641 && offsetWidth > 400) {
       mode = 'horizontal';
     }

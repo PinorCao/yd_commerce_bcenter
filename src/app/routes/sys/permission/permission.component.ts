@@ -1,21 +1,21 @@
-import { Component, TemplateRef, OnInit } from '@angular/core';
-import { Menu, _HttpClient } from '@delon/theme';
+import {Component, TemplateRef, OnInit} from '@angular/core';
+import {Menu, _HttpClient} from '@delon/theme';
 import {
   NzFormatEmitEvent,
   NzDropdownService,
   NzDropdownContextComponent,
   NzTreeNode,
   NzFormatBeforeDropEvent,
-  NzMessageService,
+  NzMessageService
 } from 'ng-zorro-antd';
-import { ArrayService } from '@delon/util';
-import { SFSchema } from '@delon/form';
-import { of } from 'rxjs';
-import { map, tap } from 'rxjs/operators';
+import {ArrayService} from '@delon/util';
+import {SFSchema} from '@delon/form';
+import {of} from 'rxjs';
+import {map, tap} from 'rxjs/operators';
 
 @Component({
   selector: 'app-sys-permission',
-  templateUrl: './permission.component.html',
+  templateUrl: './permission.component.html'
 })
 export class SysPermissionComponent implements OnInit {
   private menuEvent: NzFormatEmitEvent;
@@ -28,20 +28,21 @@ export class SysPermissionComponent implements OnInit {
 
   schema: SFSchema = {
     properties: {
-      text: { type: 'string', title: '名称' },
-      code: { type: 'string', title: '代号' },
-      remark: { type: 'string', title: '描述', ui: { widget: 'textarea', grid: { span: 24 } } },
+      text: {type: 'string', title: '名称'},
+      code: {type: 'string', title: '代号'},
+      remark: {type: 'string', title: '描述', ui: {widget: 'textarea', grid: {span: 24}}}
     },
     required: ['text'],
-    ui: { grid: { md: 24, lg: 12 }, spanLabelFixed: 100 },
+    ui: {grid: {md: 24, lg: 12}, spanLabelFixed: 100}
   };
 
   constructor(
     private http: _HttpClient,
     private ddSrv: NzDropdownService,
     private arrSrv: ArrayService,
-    private msg: NzMessageService,
-  ) {}
+    private msg: NzMessageService
+  ) {
+  }
 
   ngOnInit() {
     this.getData();
@@ -54,8 +55,8 @@ export class SysPermissionComponent implements OnInit {
           titleMapName: 'text',
           cb: (item, parent, deep) => {
             item.expanded = deep <= 1;
-          },
-        })),
+          }
+        }))
     );
   }
 
@@ -65,7 +66,7 @@ export class SysPermissionComponent implements OnInit {
     this.item = {
       id: 0,
       text: '',
-      parent_id: item ? item.id : 0,
+      parent_id: item ? item.id : 0
     };
   }
 
@@ -117,11 +118,11 @@ export class SysPermissionComponent implements OnInit {
     return this.http
       .post('/permission/move', {
         from,
-        to,
+        to
       })
       .pipe(
         tap(() => (this.op = '')),
-        map(() => true),
+        map(() => true)
       );
   };
 

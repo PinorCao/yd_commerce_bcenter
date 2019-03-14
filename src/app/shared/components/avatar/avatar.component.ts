@@ -1,12 +1,12 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
-import { HttpClient, HttpEvent, HttpRequest, HttpResponse, HttpEventType } from '@angular/common/http';
+import {Component, OnInit, Output, EventEmitter, Input} from '@angular/core';
+import {HttpClient, HttpEvent, HttpRequest, HttpResponse, HttpEventType} from '@angular/common/http';
 
-import { Observable, Observer } from 'rxjs';
+import {Observable, Observer} from 'rxjs';
 
-import { NzMessageService } from 'ng-zorro-antd';
-import { UploadFile, UploadXHRArgs } from 'ng-zorro-antd';
+import {NzMessageService} from 'ng-zorro-antd';
+import {UploadFile, UploadXHRArgs} from 'ng-zorro-antd';
 
-import { AppService } from '../../../app.service';
+import {AppService} from '../../../app.service';
 
 @Component({
   selector: 'app-avatar',
@@ -17,6 +17,7 @@ import { AppService } from '../../../app.service';
 export class AvatarComponent implements OnInit {
   loading = false;
   avatarUrl: string;
+  @Input() fileList;
   file = null;
 
   @Output() avatarObj: EventEmitter<any> = new EventEmitter<any>();
@@ -76,6 +77,7 @@ export class AvatarComponent implements OnInit {
   }
 
   ngOnInit() {
+    console.log(this.fileList);
     this.appSvc.getUploadToken().subscribe(res => {
       this.nzCustomRequest = (item: UploadXHRArgs) => {
         // 构建一个 FormData 对象，用于存储文件或其他参数

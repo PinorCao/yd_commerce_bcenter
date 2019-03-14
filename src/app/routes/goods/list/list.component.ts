@@ -1,112 +1,102 @@
 import {
-  Component,
-  ViewChild,
+  Component
 } from '@angular/core';
 
-
-import { STColumn, STComponent, STChange } from '@delon/abc';
-import { SFSchema, SFComponent, SFButton } from '@delon/form';
-import { NzMessageService } from 'ng-zorro-antd';
-
-import { GoodsService } from '../goods.service';
-import { ProductServiceProxy } from '@shared/service-proxies/service-proxies';
+import {OrderServiceProxy, ProductServiceProxy} from '@shared/service-proxies/service-proxies';
+import {_HttpClient, DrawerHelper} from '@delon/theme';
+import {NzMessageService, NzModalService} from 'ng-zorro-antd';
 
 @Component({
   selector: 'app-goods-list',
   templateUrl: './list.component.html',
-  styleUrls: ['./list.component.less'],
+  styleUrls: ['./list.component.scss']
 })
 export class GoodsListComponent {
-  @ViewChild('st')
-  private st: STComponent;
+  data: any[] = [];
+  loading = false;
 
-  @ViewChild('sf')
-  private sf: SFComponent;
+  isAllDisplayDataChecked = false;
+  isIndeterminate = false;
+  mapOfCheckedId = {};
+  numberOfChecked = 0;
 
-  params: any = {};
-
-  url = `/ware`;
-
-  searchSchema = {
-    properties: {
-      q: { type: 'string', title: 'Name' },
-      outer_id: { type: 'string', title: 'Outer ID' },
-      modified_start: {
-        type: 'string',
-        title: 'Modifiy time',
-        ui: {
-          widget: 'date',
-          end: 'modified_end',
-        }
-      },
-      modified_end: {
-        type: 'string'
-      },
-      price: {
-        type: 'number',
-        title: 'Price',
-        minimum: 0,
-        maximum: 10000,
-        ui: {
-          widget: 'slider',
-          range: true,
-        }
-      },
-      stock: {
-        type: 'number',
-        title: 'Stock',
-        minimum: 0,
-        maximum: 10000,
-        ui: {
-          widget: 'slider',
-          range: true,
-        }
-      }
-    },
-    ui: {
-      grid: { md: 12, lg: 8 },
-      spanLabelFixed: 120
-    }
-  };
-
-  btn: SFButton = {
-    render: { grid: { span: 24 }, class: 'text-center mb0', spanLabelFixed: 0 },
-    submit: 'Search',
-  };
-
-  columns: STColumn[] = [
-    { title: 'Product Information', index: 'id', render: 'name' },
-    { title: 'Outer ID', index: 'outer_id' },
-    { title: 'Price', index: 'price', type: 'currency' },
-    { title: 'Stock', index: 'stock', type: 'number' },
-    { title: '30天销量', index: 'sale_num', type: 'number' },
-    { title: '状态', index: 'status' },
-    {
-      title: 'OP',
-      buttons: [
-        {
-          text: 'Delisting',
-          iif: (i: any) => i.status === 'ON_SALE',
-          pop: true,
-          popTitle: '确认下架吗？',
-          click: (i: any) => this.delisting(i.id),
-        },
-        {
-          text: 'Edit',
-          type: 'link',
-          click: (i: any) => `/ec/ware/edit/${i.id}`,
-        },
-      ],
-    },
-  ];
-
-  constructor() {
+  constructor(
+    private http: _HttpClient,
+    public msg: NzMessageService,
+    private modalSrv: NzModalService,
+    private drawer: DrawerHelper,
+    private orderSvc: OrderServiceProxy,
+    private productSvc: ProductServiceProxy) {
   }
 
-  delisting(id: number) {
-    /*this.http.post(`${this.url}/delisting/${id}`).subscribe(() => {
-      this.msg.success('下架成功');
-      this.st.reset();
-    });*/
+  ngOnInit() {
+    this.getData();
+  }
+
+  filterChange(target, e) {
+    this.q[target] = e;
+    console.log(this.q[target]);
+    this.getData();
+  }
+
+  checkAll(value: boolean): void {
+    this.data.forEach(item => this.mapOfCheckedId[item.id] = value);
+    this.refreshStatus();
+  }
+
+  refreshStatus(): void {
+    this.isAllDisplayDataChecked = this.data.filter(item => !item.disabled).every(item => this.mapOfCheckedId[item.id]);
+    this.isIndeterminate = this.data.filter(item => !item.disabled).some(item => this.mapOfCheckedId[item.id]) && !this.isAllDisplayDataChecked;
+    this.numberOfChecked = this.data.filter(item => this.mapOfCheckedId[item.id]).length;
+  }
+
+  q = {
+    name: undefined,
+    sku: undefined,
+    sorting: undefined,
+    maxResultCount: 20,
+    skipCount: 0
+  };
+
+  getData() {
+    this.productSvc.getProducts('', '', '', 20, 0).subscribe(res => {
+      this.loading = false;
+      this.data = res.items;
+      console.log(this.data);
+    });
+  }
+
+  arrayToString(arr) {
+    let str = '';
+    arr.forEach(item => {
+      if (str) {
+        str = str + item;
+      } else {
+        str = ',' + item;
+      }
+    });
+    return str;
+  }
+
+  /*view(i: any) {
+    this.drawer
+      .create(`查看订单 #${i.orderNumber}`, OrderListViewComponent, {i}, {size: 666})
+      .subscribe();
+  }*/
+
+  remove() {
+    /*this.http
+      .delete('/rule', {nos: this.selectedRows.map(i => i.no).join(',')})
+      .subscribe(() => {
+        this.getData();
+      });*/
+  }
+
+  search() {
+    this.getData();
+  }
+
+  reset() {
+    this.q.name = undefined;
   }
 }

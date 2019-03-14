@@ -1,27 +1,27 @@
-import { SettingsService, _HttpClient } from '@delon/theme';
-import { Component, OnDestroy, Inject, Optional } from '@angular/core';
-import { Router } from '@angular/router';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { NzMessageService, NzModalService } from 'ng-zorro-antd';
+import {SettingsService, _HttpClient} from '@delon/theme';
+import {Component, OnDestroy, Inject, Optional} from '@angular/core';
+import {Router} from '@angular/router';
+import {FormGroup, FormBuilder, Validators} from '@angular/forms';
+import {NzMessageService, NzModalService} from 'ng-zorro-antd';
 import {
   SocialService,
   SocialOpenType,
   ITokenService,
-  DA_SERVICE_TOKEN,
+  DA_SERVICE_TOKEN
 } from '@delon/auth';
-import { ReuseTabService } from '@delon/abc';
-import { environment } from '@env/environment';
-import { StartupService } from '@core';
+import {ReuseTabService} from '@delon/abc';
+import {environment} from '@env/environment';
+import {StartupService} from '@core';
 
-import { AuthService } from '../auth.service';
-import { CodeSendInput } from '@shared/service-proxies/service-proxies';
-import { SmsService } from '@core/service/sms.service';
+import {AuthService} from '../auth.service';
+import {CodeSendInput} from '@shared/service-proxies/service-proxies';
+import {SmsService} from '@core/service/sms.service';
 
 @Component({
   selector: 'passport-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.less'],
-  providers: [SocialService],
+  providers: [SocialService]
 })
 export class UserLoginComponent implements OnDestroy {
   form: FormGroup;
@@ -42,14 +42,14 @@ export class UserLoginComponent implements OnDestroy {
     public http: _HttpClient,
     public msg: NzMessageService,
     private authSvc: AuthService,
-    private smsSvc: SmsService,
+    private smsSvc: SmsService
   ) {
     this.form = fb.group({
       loginCertificate: [null, [Validators.required, Validators.minLength(4)]],
       password: [null, Validators.required],
       phoneNum: [null, [Validators.required, Validators.pattern(/^1\d{10}$/)]],
       loginCode: [null, [Validators.required]],
-      rememberClient: [true],
+      rememberClient: [true]
     });
     modalSrv.closeAll();
   }
@@ -85,15 +85,15 @@ export class UserLoginComponent implements OnDestroy {
 
   getCaptcha() {
     if (this.mobile.invalid) {
-      this.mobile.markAsDirty({ onlySelf: true });
-      this.mobile.updateValueAndValidity({ onlySelf: true });
+      this.mobile.markAsDirty({onlySelf: true});
+      this.mobile.updateValueAndValidity({onlySelf: true});
       return;
     }
 
     const data = new CodeSendInput({
       targetNumber: this.mobile.value,
       codeType: 20,
-      captchaResponse: '',
+      captchaResponse: ''
     });
 
     this.smsSvc.send(data).subscribe(res => {
@@ -143,13 +143,14 @@ export class UserLoginComponent implements OnDestroy {
       this.reuseTabService.clear();
       // 设置用户Token信息
       this.tokenSvc.set({
-        token: res.result.accessToken,
+        token: res.result.accessToken
       });
       // 重新获取 StartupService 内容，我们始终认为应用信息一般都会受当前用户授权范围而影响
       this.startupSrv.load().then(() => {
         let url = this.tokenSvc.referrer.url || '/';
         if (url.includes('/passport')) url = '/';
-        this.router.navigateByUrl(url);
+        window.location.href = '/';
+        /*this.router.navigateByUrl(url);*/
       });
     });
 
@@ -192,24 +193,24 @@ export class UserLoginComponent implements OnDestroy {
     switch (type) {
       case 'auth0':
         url = `//cipchk.auth0.com/login?client=8gcNydIDzGBYxzqV0Vm1CX_RXH-wsWo5&redirect_uri=${decodeURIComponent(
-          callback,
+          callback
         )}`;
         break;
       case 'github':
         url = `//github.com/login/oauth/authorize?client_id=9d6baae4b04a23fcafa2&response_type=code&redirect_uri=${decodeURIComponent(
-          callback,
+          callback
         )}`;
         break;
       case 'weibo':
         url = `https://api.weibo.com/oauth2/authorize?client_id=1239507802&response_type=code&redirect_uri=${decodeURIComponent(
-          callback,
+          callback
         )}`;
         break;
     }
     if (openType === 'window') {
       this.socialService
         .login(url, '/', {
-          type: 'window',
+          type: 'window'
         })
         .subscribe(res => {
           if (res) {
@@ -219,7 +220,7 @@ export class UserLoginComponent implements OnDestroy {
         });
     } else {
       this.socialService.login(url, '/', {
-        type: 'href',
+        type: 'href'
       });
     }
   }

@@ -224,6 +224,7 @@
   "menu.system.permission": "权限",
   "menu.system.menu": "菜单",
   "menu.system.log": "日志",
+  "menu.system.settings": "设置",
   "menu.map": "地图",
   "menu.map.google": "Google地图",
   "menu.map.baidu": "Baidu地图",
@@ -249,5 +250,8 @@
   "menu.tenant": "租户管理",
   "menu.tenant.list": "查找租户",
   "menu.tenant.feature": "租户特性",
-  "menu.tenant.settings": "租户设置"
+  "menu.tenant.settings": "租户设置",
+  "menu.order": "订单管理",
+  "menu.order.list": "查找订单",
+  "menu.order.add": "创建订单"
 }

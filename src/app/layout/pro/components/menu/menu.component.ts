@@ -1,20 +1,20 @@
-import { Component, Input, OnDestroy, ChangeDetectorRef, ChangeDetectionStrategy, OnInit } from '@angular/core';
-import { Router, NavigationEnd } from '@angular/router';
-import { Subject } from 'rxjs';
-import { filter, takeUntil } from 'rxjs/operators';
-import { Menu, MenuService } from '@delon/theme';
-import { InputBoolean } from '@delon/util';
+import {Component, Input, OnDestroy, ChangeDetectorRef, ChangeDetectionStrategy, OnInit} from '@angular/core';
+import {Router, NavigationEnd} from '@angular/router';
+import {Subject} from 'rxjs';
+import {filter, takeUntil} from 'rxjs/operators';
+import {Menu, MenuService} from '@delon/theme';
+import {InputBoolean} from '@delon/util';
 
-import { BrandService } from '../../pro.service';
-import { ProMenu } from '../../pro.types';
+import {BrandService} from '../../pro.service';
+import {ProMenu} from '../../pro.types';
 
 @Component({
   selector: '[layout-pro-menu]',
   templateUrl: './menu.component.html',
-  styleUrls:['./menu.component.scss'],
+  styleUrls: ['./menu.component.scss'],
   host: {
     '[class.alain-pro__menu]': 'true',
-    '[class.alain-pro__menu-only-icon]': 'pro.onlyIcon',
+    '[class.alain-pro__menu-only-icon]': 'pro.onlyIcon'
   },
   changeDetection: ChangeDetectionStrategy.OnPush
 })
@@ -30,7 +30,8 @@ export class LayoutProMenuComponent implements OnInit, OnDestroy {
     private router: Router,
     public pro: BrandService,
     private cdr: ChangeDetectorRef
-  ) { }
+  ) {
+  }
 
   private cd() {
     this.cdr.markForCheck();
@@ -49,7 +50,7 @@ export class LayoutProMenuComponent implements OnInit, OnDestroy {
         }
       }
       if (item._hidden === true) {
-        return ;
+        return;
       }
       if (parent === null) {
         res.push(item);
@@ -96,10 +97,10 @@ export class LayoutProMenuComponent implements OnInit, OnDestroy {
   }
 
   to(item: ProMenu) {
-    if (item.disabled) return ;
+    if (item.disabled) return;
 
-    const { router, pro } = this;
-    const { externalLink, target, link } = item;
+    const {router, pro} = this;
+    const {externalLink, target, link} = item;
     if (externalLink) {
       if (target === '_blank') {
         window.open(externalLink);
@@ -116,7 +117,7 @@ export class LayoutProMenuComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    const { unsubscribe$, router, pro } = this;
+    const {unsubscribe$, router, pro} = this;
     this.menuSrv.change.pipe(
       takeUntil(unsubscribe$)
     ).subscribe(res => this.genMenus(res));
@@ -133,7 +134,7 @@ export class LayoutProMenuComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    const { unsubscribe$ } = this;
+    const {unsubscribe$} = this;
     unsubscribe$.next();
     unsubscribe$.complete();
   }

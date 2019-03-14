@@ -17,8 +17,6 @@ import { UserLockComponent } from './passport/lock/lock.component';
 import { UserLogin2Component } from './passport/login2/login2.component';
 import { UserLogin3Component } from './passport/login3/login3.component';
 import { CallbackComponent } from './callback/callback.component';
-// settings pages
-import { SettingsComponent } from './settings/settings.component';
 
 // files pages
 import { FilesComponent } from './files/files.component';
@@ -36,6 +34,8 @@ const routes: Routes = [
       { path: 'tenant', loadChildren: './tenant/tenant.module#TenantModule' },
       { path: 'store', loadChildren: './store/store.module#StoreModule' },
       { path: 'goods', loadChildren: './goods/goods.module#GoodsModule' },
+      { path: 'order', loadChildren: './order/order.module#OrderModule' },
+      { path: 'shipment', loadChildren: './shipment/shipment.module#ShipmentModule' },
       { path: 'pro', loadChildren: './pro/pro.module#ProModule' },
       { path: 'sys', loadChildren: './sys/sys.module#SysModule' },
       { path: 'ec', loadChildren: './ec/ec.module#ECModule' },
@@ -44,8 +44,7 @@ const routes: Routes = [
       { path: 'other', loadChildren: './other/other.module#OtherModule' },
       // Exception
       { path: 'exception', loadChildren: './exception/exception.module#ExceptionModule' },
-      { path: 'files', component: FilesComponent },
-      { path: 'settings', component: SettingsComponent },
+      { path: 'files', component: FilesComponent }
     ],
   },
   // passport
