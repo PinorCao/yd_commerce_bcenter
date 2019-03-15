@@ -6,6 +6,7 @@ import {OrderServiceProxy} from '@shared/service-proxies/service-proxies';
 import {_HttpClient, DrawerHelper} from '@delon/theme';
 import {NzMessageService, NzModalService} from 'ng-zorro-antd';
 import {OrderListViewComponent} from './view.component';
+import {OrderListMemoComponent} from './memo.component';
 
 @Component({
   selector: 'app-order-list',
@@ -13,7 +14,7 @@ import {OrderListViewComponent} from './view.component';
   styleUrls: ['./list.component.scss']
 })
 export class OrderListComponent {
-  data: any[] = [];
+  data;
   loading = false;
 
   isAllDisplayDataChecked = false;
@@ -42,14 +43,14 @@ export class OrderListComponent {
   }
 
   checkAll(value: boolean): void {
-    this.data.forEach(item => this.mapOfCheckedId[item.id] = value);
+    this.data.items.forEach(item => this.mapOfCheckedId[item.id] = value);
     this.refreshStatus();
   }
 
   refreshStatus(): void {
-    this.isAllDisplayDataChecked = this.data.filter(item => !item.disabled).every(item => this.mapOfCheckedId[item.id]);
-    this.isIndeterminate = this.data.filter(item => !item.disabled).some(item => this.mapOfCheckedId[item.id]) && !this.isAllDisplayDataChecked;
-    this.numberOfChecked = this.data.filter(item => this.mapOfCheckedId[item.id]).length;
+    this.isAllDisplayDataChecked = this.data.items.filter(item => !item.disabled).every(item => this.mapOfCheckedId[item.id]);
+    this.isIndeterminate = this.data.items.filter(item => !item.disabled).some(item => this.mapOfCheckedId[item.id]) && !this.isAllDisplayDataChecked;
+    this.numberOfChecked = this.data.items.filter(item => this.mapOfCheckedId[item.id]).length;
     console.log(this.mapOfCheckedId);
   }
 
@@ -72,7 +73,7 @@ export class OrderListComponent {
     orderTypes: [],
     orderSource: [],
     sorting: undefined,
-    maxResultCount: 20,
+    maxResultCount: 10,
     skipCount: 0
   };
 
@@ -100,7 +101,7 @@ export class OrderListComponent {
       this.q.maxResultCount,
       this.q.skipCount).subscribe(res => {
       this.loading = false;
-      this.data = res.items;
+      this.data = res;
       console.log(this.data);
     });
   }
@@ -121,6 +122,14 @@ export class OrderListComponent {
     this.drawer
       .create(`查看订单 #${i.orderNumber}`, OrderListViewComponent, {i}, {size: 666})
       .subscribe();
+  }
+
+  sendShip() {
+    this.drawer
+      .create(`批量发货`, OrderListMemoComponent, {}, {size: 350})
+      .subscribe((res: any) => {
+        console.log(res);
+      });
   }
 
   remove() {

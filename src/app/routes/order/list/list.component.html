@@ -68,14 +68,18 @@
                 </nz-col>
             </nz-row>
         </form>-->
-        <button nz-button (click)="add(modalContent)" [nzType]="'primary'">
+        <button nz-button routerLink="/order/edit/0" [nzType]="'primary'">
             <i nz-icon type="plus"></i>
-            <span>新建</span>
+            <span>创建新订单</span>
         </button>
         <button nz-button *ngIf="numberOfChecked > 0" (click)="remove()" [nzType]="'primary'">
             <i nz-icon type="plus"></i>
-            <span>删除</span>
+            <span>删除已选订单</span>
         </button>
+        <a (click)="sendShip()" nz-button [nzType]="'primary'">
+            <i nz-icon type="plus"></i>
+            <span>批量发货</span>
+        </a>
         <div class="my-md">
             <nz-alert [nzType]="'info'" [nzShowIcon]="true" [nzMessage]="message">
                 <ng-template #message>
@@ -94,7 +98,7 @@
           </ng-template>
         </st>-->
 
-        <nz-table #nzTable [nzData]="data">
+        <nz-table *ngIf="data" #nzTable [nzData]="data.items">
             <thead>
             <tr>
                 <th nzShowCheckbox [(nzChecked)]="isAllDisplayDataChecked" [nzIndeterminate]="isIndeterminate" (nzCheckedChange)="checkAll($event)"></th>
@@ -151,6 +155,8 @@
                     <td>{{data.orderSourceString}}</td>
                     <td>{{data.createOn | date : 'yyyy/MM/dd HH:mm:ss'}}</td>
                     <td>
+                        <a [routerLink]="'/order/edit/' + data.id">发货</a>
+                        <nz-divider nzType="vertical"></nz-divider>
                         <a [routerLink]="'/order/edit/' + data.id">编辑</a>
                         <nz-divider nzType="vertical"></nz-divider>
                         <a>删除</a>

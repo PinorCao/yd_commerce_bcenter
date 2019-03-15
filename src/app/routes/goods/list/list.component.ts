@@ -12,7 +12,7 @@ import {NzMessageService, NzModalService} from 'ng-zorro-antd';
   styleUrls: ['./list.component.scss']
 })
 export class GoodsListComponent {
-  data: any[] = [];
+  data;
   loading = false;
 
   isAllDisplayDataChecked = false;
@@ -40,28 +40,29 @@ export class GoodsListComponent {
   }
 
   checkAll(value: boolean): void {
-    this.data.forEach(item => this.mapOfCheckedId[item.id] = value);
+    this.data.items.forEach(item => this.mapOfCheckedId[item.id] = value);
     this.refreshStatus();
   }
 
   refreshStatus(): void {
-    this.isAllDisplayDataChecked = this.data.filter(item => !item.disabled).every(item => this.mapOfCheckedId[item.id]);
-    this.isIndeterminate = this.data.filter(item => !item.disabled).some(item => this.mapOfCheckedId[item.id]) && !this.isAllDisplayDataChecked;
-    this.numberOfChecked = this.data.filter(item => this.mapOfCheckedId[item.id]).length;
+    this.isAllDisplayDataChecked = this.data.items.filter(item => !item.disabled).every(item => this.mapOfCheckedId[item.id]);
+    this.isIndeterminate = this.data.items.filter(item => !item.disabled).some(item => this.mapOfCheckedId[item.id]) && !this.isAllDisplayDataChecked;
+    this.numberOfChecked = this.data.items.filter(item => this.mapOfCheckedId[item.id]).length;
   }
 
   q = {
     name: undefined,
     sku: undefined,
     sorting: undefined,
-    maxResultCount: 20,
+    maxResultCount: 10,
     skipCount: 0
   };
 
   getData() {
-    this.productSvc.getProducts('', '', '', 20, 0).subscribe(res => {
+    this.productSvc.getProducts('', '', '', this.q.maxResultCount, this.q.skipCount).subscribe(res => {
+      console.log(res);
       this.loading = false;
-      this.data = res.items;
+      this.data = res;
       console.log(this.data);
     });
   }

@@ -4,9 +4,11 @@ import {SharedModule} from '@shared/shared.module';
 import {ShipmentRoutingModule} from './shipment-routing.module';
 
 import {ShipmentListComponent} from './list/list.component';
+import {ShipmentSupportListComponent} from './support/list/list.component';
 
 const COMPONENTS = [
-  ShipmentListComponent
+  ShipmentListComponent,
+  ShipmentSupportListComponent
 ];
 
 @NgModule({

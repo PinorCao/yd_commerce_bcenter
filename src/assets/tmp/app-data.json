@@ -78,7 +78,7 @@
         },
         {
           "_text": "物流管理",
-          "i18n": "menu.order",
+          "i18n": "menu.shipment",
           "icon": "anticon anticon-radar-chart",
           "children": [
             {
@@ -89,7 +89,12 @@
             {
               "_text": "创建发货记录",
               "link": "/shipment/edit/0",
-              "i18n": "menu.order.add"
+              "i18n": "menu.shipment.add"
+            },
+            {
+              "_text": "物流供应商",
+              "link": "/shipment/support/list",
+              "i18n": "menu.shipment.support.list"
             }
           ]
         },

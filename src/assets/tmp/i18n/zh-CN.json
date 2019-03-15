@@ -253,5 +253,10 @@
   "menu.tenant.settings": "租户设置",
   "menu.order": "订单管理",
   "menu.order.list": "查找订单",
-  "menu.order.add": "创建订单"
+  "menu.order.add": "创建订单",
+  "menu.shipment": "物流管理",
+  "menu.shipment.list": "发货记录",
+  "menu.shipment.add": "创建发货单",
+  "menu.shipment.support.list": "物流供应商",
+  "menu.shipment.support.edit": "添加/编辑供应商"
 }
