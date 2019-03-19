@@ -16,6 +16,8 @@ import {StartupService} from '@core';
 import {AuthService} from '../auth.service';
 import {CodeSendInput} from '@shared/service-proxies/service-proxies';
 import {SmsService} from '@core/service/sms.service';
+import { AppConsts } from '@shared/AppConsts';
+import { UtilsService } from '@abp/utils/utils.service';
 
 @Component({
   selector: 'passport-login',
@@ -42,7 +44,8 @@ export class UserLoginComponent implements OnDestroy {
     public http: _HttpClient,
     public msg: NzMessageService,
     private authSvc: AuthService,
-    private smsSvc: SmsService
+    private smsSvc: SmsService,
+    private _utilsService: UtilsService,
   ) {
     this.form = fb.group({
       loginCertificate: [null, [Validators.required, Validators.minLength(4)]],
@@ -145,6 +148,10 @@ export class UserLoginComponent implements OnDestroy {
       this.tokenSvc.set({
         token: res.result.accessToken
       });
+
+      // 设置租户id
+      abp.multiTenancy.setTenantIdCookie(res.result.tenantId);
+
       // 重新获取 StartupService 内容，我们始终认为应用信息一般都会受当前用户授权范围而影响
       this.startupSrv.load().then(() => {
         let url = this.tokenSvc.referrer.url || '/';
