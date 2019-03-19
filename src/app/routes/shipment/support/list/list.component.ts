@@ -44,37 +44,21 @@ export class ShipmentSupportListComponent {
   }
 
   getData() {
-    /*this.loading = true;
+    this.loading = true;
     zip(this.logisticsSvc.getLogisticsSelectList(), this.logisticsSvc.getTenantLogisticsSelectList()).subscribe(([tags, selectedTags]) => {
       this.loading = false;
+      this.data = pyGroup(tags);
       selectedTags.forEach(item => {
         this.selectedTags.push({
-          id: 0,
+          id: item.value,
+          text: item.text,
           logisticsId: tags[getIndex(tags, 'text', item.text)].value,
           displayOrder: 0
-        })
-      });
-    });*/
-
-    // id 和logisticsId很容易搞混
-
-    this.loading = true;
-    this.logisticsSvc.getLogisticsSelectList().subscribe(res => {
-      this.data = pyGroup(res);
-      this.data.forEach(item => {
-        item.data.forEach(_item => {
-          if (_item.id !== 0) {
-            this.selectedTags.push(_item);
-          }
         });
       });
     });
-    this.logisticsSvc.getTenantLogisticsSelectList().subscribe(res => {
-      console.log(res);
-      res.forEach(item => {
-        this.selectedTags.push();
-      });
-    });
+
+    // id 和logisticsId很容易搞混
   }
 
   handleChange(checked: boolean, tag): void {
@@ -82,7 +66,7 @@ export class ShipmentSupportListComponent {
       this.selectedTags.push(tag);
       const body = new CreateOrUpdateTenantLogisticsInput({
         id: 0,
-        logisticsId: tag.value,
+        logisticsId: tag.logisticsId,
         displayOrder: 0
       });
       this.logisticsSvc.createOrUpdateTenantLogistics(body).subscribe(res => {
@@ -98,7 +82,13 @@ export class ShipmentSupportListComponent {
   }
 
   clearCheck() {
-    this.selectedTags = [];
+    const ids = [];
+    this.selectedTags.forEach(item => {
+      ids.push(item.id);
+    });
+    this.logisticsSvc.deleteTenantLogistics(ids).subscribe(res => {
+      this.selectedTags = [];
+    });
   }
 
   cancel() {
