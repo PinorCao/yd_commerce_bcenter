@@ -1,5 +1,5 @@
 <page-header-wrapper [title]="id === '0' ? '创建新订单' : '编辑订单'">
-    <form nz-form [formGroup]="orderForm" (ngSubmit)="submit()" class="sf__no-error">
+    <form *ngIf="products" nz-form [formGroup]="orderForm" (ngSubmit)="submit()" class="sf__no-error">
         <nz-card nzTitle="商品信息">
             <nz-form-item>
                 <nz-form-label [nzXs]="24" [nzSm]="4" nzRequired nzFor="productId">选择店铺</nz-form-label>

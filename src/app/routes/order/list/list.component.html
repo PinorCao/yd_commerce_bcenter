@@ -8,7 +8,7 @@
             <i nz-icon type="plus"></i>
             <span>删除已选订单</span>
         </button>
-        <a (click)="sendShip()" nz-button [nzType]="'primary'">
+        <a *ngIf="numberOfChecked > 0" (click)="sendShip()" nz-button [nzType]="'primary'">
             <i nz-icon type="plus"></i>
             <span>批量发货</span>
         </a>
@@ -47,16 +47,16 @@
                 <th>
                     商品
                 </th>
-                <th nzShowFilter [nzFilters]="orderStatus" (nzFilterChange)="filterChange('orderStatus',$event)">
+                <th nzShowFilter [nzFilters]="enums.OrderStatus" (nzFilterChange)="filterChange('orderStatus',$event)">
                     订单状态
                 </th>
-                <th nzShowFilter [nzFilters]="paymentStatus" (nzFilterChange)="filterChange('paymentStatus',$event)">
+                <th nzShowFilter [nzFilters]="enums.PaymentStatus" (nzFilterChange)="filterChange('paymentStatus',$event)">
                     付款状态
                 </th>
-                <th nzShowFilter [nzFilters]="shippingStatus" (nzFilterChange)="filterChange('shippingStatus',$event)">
+                <th nzShowFilter [nzFilters]="enums.ShippingStatus" (nzFilterChange)="filterChange('shippingStatus',$event)">
                     配送状态
                 </th>
-                <th nzShowFilter [nzFilters]="orderSources" (nzFilterChange)="filterChange('orderSources',$event)">
+                <th nzShowFilter [nzFilters]="enums.OrderSource" (nzFilterChange)="filterChange('orderSource',$event)">
                     订单来源
                 </th>
                 <th nzShowSort nzSortKey="createOn">更新时间</th>

@@ -2,7 +2,7 @@ import {
   Component
 } from '@angular/core';
 
-import {OrderServiceProxy} from '@shared/service-proxies/service-proxies';
+import {CommonLookupServiceProxy, OrderServiceProxy} from '@shared/service-proxies/service-proxies';
 import {_HttpClient, DrawerHelper} from '@delon/theme';
 import {NzMessageService, NzModalService} from 'ng-zorro-antd';
 import {OrderListViewComponent} from './view.component';
@@ -24,21 +24,46 @@ export class OrderListComponent {
   mapOfExpandData = {};
   numberOfChecked = 0;
 
+  enums = {
+    OrderSource: [],
+    OrderStatus: [],
+    OrderType: [],
+    PaymentStatus: [],
+    ShippingStatus: []
+  };
+
   constructor(
     private http: _HttpClient,
     public msg: NzMessageService,
     private modalSrv: NzModalService,
     private drawer: DrawerHelper,
+    private enumsSvc: CommonLookupServiceProxy,
     private orderSvc: OrderServiceProxy) {
   }
 
   ngOnInit() {
     this.getData();
+    this.getEnums(['OrderSource', 'OrderStatus', 'OrderType', 'PaymentStatus', 'ShippingStatus']);
+  }
+
+  getEnums(enumNames) {
+    enumNames.forEach(enumName => {
+      this.enumsSvc.getEnumSelectItem(enumName).subscribe(res => {
+        res.forEach((item, index) => {
+          this.enums[enumName].push({
+            index: index,
+            text: item.text,
+            value: item.value,
+            type: 'default',
+            checked: false
+          });
+        });
+      });
+    });
   }
 
   filterChange(target, e) {
     this.q[target] = e;
-    console.log(this.q[target]);
     this.getData();
   }
 
@@ -51,7 +76,6 @@ export class OrderListComponent {
     this.isAllDisplayDataChecked = this.data.items.filter(item => !item.disabled).every(item => this.mapOfCheckedId[item.id]);
     this.isIndeterminate = this.data.items.filter(item => !item.disabled).some(item => this.mapOfCheckedId[item.id]) && !this.isAllDisplayDataChecked;
     this.numberOfChecked = this.data.items.filter(item => this.mapOfCheckedId[item.id]).length;
-    console.log(this.mapOfCheckedId);
   }
 
   q = {

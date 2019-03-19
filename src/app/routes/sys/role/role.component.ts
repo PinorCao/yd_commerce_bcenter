@@ -51,7 +51,7 @@ export class SysRoleComponent implements OnInit {
       return permission.items;
     })).subscribe(res => {
       this.permission = this.arrSrv.arrToTreeNode(res, {
-        titleMapName: 'name',
+        titleMapName: 'displayName',
         idMapName: 'name',
         parentIdMapName: 'parentName',
         cb: (item, parent, deep) => {
@@ -75,7 +75,7 @@ export class SysRoleComponent implements OnInit {
 
   changeData(list: any[]) {
     return this.arrSrv.arrToTreeNode(list || [], {
-      titleMapName: 'name',
+      titleMapName: 'displayName',
       idMapName: 'name',
       parentIdMapName: 'parentName',
       cb: (item, parent, deep) => {

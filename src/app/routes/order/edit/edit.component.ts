@@ -117,7 +117,6 @@ export class OrderEditComponent implements OnInit {
             });
           } else {
             this._attributes = this.orderItemForm.get('attributes').value;
-            console.log(this._attributes);
           }
         });
       }
@@ -196,7 +195,8 @@ export class OrderEditComponent implements OnInit {
 
   getSelectedProduct(item) {
     if (item && item.attributes && item.attributes.length > 0) {
-      return '(' + this.products[getIndex(this.products, 'id', item.productId)].name + ',' + this.getLabel(item.attributes) + ') x' + item.quantity + ' | ' + this.currency.transform(item.price);
+      const index = getIndex(this.products, 'id', item.productId);
+      return '(' + this.products[index].name + ',' + this.getLabel(item.attributes) + ') x' + item.quantity + ' | ' + this.currency.transform(item.price);
     } else {
       return '';
     }
@@ -206,17 +206,14 @@ export class OrderEditComponent implements OnInit {
     this.productSelectShow = true;
     this.orderItemIndex = i;
     this.orderItemForm.setValue(this.orderForm.get('items').value[i]);
-    console.log(this.orderItemForm.value);
   }
 
   handleOk(): void {
     this.orderItemForm.get('attributes').setValue(this._attributes);
-    console.log(this.orderItemForm.value);
     this.productSelectShow = false;
     const items = this.orderForm.get('items').value;
     items[this.orderItemIndex] = this.orderItemForm.value;
     this.orderForm.get('items').setValue(items);
-    console.log(this.orderForm.value);
   }
 
   handleCancel(): void {

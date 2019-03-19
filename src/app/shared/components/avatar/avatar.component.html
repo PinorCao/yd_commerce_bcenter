@@ -4,7 +4,7 @@
            nzListType="picture-card"
            [nzShowUploadList]="true"
            [(nzFileList)]="fileList"
-           [nzShowButton]="fileList.length < 1"
+           [nzShowButton]="fileList?.length < 1"
            [nzBeforeUpload]="beforeUpload"
            [nzCustomRequest]="nzCustomRequest"
            (nzChange)="handleChange($event)">
