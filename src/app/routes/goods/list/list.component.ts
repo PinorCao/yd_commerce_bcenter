@@ -60,11 +60,14 @@ export class GoodsListComponent {
 
   getData() {
     this.productSvc.getProducts('', '', '', this.q.maxResultCount, this.q.skipCount).subscribe(res => {
-      console.log(res);
       this.loading = false;
       this.data = res;
-      console.log(this.data);
     });
+  }
+
+  pageChange(e) {
+    this.q.skipCount = this.q.maxResultCount * (e - 1);
+    this.getData();
   }
 
   arrayToString(arr) {

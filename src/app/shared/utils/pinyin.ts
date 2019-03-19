@@ -933,10 +933,14 @@ export const pyGroup = function (arr) {
   letters.map((item, i) => {
     let cur = {letter: item, data: []};
     arr.map((_item) => {
-      _item.id = 0;
       const firstLetter = Pinyin.getCamelChars(_item.text).split('')[0];
       if (firstLetter === item) {
-        cur.data.push(_item);
+        cur.data.push({
+          id: 0,
+          logisticsId: _item.value,
+          text: _item.text,
+          displayOrder: 0
+        });
       }
     });
     result.push(cur);

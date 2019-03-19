@@ -78,7 +78,6 @@ export class OrderListComponent {
   };
 
   getData() {
-    console.log(this.q);
     this.loading = true;
     this.orderSvc.getOrders(this.q.productIds,
       this.q.logisticsNumber,
@@ -102,8 +101,12 @@ export class OrderListComponent {
       this.q.skipCount).subscribe(res => {
       this.loading = false;
       this.data = res;
-      console.log(this.data);
     });
+  }
+
+  pageChange(e) {
+    this.q.skipCount = this.q.maxResultCount * (e - 1);
+    this.getData();
   }
 
   arrayToString(arr) {
