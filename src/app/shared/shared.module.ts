@@ -37,13 +37,15 @@ import {FileManagerComponent} from './components/file-manager/file-manager.compo
 import {PRO_SHARED_COMPONENTS} from '../layout/pro';
 import {AvatarComponent} from '@shared/components/avatar/avatar.component';
 import {AvatarsComponent} from '@shared/components/avatars/avatars.component';
+import {FeatureComponent} from '@shared/components/feature/feature.component';
 
 const COMPONENTS_ENTRY = [
   LangsComponent,
   ImgComponent,
   FileManagerComponent,
   AvatarComponent,
-  AvatarsComponent
+  AvatarsComponent,
+  FeatureComponent
 ];
 const COMPONENTS = [
   EditorComponent,
@@ -52,7 +54,7 @@ const COMPONENTS = [
 ];
 const DIRECTIVES = [ImgDirective, DelayDirective, MasonryDirective, ScrollbarDirective];
 
-const PIPES = [UploadFilePipe];
+const PIPES = [UploadFilePipe, ToBoolPipe];
 
 // #endregion
 
@@ -60,6 +62,7 @@ const PIPES = [UploadFilePipe];
 
 import {CNCurrencyPipe} from '@delon/theme';
 import {UploadFilePipe} from '@shared/pipe/uploadFile.pipe';
+import {ToBoolPipe} from '@shared/pipe/toBool.pipe';
 
 @NgModule({
   imports: [

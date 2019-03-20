@@ -258,5 +258,6 @@
   "menu.shipment.list": "发货记录",
   "menu.shipment.add": "创建发货单",
   "menu.shipment.support.list": "物流供应商",
-  "menu.shipment.support.edit": "添加/编辑供应商"
+  "menu.shipment.support.edit": "添加/编辑供应商",
+  "menu.system.edition": "版本管理"
 }

@@ -10,6 +10,8 @@ import {SysRoleComponent} from './role/role.component';
 import {SysLogComponent} from './log/log.component';
 import {SysFileManagerComponent} from './file-manager/file-manager.component';
 import {SysSettingsComponent} from './settings/settings.component';
+import {SysEditionListComponent} from './edition/list/list.component';
+import {SysEditionEditComponent} from './edition/edit/edit.component';
 
 const routes: Routes = [
   {path: 'user', component: SysUserComponent},
@@ -20,7 +22,9 @@ const routes: Routes = [
   {path: 'role', component: SysRoleComponent},
   {path: 'log', component: SysLogComponent},
   {path: 'file-manager', component: SysFileManagerComponent},
-  {path: 'settings', component: SysSettingsComponent}
+  {path: 'settings', component: SysSettingsComponent},
+  {path: 'edition/list', component: SysEditionListComponent},
+  {path: 'edition/edit/:id', component: SysEditionEditComponent}
 ];
 
 @NgModule({

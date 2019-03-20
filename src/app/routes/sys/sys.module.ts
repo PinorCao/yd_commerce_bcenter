@@ -12,6 +12,9 @@ import {SysRoleComponent} from './role/role.component';
 import {SysLogComponent} from './log/log.component';
 import {SysFileManagerComponent} from './file-manager/file-manager.component';
 import {SysSettingsComponent} from './settings/settings.component';
+import {SysEditionListComponent} from './edition/list/list.component';
+import {SysEditionEditComponent} from './edition/edit/edit.component';
+
 
 const COMPONENTS = [
   SysUserComponent,
@@ -22,7 +25,9 @@ const COMPONENTS = [
   SysLogComponent,
   SysRoleComponent,
   SysFileManagerComponent,
-  SysSettingsComponent
+  SysSettingsComponent,
+  SysEditionListComponent,
+  SysEditionEditComponent
 ];
 
 const COMPONENTS_NOROUNT = [];

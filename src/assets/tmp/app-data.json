@@ -129,6 +129,11 @@
               "_text": "设置",
               "link": "/sys/settings",
               "i18n": "menu.system.settings"
+            },
+            {
+              "_text": "版本管理",
+              "link": "/sys/edition/list",
+              "i18n": "menu.system.edition"
             }
           ]
         }
