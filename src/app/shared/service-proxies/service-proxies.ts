@@ -15365,6 +15365,7 @@ export class NameValueDto implements INameValueDto {
     name!: string | undefined;
     value!: string | undefined;
 
+
     constructor(data?: INameValueDto) {
         if (data) {
             for (var property in data) {
