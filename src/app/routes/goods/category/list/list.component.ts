@@ -119,16 +119,10 @@ export class GoodsCategoryListComponent implements OnInit {
   }
 
   remove(item) {
-    this.categorySvc.deleteCategory(item.id).subscribe(() => {
+    this.categorySvc.deleteCategory([item.id]).subscribe(() => {
       this.msg.success(`您已成功删除${ item.name}`);
       this.getData();
     });
-    /*this.http
-      .delete('/rule', { nos: this.selectedRows.map(i => i.no).join(',') })
-      .subscribe(() => {
-        this.getData();
-        this.st.clearCheck();
-      });*/
   }
 
   approval() {

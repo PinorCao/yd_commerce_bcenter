@@ -1,23 +1,20 @@
 import {
   Component,
-  OnInit,
-  OnDestroy, ViewChild, ChangeDetectorRef, TemplateRef,
+  OnInit, ViewChild
 } from '@angular/core';
-import { Router } from '@angular/router';
+import {Router} from '@angular/router';
 
-import { NzMessageService, NzModalService } from 'ng-zorro-antd';
+import {NzMessageService, NzModalService} from 'ng-zorro-antd';
 
-import { StoreListDto, StoreServiceProxy } from '@shared/service-proxies/service-proxies';
-import { STChange, STColumn, STComponent, STData } from '@delon/abc';
-import { SFButton, SFComponent, SFSchema } from '@delon/form';
-import { SettingsService } from '@delon/theme';
-import { _HttpClient } from '@delon/theme';
-import { AppService } from '../../../app.service';
+import {StoreListDto, StoreServiceProxy} from '@shared/service-proxies/service-proxies';
+import {STChange, STColumn, STComponent, STData} from '@delon/abc';
+import {_HttpClient} from '@delon/theme';
+import {AppService} from '../../../app.service';
 
 @Component({
   selector: 'app-store-list',
   templateUrl: './list.component.html',
-  styleUrls: ['./list.component.less'],
+  styleUrls: ['./list.component.less']
 })
 export class StoreListComponent implements OnInit {
 
@@ -26,44 +23,50 @@ export class StoreListComponent implements OnInit {
     source: undefined,
     sorting: undefined,
     maxResultCount: 20,
-    skipCount: 0,
+    skipCount: 0
   };
   sources = [
     {
-      index: 0, text: '自营', value: 10, type: 'default', checked: false,
+      index: 0, text: '自营', value: 10, type: 'default', checked: false
     },
     {
-      index: 1, text: '鲁班', value: 20, type: 'default', checked: false,
+      index: 1, text: '鲁班', value: 20, type: 'default', checked: false
     },
     {
-      index: 2, text: '放心购', value: 30, type: 'default', checked: false,
+      index: 2, text: '放心购', value: 30, type: 'default', checked: false
     },
     {
-      index: 3, text: '广点通', value: 40, type: 'default', checked: false,
+      index: 3, text: '广点通', value: 40, type: 'default', checked: false
     },
     {
-      index: 4, text: '有赞', value: 50, type: 'default', checked: false,
-    },
+      index: 4, text: '有赞', value: 50, type: 'default', checked: false
+    }
   ];
   data: StoreListDto[] = [];
   loading = false;
   @ViewChild('st')
   st: STComponent;
   columns: STColumn[] = [
-    { title: '', index: 'id', type: 'checkbox' },
-    { title: '店铺名称', index: 'name' },
-    { title: '订单来源', index: 'orderSourceTypeName' },
-    { title: '订单同步', index: 'orderSyncLabel' },
+    {title: '', index: 'id', type: 'checkbox'},
+    {title: '店铺名称', index: 'name'},
+    {title: '订单来源', index: 'orderSourceTypeName'},
+    {title: '订单同步', index: 'orderSyncLabel'},
     {
       title: '操作', buttons: [
         {
           text: '更新',
           click: (item: any) => {
             this.router.navigate(['/store/edit', item.id]);
-          },
+          }
         },
-      ],
-    },
+        {
+          text: '删除',
+          pop: true,
+          popTitle: '确认删除吗？',
+          click: (item: any) => this.remove([item.id])
+        }
+      ]
+    }
   ];
   selectedRows: STData[] = [];
   description = '';
@@ -75,7 +78,6 @@ export class StoreListComponent implements OnInit {
     private router: Router,
     public msg: NzMessageService,
     private modalSrv: NzModalService,
-    private cdr: ChangeDetectorRef,
     private appSvc: AppService,
     private storeSvc: StoreServiceProxy) {
   }
@@ -112,25 +114,7 @@ export class StoreListComponent implements OnInit {
         items.push(item);
       });
       this.data = items;
-      this.cdr.detectChanges();
     });
-    /*this.http
-      .get('/rule', this.q)
-      .pipe(
-        map((list: any[]) =>
-          list.map(i => {
-            const statusItem = this.status[i.status];
-            i.statusText = statusItem.text;
-            i.statusType = statusItem.type;
-            return i;
-          }),
-        ),
-        tap(() => (this.loading = false)),
-      )
-      .subscribe(res => {
-        this.data = res;
-        this.cdr.detectChanges();
-      });*/
   }
 
   stChange(e: STChange) {
@@ -138,7 +122,6 @@ export class StoreListComponent implements OnInit {
       case 'checkbox':
         this.selectedRows = e.checkbox;
         this.totalCallNo = this.selectedRows.reduce((total, cv) => total + cv.callNo, 0);
-        this.cdr.detectChanges();
         break;
       case 'filter':
         this.getData();
@@ -146,29 +129,10 @@ export class StoreListComponent implements OnInit {
     }
   }
 
-  remove() {
-    this.http
-      .delete('/rule', { nos: this.selectedRows.map(i => i.no).join(',') })
-      .subscribe(() => {
-        this.getData();
-        this.st.clearCheck();
-      });
-  }
-
-  approval() {
-    this.msg.success(`审批了 ${this.selectedRows.length} 笔`);
-  }
-
-  add(tpl: TemplateRef<{}>) {
-    this.modalSrv.create({
-      nzTitle: '新建规则',
-      nzContent: tpl,
-      nzOnOk: () => {
-        this.loading = true;
-        this.http
-          .post('/rule', { description: this.description })
-          .subscribe(() => this.getData());
-      },
+  remove(ids) {
+    this.storeSvc.deleteStore(ids).subscribe(res => {
+      this.getData();
+      this.st.clearCheck();
     });
   }
 

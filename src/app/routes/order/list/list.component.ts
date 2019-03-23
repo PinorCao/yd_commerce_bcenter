@@ -2,11 +2,18 @@ import {
   Component
 } from '@angular/core';
 
-import {CommonLookupServiceProxy, OrderServiceProxy} from '@shared/service-proxies/service-proxies';
+import {FormControl, FormGroup, Validators} from '@angular/forms';
+import {
+  CommonLookupServiceProxy,
+  OrderServiceProxy,
+  StateServiceServiceProxy
+} from '@shared/service-proxies/service-proxies';
 import {_HttpClient, DrawerHelper} from '@delon/theme';
 import {NzMessageService, NzModalService} from 'ng-zorro-antd';
 import {OrderListViewComponent} from './view.component';
 import {OrderListMemoComponent} from './memo.component';
+
+let that;
 
 @Component({
   selector: 'app-order-list',
@@ -18,10 +25,8 @@ export class OrderListComponent {
   loading = false;
 
   isAllDisplayDataChecked = false;
-  isOperating = false;
   isIndeterminate = false;
   mapOfCheckedId = {};
-  mapOfExpandData = {};
   numberOfChecked = 0;
 
   enums = {
@@ -37,11 +42,38 @@ export class OrderListComponent {
     public msg: NzMessageService,
     private modalSrv: NzModalService,
     private drawer: DrawerHelper,
+    private stateSvc: StateServiceServiceProxy,
     private enumsSvc: CommonLookupServiceProxy,
     private orderSvc: OrderServiceProxy) {
+    that = this;
   }
 
+  address;
+  searchForm: FormGroup;
+
   ngOnInit() {
+    this.searchForm = new FormGroup({
+      productIds: new FormControl([], []),
+      logisticsNumber: new FormControl('', []),
+      orderNumber: new FormControl('', []),
+      createOn_FormDate: new FormControl('', []),
+      createOn_ToDate: new FormControl('', []),
+      receiveOn_FormDate: new FormControl('', []),
+      receiveOn_ToDate: new FormControl('', []),
+      shippingName: new FormControl('', []),
+      phoneNumber: new FormControl('', []),
+      provinceId: new FormControl('', []),
+      cityId: new FormControl('', []),
+      districtId: new FormControl('', []),
+      orderStatus: new FormControl([], []),
+      paymentStatus: new FormControl([], []),
+      shippingStatus: new FormControl([], []),
+      orderTypes: new FormControl([], []),
+      orderSource: new FormControl([], []),
+      sorting: new FormControl('', []),
+      maxResultCount: new FormControl(10, []),
+      skipCount: new FormControl(0, [])
+    });
     this.getData();
     this.getEnums(['OrderSource', 'OrderStatus', 'OrderType', 'PaymentStatus', 'ShippingStatus']);
   }
@@ -63,7 +95,7 @@ export class OrderListComponent {
   }
 
   filterChange(target, e) {
-    this.q[target] = e;
+    this.searchForm.get(target).setValue(e);
     this.getData();
   }
 
@@ -78,59 +110,79 @@ export class OrderListComponent {
     this.numberOfChecked = this.data.items.filter(item => this.mapOfCheckedId[item.id]).length;
   }
 
-  q = {
-    productIds: [],
-    logisticsNumber: undefined,
-    orderNumber: undefined,
-    createOn_FormDate: undefined,
-    createOn_ToDate: undefined,
-    receiveOn_FormDate: undefined,
-    receiveOn_ToDate: undefined,
-    shippingName: undefined,
-    phoneNumber: undefined,
-    provinceId: undefined,
-    cityId: undefined,
-    districtId: undefined,
-    orderStatus: [],
-    paymentStatus: [],
-    shippingStatus: [],
-    orderTypes: [],
-    orderSource: [],
-    sorting: undefined,
-    maxResultCount: 10,
-    skipCount: 0
-  };
-
   getData() {
     this.loading = true;
-    this.orderSvc.getOrders(this.q.productIds,
-      this.q.logisticsNumber,
-      this.q.orderNumber,
-      this.q.createOn_FormDate,
-      this.q.createOn_ToDate,
-      this.q.receiveOn_FormDate,
-      this.q.receiveOn_ToDate,
-      this.q.shippingName,
-      this.q.phoneNumber,
-      this.q.provinceId,
-      this.q.cityId,
-      this.q.districtId,
-      this.q.orderStatus,
-      this.q.paymentStatus,
-      this.q.shippingStatus,
-      this.q.orderTypes,
-      this.q.orderSource,
-      this.q.sorting,
-      this.q.maxResultCount,
-      this.q.skipCount).subscribe(res => {
+    this.orderSvc.getOrders(
+      this.searchForm.get('productIds').value,
+      this.searchForm.get('logisticsNumber').value,
+      this.searchForm.get('orderNumber').value,
+      this.searchForm.get('createOn_FormDate').value,
+      this.searchForm.get('createOn_ToDate').value,
+      this.searchForm.get('receiveOn_FormDate').value,
+      this.searchForm.get('receiveOn_ToDate').value,
+      this.searchForm.get('shippingName').value,
+      this.searchForm.get('phoneNumber').value,
+      this.searchForm.get('provinceId').value,
+      this.searchForm.get('cityId').value,
+      this.searchForm.get('districtId').value,
+      this.searchForm.get('orderStatus').value,
+      this.searchForm.get('paymentStatus').value,
+      this.searchForm.get('shippingStatus').value,
+      this.searchForm.get('orderTypes').value,
+      this.searchForm.get('orderSource').value,
+      this.searchForm.get('sorting').value,
+      this.searchForm.get('maxResultCount').value,
+      this.searchForm.get('skipCount').value).subscribe(res => {
       this.loading = false;
       this.data = res;
     });
   }
 
+  createOn(e) {
+    this.searchForm.get('createOn_FormDate').setValue(e[0]);
+    this.searchForm.get('createOn_ToDate').setValue(e[1]);
+  }
+
+  receiveOn(e) {
+    this.searchForm.get('receiveOn_FormDate').setValue(e[0]);
+    this.searchForm.get('receiveOn_ToDate').setValue(e[1]);
+  }
+
   pageChange(e) {
-    this.q.skipCount = this.q.maxResultCount * (e - 1);
+    this.searchForm.get('skipCount').setValue(this.searchForm.get('maxResultCount').value * (e - 1));
     this.getData();
+  }
+
+  onChanges(values: any): void {
+    this.searchForm.get('provinceId').setValue(values[0]);
+    this.searchForm.get('cityId').setValue(values[1]);
+    this.searchForm.get('districtId').setValue(values[2]);
+  }
+
+  loadData(node: any, index: number) {
+    return new Promise((resolve) => {
+      if (index < 0) { // if index less than 0 it is root node
+        that.stateSvc.getProvinceSelectList().subscribe(res => {
+          node.children = res;
+          resolve();
+        });
+      } else if (index === 0) {
+        that.stateSvc.getCitySelectList(node.value).subscribe(res => {
+          node.children = res;
+          resolve();
+        });
+      } else {
+        that.stateSvc.getDistrictSelectList(node.value).subscribe(res => {
+          const list = [];
+          res.forEach(item => {
+            item['isLeaf'] = true;
+            list.push(item);
+          });
+          node.children = list;
+          resolve();
+        });
+      }
+    });
   }
 
   arrayToString(arr) {
@@ -172,6 +224,6 @@ export class OrderListComponent {
   }
 
   reset() {
-    this.q.orderNumber = undefined;
+    // this.q.orderNumber = undefined;
   }
 }

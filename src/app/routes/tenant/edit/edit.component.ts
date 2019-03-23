@@ -11,7 +11,8 @@ import {
   TenantInfoEditDto,
   TenantServiceProxy,
   NameValueDto,
-  EditionServiceProxy
+  EditionServiceProxy,
+  CreateTenantInput
 } from '@shared/service-proxies/service-proxies';
 import {getIndex} from '@shared/utils/utils';
 
@@ -21,7 +22,7 @@ import {getIndex} from '@shared/utils/utils';
   styleUrls: ['./edit.component.scss']
 })
 export class TenantEditComponent implements OnInit {
-  id = this.route.snapshot.params['id'];
+  id = this.route.snapshot.params['id'] !== '0' ? this.route.snapshot.params['id'] : undefined;
   tenant;
   features;
   editions;
@@ -35,8 +36,8 @@ export class TenantEditComponent implements OnInit {
   }
 
   ngOnInit() {
-    if (this.id !== '0') {
-      const features = [];
+    const features = [];
+    if (this.id) {
       this.tenantSvc.getTenantForEdit(this.id).subscribe(res => {
         this.tenant = res.tenant;
         this.subscriptionEndDateUtc = this.tenant.subscriptionEndDateUtc ? moment(this.tenant.subscriptionEndDateUtc).format('YYYY-MM-DD') : '';
@@ -46,30 +47,45 @@ export class TenantEditComponent implements OnInit {
         });
         this.features = features;
       });
+    } else {
+      this.tenant = {
+        tenancyName: '',
+        name: '',
+        adminEmailAddress: '',
+        phoneNumber: '',
+        adminPassword: '',
+        connectionString: '',
+        shouldChangePasswordOnNextLogin: true,
+        sendActivationEmail: true,
+        editionId: 0,
+        isActive: true,
+        subscriptionEndDateUtc: '',
+        isInTrialPeriod: true
+      };
     }
     this.editionSvc.getEditionSelectList().subscribe(res => {
       this.editions = res;
-      console.log(this.editions);
     });
-  }
-
-  onChange(e) {
-    console.log(e);
   }
 
   submit() {
-    console.log(this.tenant);
-    const features = [];
-    this.features.forEach(feature => {
-      features.push(new NameValueDto({
-        name: feature.name,
-        value: feature.value
-      }));
-    });
-    this.tenant['features'] = features;
-    this.tenantSvc.updateTenant(this.tenant).subscribe(res => {
-      console.log(res);
-    });
+    if (this.id) {
+      const features = [];
+      this.features.forEach(feature => {
+        features.push(new NameValueDto({
+          name: feature.name,
+          value: feature.value
+        }));
+      });
+      this.tenant['features'] = features;
+      this.tenantSvc.updateTenant(this.tenant).subscribe(res => {
+        console.log(res);
+      });
+    } else {
+      this.tenantSvc.createTenant(this.tenant).subscribe(res => {
+        console.log(res);
+      });
+    }
   }
 
   cancel() {
