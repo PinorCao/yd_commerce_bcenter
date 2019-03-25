@@ -4,7 +4,7 @@ import {
 } from '@angular/core';
 import {_HttpClient} from '@delon/theme';
 import {NzMessageService, NzDrawerRef} from 'ng-zorro-antd';
-import {OrderServiceProxy} from '@shared/service-proxies/service-proxies';
+import {OrderServiceProxy, ShipmentServiceProxy} from '@shared/service-proxies/service-proxies';
 
 @Component({
   selector: 'app-order-list-view',
@@ -18,7 +18,8 @@ export class OrderListViewComponent implements OnInit {
     private http: _HttpClient,
     private msg: NzMessageService,
     private drawer: NzDrawerRef,
-    private orderSvc: OrderServiceProxy) {
+    private orderSvc: OrderServiceProxy,
+    private shipmentSvc: ShipmentServiceProxy) {
   }
 
   ngOnInit() {
@@ -27,6 +28,9 @@ export class OrderListViewComponent implements OnInit {
       this.i = res;
       this.loading = false;
       console.log(this.i);
+    });
+    this.shipmentSvc.getOrderShipments(this.i.id).subscribe(res => {
+      console.log(res);
     });
     /*this.http.get(`/trade/${this.i.id}`).subscribe(res => {
       this.i = res;

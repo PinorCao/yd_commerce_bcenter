@@ -41,6 +41,7 @@ export class GoodsListComponent {
 
   checkAll(value: boolean): void {
     this.data.items.forEach(item => this.mapOfCheckedId[item.id] = value);
+    console.log(this.mapOfCheckedId);
     this.refreshStatus();
   }
 
@@ -70,30 +71,29 @@ export class GoodsListComponent {
     this.getData();
   }
 
-  arrayToString(arr) {
-    let str = '';
-    arr.forEach(item => {
-      if (str) {
-        str = str + item;
-      } else {
-        str = ',' + item;
-      }
-    });
-    return str;
-  }
-
   /*view(i: any) {
     this.drawer
       .create(`查看订单 #${i.orderNumber}`, OrderListViewComponent, {i}, {size: 666})
       .subscribe();
   }*/
 
-  remove() {
-    /*this.http
-      .delete('/rule', {nos: this.selectedRows.map(i => i.no).join(',')})
-      .subscribe(() => {
-        this.getData();
-      });*/
+  remove(ids) {
+    let _ids = [];
+    if (ids.length) {
+      _ids = ids;
+    } else {
+      for (const id in ids) {
+        if (ids[id]) {
+          _ids.push(parseInt(id, 10));
+        }
+      }
+    }
+    this.productSvc.deleteProduct(_ids).subscribe(res => {
+      this.getData();
+    });
+  }
+
+  cancel() {
   }
 
   search() {

@@ -15,7 +15,7 @@ import {getIndex} from '@shared/utils/utils';
   templateUrl: './edit.component.html'
 })
 export class SysEditionEditComponent {
-  id = this.route.snapshot.params['id'];
+  id = this.route.snapshot.params['id'] !== '0' ? this.route.snapshot.params['id'] : undefined;
   tenant;
   edition;
   features;
@@ -30,25 +30,22 @@ export class SysEditionEditComponent {
   }
 
   ngOnInit() {
-    if (this.id !== '0') {
-      const features = [];
-      this.editionSvc.getEditionForEdit(this.id).subscribe(res => {
-        this.edition = res.edition;
-        res.features.forEach(item => {
-          item['value'] = res.featureValues[getIndex(res.featureValues, 'name', item.name)].value;
-          features.push(item);
-        });
-        this.features = features;
+    const features = [];
+    this.editionSvc.getEditionForEdit(this.id).subscribe(res => {
+      console.log(res);
+      this.edition = res.edition;
+      res.features.forEach(item => {
+        item['value'] = res.featureValues[getIndex(res.featureValues, 'name', item.name)].value;
+        features.push(item);
       });
-    }
+      this.features = features;
+    });
     this.editionSvc.getEditionSelectList().subscribe(res => {
       this.editions = res;
-      console.log(res);
     });
   }
 
   submit(f) {
-    console.log(f);
     const features = [];
     this.features.forEach(feature => {
       features.push(new NameValueDto({

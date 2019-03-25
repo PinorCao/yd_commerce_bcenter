@@ -1,4 +1,4 @@
-import {Component, Input, OnDestroy, ChangeDetectorRef, ChangeDetectionStrategy, OnInit} from '@angular/core';
+import {Component, Input, OnDestroy, Injector, ChangeDetectorRef, ChangeDetectionStrategy, OnInit} from '@angular/core';
 import {Router, NavigationEnd} from '@angular/router';
 import {Subject} from 'rxjs';
 import {filter, takeUntil} from 'rxjs/operators';
@@ -7,6 +7,7 @@ import {InputBoolean} from '@delon/util';
 
 import {BrandService} from '../../pro.service';
 import {ProMenu} from '../../pro.types';
+import {AppComponentBase} from '@shared/app-component-base';
 
 @Component({
   selector: '[layout-pro-menu]',
@@ -18,7 +19,7 @@ import {ProMenu} from '../../pro.types';
   },
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class LayoutProMenuComponent implements OnInit, OnDestroy {
+export class LayoutProMenuComponent extends AppComponentBase implements OnInit, OnDestroy {
   private unsubscribe$ = new Subject<void>();
   menus: ProMenu[];
 
@@ -26,11 +27,13 @@ export class LayoutProMenuComponent implements OnInit, OnDestroy {
   @Input() mode = 'inline';
 
   constructor(
+    injector: Injector,
     private menuSrv: MenuService,
     private router: Router,
     public pro: BrandService,
     private cdr: ChangeDetectorRef
   ) {
+    super(injector);
   }
 
   private cd() {

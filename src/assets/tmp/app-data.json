@@ -17,68 +17,68 @@
       "children": [
         {
           "_text": "商品管理",
-          "i18n": "menu.goods",
+          "i18n": "BusiCenter.Catelog",
           "icon": "anticon anticon-gift",
           "children": [
             {
               "_text": "查找商品",
               "link": "/goods/list",
-              "i18n": "menu.goods.list"
+              "i18n": "BusiCenter.Catelog.Product"
             },
             {
               "_text": "分类管理",
               "link": "/goods/category/list",
-              "i18n": "menu.goods.category"
+              "i18n": "BusiCenter.Catelog.Category"
             },
             {
               "_text": "属性管理",
               "link": "/dashboard/monitor",
-              "i18n": "menu.dashboard.monitor"
+              "i18n": "BusiCenter.Catelog.ProductAttribute"
             }
           ]
         },
         {
           "_text": "租户管理",
-          "i18n": "menu.tenant",
+          "i18n": "Admin.UserManage.Tenants",
           "icon": "anticon anticon-radar-chart",
           "children": [
             {
               "_text": "查找租户",
               "link": "/tenant/list",
-              "i18n": "menu.tenant.list"
+              "i18n": "Admin.UserManage.Tenants"
             },
             {
               "_text": "特性管理",
               "link": "/tenant/feature",
-              "i18n": "menu.tenant.feature"
+              "i18n": "Admin.UserManage.Tenants.ChangeFeatures"
             },
             {
               "_text": "租户设置",
               "link": "/tenant/settings",
-              "i18n": "menu.tenant.settings"
+              "i18n": "Admin.Configuration.Tenant.Settings"
             }
           ]
         },
         {
           "_text": "订单管理",
-          "i18n": "menu.order",
+          "i18n": "BusiCenter.Order",
           "icon": "anticon anticon-radar-chart",
           "children": [
             {
               "_text": "查找订单",
               "link": "/order/list",
-              "i18n": "menu.order.list"
+              "i18n": "BusiCenter.Order"
             },
             {
               "_text": "创建订单",
               "link": "/order/edit/0",
-              "i18n": "menu.order.add"
+              "i18n": "BusiCenter.Order.Create"
             }
           ]
         },
         {
           "_text": "物流管理",
-          "i18n": "menu.shipment",
+          "i18n": "BusiCenter.TenantLogistics",
           "icon": "anticon anticon-radar-chart",
           "children": [
             {
@@ -94,46 +94,57 @@
             {
               "_text": "物流供应商",
               "link": "/shipment/support/list",
-              "i18n": "menu.shipment.support.list"
+              "i18n": "BusiCenter.TenantLogistics"
+            }
+          ]
+        },
+        {
+          "_text": "发货管理",
+          "i18n": "BusiCenter.Shipment",
+          "icon": "anticon anticon-radar-chart",
+          "children": [
+            {
+              "_text": "发货单查询",
+              "link": "/shipment/list",
+              "i18n": "menu.shipment.list"
+            },
+            {
+              "_text": "创建发货记录",
+              "link": "/shipment/edit/0",
+              "i18n": "menu.shipment.add"
+            },
+            {
+              "_text": "物流供应商",
+              "link": "/shipment/support/list",
+              "i18n": "BusiCenter.TenantLogistics"
             }
           ]
         },
         {
           "_text": "店铺管理",
-          "i18n": "menu.store",
+          "i18n": "BusiCenter.Store",
           "icon": "anticon anticon-shop",
           "link": "/store/list"
         },
         {
-          "_text": "文件管理",
-          "i18n": "menu.files",
-          "icon": "anticon anticon-profile",
-          "link": "/files"
-        },
-        {
           "_text": "系统",
-          "i18n": "menu.system",
+          "i18n": "Admin.Configuration",
           "icon": "anticon anticon-setting",
           "children": [
             {
               "_text": "角色",
               "link": "/sys/role",
-              "i18n": "menu.system.role"
-            },
-            {
-              "_text": "权限",
-              "link": "/sys/permission",
-              "i18n": "menu.system.permission"
+              "i18n": "Admin.UserManage.Roles"
             },
             {
               "_text": "设置",
               "link": "/sys/settings",
-              "i18n": "menu.system.settings"
+              "i18n": "Admin.Configuration.Host.Settings"
             },
             {
               "_text": "版本管理",
               "link": "/sys/edition/list",
-              "i18n": "menu.system.edition"
+              "i18n": "Admin.System.Editions"
             }
           ]
         }

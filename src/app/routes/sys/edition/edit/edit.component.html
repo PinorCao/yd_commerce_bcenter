@@ -1,4 +1,4 @@
-<page-header-wrapper [title]="id === '0' ? '创建新版本' : '编辑版本'">
+<page-header-wrapper [title]="id ? '编辑版本' : '创建新版本'">
     <form *ngIf="edition" nz-form #f="ngForm" (submit)="submit(f)" class="sf__no-error">
         <nz-card nzTitle="版本基本信息">
             <nz-form-item>

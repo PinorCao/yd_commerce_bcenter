@@ -1,10 +1,14 @@
-import * as moment from "moment";
-import { AppConsts } from "@shared/AppConsts";
-import { platformBrowserDynamic } from "@angular/platform-browser-dynamic";
-import { Type, CompilerOptions, NgModuleRef } from "@angular/core";
-import * as _ from "lodash";
+import * as moment from 'moment';
+import {AppConsts} from '@shared/AppConsts';
+import {platformBrowserDynamic} from '@angular/platform-browser-dynamic';
+import {Type, CompilerOptions, NgModuleRef, Inject} from '@angular/core';
+import * as _ from 'lodash';
+import {DA_SERVICE_TOKEN, ITokenService} from '@delon/auth';
 
 export class AppPreBootstrap {
+  constructor(@Inject(DA_SERVICE_TOKEN) private tokenSvc: ITokenService) {
+  }
+
   static run(callback: () => void): void {
     AppPreBootstrap.getApplicationConfig(() => {
       AppPreBootstrap.getUserConfiguration(callback);
@@ -24,10 +28,10 @@ export class AppPreBootstrap {
   private static getApplicationConfig(callback: () => void) {
     return abp
       .ajax({
-        url: "/assets/appconfig.json",
-        method: "GET",
+        url: '/assets/appconfig.json',
+        method: 'GET',
         headers: {
-          "Abp.TenantId": abp.multiTenancy.getTenantIdCookie()
+          'Abp.TenantId': abp.multiTenancy.getTenantIdCookie()
         }
       })
       .done(result => {
@@ -41,11 +45,11 @@ export class AppPreBootstrap {
   private static getCurrentClockProvider(
     currentProviderName: string
   ): abp.timing.IClockProvider {
-    if (currentProviderName === "unspecifiedClockProvider") {
+    if (currentProviderName === 'unspecifiedClockProvider') {
       return abp.timing.unspecifiedClockProvider;
     }
 
-    if (currentProviderName === "utcClockProvider") {
+    if (currentProviderName === 'utcClockProvider') {
       return abp.timing.utcClockProvider;
     }
 
@@ -57,14 +61,14 @@ export class AppPreBootstrap {
   ): Promise<any> {
     return abp
       .ajax({
-        url: AppConsts.remoteServiceBaseUrl + "/UserConfiguration/GetAll?sourceName=BusinessCenter",
-        method: "GET",
+        url: AppConsts.remoteServiceBaseUrl + '/UserConfiguration/GetAll?sourceName=BusinessCenter',
+        method: 'GET',
         headers: {
-          Authorization: "Bearer " + abp.auth.getToken(),
-          ".AspNetCore.Culture": abp.utils.getCookieValue(
-            "Abp.Localization.CultureName"
+          Authorization: 'Bearer ' + abp.auth.getToken(),
+          '.AspNetCore.Culture': abp.utils.getCookieValue(
+            'Abp.Localization.CultureName'
           ),
-          "Abp.TenantId": abp.multiTenancy.getTenantIdCookie()
+          'Abp.TenantId': abp.multiTenancy.getTenantIdCookie()
         }
       })
       .done(result => {
@@ -81,10 +85,10 @@ export class AppPreBootstrap {
           (window as any).moment.tz.setDefault(abp.timing.timeZoneInfo.iana.timeZoneId);*/
         }
 
-        abp.event.trigger("abp.dynamicScriptsInitialized");
+        abp.event.trigger('abp.dynamicScriptsInitialized');
 
-        AppConsts.recaptchaSiteKey = abp.setting.get("Recaptcha.SiteKey");
-        AppConsts.subscriptionExpireNootifyDayCount = parseInt(abp.setting.get("App.TenantManagement.SubscriptionExpireNotifyDayCount"));
+        AppConsts.recaptchaSiteKey = abp.setting.get('Recaptcha.SiteKey');
+        AppConsts.subscriptionExpireNootifyDayCount = parseInt(abp.setting.get('App.TenantManagement.SubscriptionExpireNotifyDayCount'));
 
         callback();
       });
