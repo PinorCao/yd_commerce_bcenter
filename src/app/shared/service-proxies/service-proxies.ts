@@ -744,6 +744,680 @@ export class AccountServiceProxy {
 }
 
 @Injectable()
+export class AdvertAccountAppSerivceServiceProxy {
+    private http: HttpClient;
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * 获取所有广告账户
+     * @param advertChannels (optional) 渠道
+     * @param thirdpartyId (optional) 第三方Id
+     * @param userName (optional) 用户名
+     * @param displayName (optional) 显示名称
+     * @param productId (optional) 产品Id
+     * @param sorting (optional) 排序字段 (eg:Id DESC)
+     * @param maxResultCount (optional) 最大结果数量(等同:PageSize)
+     * @param skipCount (optional) 列表跳过数量(等同: PageSize*PageIndex)
+     * @return Success
+     */
+    getAccounts(advertChannels: AdvertChannels[] | null | undefined, thirdpartyId: string | null | undefined, userName: string | null | undefined, displayName: string | null | undefined, productId: number | null | undefined, sorting: string | null | undefined, maxResultCount: number | null | undefined, skipCount: number | null | undefined): Observable<PagedResultDtoOfAdvertAccountListDto> {
+        let url_ = this.baseUrl + "/api/services/app/AdvertAccountAppSerivce/GetAccounts?";
+        if (advertChannels !== undefined)
+            advertChannels && advertChannels.forEach(item => { url_ += "AdvertChannels=" + encodeURIComponent("" + item) + "&"; });
+        if (thirdpartyId !== undefined)
+            url_ += "ThirdpartyId=" + encodeURIComponent("" + thirdpartyId) + "&"; 
+        if (userName !== undefined)
+            url_ += "UserName=" + encodeURIComponent("" + userName) + "&"; 
+        if (displayName !== undefined)
+            url_ += "DisplayName=" + encodeURIComponent("" + displayName) + "&"; 
+        if (productId !== undefined)
+            url_ += "ProductId=" + encodeURIComponent("" + productId) + "&"; 
+        if (sorting !== undefined)
+            url_ += "Sorting=" + encodeURIComponent("" + sorting) + "&"; 
+        if (maxResultCount !== undefined)
+            url_ += "MaxResultCount=" + encodeURIComponent("" + maxResultCount) + "&"; 
+        if (skipCount !== undefined)
+            url_ += "SkipCount=" + encodeURIComponent("" + skipCount) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetAccounts(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetAccounts(<any>response_);
+                } catch (e) {
+                    return <Observable<PagedResultDtoOfAdvertAccountListDto>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<PagedResultDtoOfAdvertAccountListDto>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetAccounts(response: HttpResponseBase): Observable<PagedResultDtoOfAdvertAccountListDto> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? PagedResultDtoOfAdvertAccountListDto.fromJS(resultData200) : new PagedResultDtoOfAdvertAccountListDto();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<PagedResultDtoOfAdvertAccountListDto>(<any>null);
+    }
+
+    /**
+     * 获取所有可用广告账户(下拉框)
+     * @return Success
+     */
+    getAccountSelectList(): Observable<SelectListItemDtoOfInt64[]> {
+        let url_ = this.baseUrl + "/api/services/app/AdvertAccountAppSerivce/GetAccountSelectList";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetAccountSelectList(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetAccountSelectList(<any>response_);
+                } catch (e) {
+                    return <Observable<SelectListItemDtoOfInt64[]>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<SelectListItemDtoOfInt64[]>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetAccountSelectList(response: HttpResponseBase): Observable<SelectListItemDtoOfInt64[]> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(SelectListItemDtoOfInt64.fromJS(item));
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<SelectListItemDtoOfInt64[]>(<any>null);
+    }
+
+    /**
+     * 获取广告账户详情
+     * @param id (optional) 
+     * @return Success
+     */
+    getAccountForEdit(id: number | null | undefined): Observable<GetAdvertAccountForEditOutput> {
+        let url_ = this.baseUrl + "/api/services/app/AdvertAccountAppSerivce/GetAccountForEdit?";
+        if (id !== undefined)
+            url_ += "Id=" + encodeURIComponent("" + id) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetAccountForEdit(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetAccountForEdit(<any>response_);
+                } catch (e) {
+                    return <Observable<GetAdvertAccountForEditOutput>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<GetAdvertAccountForEditOutput>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetAccountForEdit(response: HttpResponseBase): Observable<GetAdvertAccountForEditOutput> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? GetAdvertAccountForEditOutput.fromJS(resultData200) : new GetAdvertAccountForEditOutput();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<GetAdvertAccountForEditOutput>(<any>null);
+    }
+
+    /**
+     * 创建或更新广告账户
+     * @param input (optional) 
+     * @return Success
+     */
+    createOrUpdateAccount(input: CreateOrUpdateAdvertAccountInput | null | undefined): Observable<EntityDtoOfInt64> {
+        let url_ = this.baseUrl + "/api/services/app/AdvertAccountAppSerivce/CreateOrUpdateAccount";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processCreateOrUpdateAccount(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processCreateOrUpdateAccount(<any>response_);
+                } catch (e) {
+                    return <Observable<EntityDtoOfInt64>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<EntityDtoOfInt64>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processCreateOrUpdateAccount(response: HttpResponseBase): Observable<EntityDtoOfInt64> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? EntityDtoOfInt64.fromJS(resultData200) : new EntityDtoOfInt64();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<EntityDtoOfInt64>(<any>null);
+    }
+
+    /**
+     * 删除广告账户
+     * @param ids (optional) id数组
+     * @return Success
+     */
+    deleteAdvertAccount(ids: number[] | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/app/AdvertAccountAppSerivce/DeleteAdvertAccount?";
+        if (ids !== undefined)
+            ids && ids.forEach(item => { url_ += "Ids=" + encodeURIComponent("" + item) + "&"; });
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+            })
+        };
+
+        return this.http.request("delete", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processDeleteAdvertAccount(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processDeleteAdvertAccount(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processDeleteAdvertAccount(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+}
+
+@Injectable()
+export class AdvertDailyStatisticAppSerivceServiceProxy {
+    private http: HttpClient;
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * 获取所有广告数据统计
+     * @param advertChannels (optional) 渠道
+     * @param productIds (optional) 产品Id
+     * @param accountIds (optional) 账户Id
+     * @param statisticOn_FormDate (optional) 开始时间
+     * @param statisticOn_ToDate (optional) 结束时间
+     * @param sorting (optional) 排序字段 (eg:Id DESC)
+     * @param maxResultCount (optional) 最大结果数量(等同:PageSize)
+     * @param skipCount (optional) 列表跳过数量(等同: PageSize*PageIndex)
+     * @return Success
+     */
+    getDailyStatistics(advertChannels: AdvertChannels2[] | null | undefined, productIds: number[] | null | undefined, accountIds: number[] | null | undefined, statisticOn_FormDate: moment.Moment | null | undefined, statisticOn_ToDate: moment.Moment | null | undefined, sorting: string | null | undefined, maxResultCount: number | null | undefined, skipCount: number | null | undefined): Observable<PagedResultDtoOfDailyStatisticDto> {
+        let url_ = this.baseUrl + "/api/services/app/AdvertDailyStatisticAppSerivce/GetDailyStatistics?";
+        if (advertChannels !== undefined)
+            advertChannels && advertChannels.forEach(item => { url_ += "AdvertChannels=" + encodeURIComponent("" + item) + "&"; });
+        if (productIds !== undefined)
+            productIds && productIds.forEach(item => { url_ += "ProductIds=" + encodeURIComponent("" + item) + "&"; });
+        if (accountIds !== undefined)
+            accountIds && accountIds.forEach(item => { url_ += "AccountIds=" + encodeURIComponent("" + item) + "&"; });
+        if (statisticOn_FormDate !== undefined)
+            url_ += "StatisticOn.FormDate=" + encodeURIComponent(statisticOn_FormDate ? "" + statisticOn_FormDate.toJSON() : "") + "&"; 
+        if (statisticOn_ToDate !== undefined)
+            url_ += "StatisticOn.ToDate=" + encodeURIComponent(statisticOn_ToDate ? "" + statisticOn_ToDate.toJSON() : "") + "&"; 
+        if (sorting !== undefined)
+            url_ += "Sorting=" + encodeURIComponent("" + sorting) + "&"; 
+        if (maxResultCount !== undefined)
+            url_ += "MaxResultCount=" + encodeURIComponent("" + maxResultCount) + "&"; 
+        if (skipCount !== undefined)
+            url_ += "SkipCount=" + encodeURIComponent("" + skipCount) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetDailyStatistics(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetDailyStatistics(<any>response_);
+                } catch (e) {
+                    return <Observable<PagedResultDtoOfDailyStatisticDto>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<PagedResultDtoOfDailyStatisticDto>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetDailyStatistics(response: HttpResponseBase): Observable<PagedResultDtoOfDailyStatisticDto> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? PagedResultDtoOfDailyStatisticDto.fromJS(resultData200) : new PagedResultDtoOfDailyStatisticDto();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<PagedResultDtoOfDailyStatisticDto>(<any>null);
+    }
+
+    /**
+     * 获取广告数据统计详情
+     * @param id (optional) 
+     * @return Success
+     */
+    getDailyStatisticForEdit(id: number | null | undefined): Observable<DailyStatisticDto> {
+        let url_ = this.baseUrl + "/api/services/app/AdvertDailyStatisticAppSerivce/GetDailyStatisticForEdit?";
+        if (id !== undefined)
+            url_ += "Id=" + encodeURIComponent("" + id) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetDailyStatisticForEdit(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetDailyStatisticForEdit(<any>response_);
+                } catch (e) {
+                    return <Observable<DailyStatisticDto>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<DailyStatisticDto>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetDailyStatisticForEdit(response: HttpResponseBase): Observable<DailyStatisticDto> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? DailyStatisticDto.fromJS(resultData200) : new DailyStatisticDto();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<DailyStatisticDto>(<any>null);
+    }
+
+    /**
+     * 创建或更新广告数据统计
+     * @param input (optional) 
+     * @return Success
+     */
+    createOrUpdateDailyStatistic(input: DailyStatisticDto | null | undefined): Observable<EntityDtoOfInt64> {
+        let url_ = this.baseUrl + "/api/services/app/AdvertDailyStatisticAppSerivce/CreateOrUpdateDailyStatistic";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processCreateOrUpdateDailyStatistic(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processCreateOrUpdateDailyStatistic(<any>response_);
+                } catch (e) {
+                    return <Observable<EntityDtoOfInt64>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<EntityDtoOfInt64>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processCreateOrUpdateDailyStatistic(response: HttpResponseBase): Observable<EntityDtoOfInt64> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? EntityDtoOfInt64.fromJS(resultData200) : new EntityDtoOfInt64();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<EntityDtoOfInt64>(<any>null);
+    }
+
+    /**
+     * 删除广告数据统计
+     * @param ids (optional) id数组
+     * @return Success
+     */
+    deleteDailyStatistic(ids: number[] | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/app/AdvertDailyStatisticAppSerivce/DeleteDailyStatistic?";
+        if (ids !== undefined)
+            ids && ids.forEach(item => { url_ += "Ids=" + encodeURIComponent("" + item) + "&"; });
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+            })
+        };
+
+        return this.http.request("delete", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processDeleteDailyStatistic(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processDeleteDailyStatistic(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processDeleteDailyStatistic(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * 获取广告数据统计条目
+     * @param advertDailyStatisticId (optional) 广告统计Id
+     * @return Success
+     */
+    getDailyStatisticItems(advertDailyStatisticId: number | null | undefined): Observable<AdvertStatisticItemDto[]> {
+        let url_ = this.baseUrl + "/api/services/app/AdvertDailyStatisticAppSerivce/GetDailyStatisticItems?";
+        if (advertDailyStatisticId !== undefined)
+            url_ += "AdvertDailyStatisticId=" + encodeURIComponent("" + advertDailyStatisticId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetDailyStatisticItems(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetDailyStatisticItems(<any>response_);
+                } catch (e) {
+                    return <Observable<AdvertStatisticItemDto[]>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<AdvertStatisticItemDto[]>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetDailyStatisticItems(response: HttpResponseBase): Observable<AdvertStatisticItemDto[]> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(AdvertStatisticItemDto.fromJS(item));
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<AdvertStatisticItemDto[]>(<any>null);
+    }
+
+    /**
+     * 创建或更新广告数据条目
+     * @param input (optional) 
+     * @return Success
+     */
+    createOrUpdateDailyStatisticItem(input: AdvertStatisticItemDto | null | undefined): Observable<EntityDtoOfInt64> {
+        let url_ = this.baseUrl + "/api/services/app/AdvertDailyStatisticAppSerivce/CreateOrUpdateDailyStatisticItem";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processCreateOrUpdateDailyStatisticItem(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processCreateOrUpdateDailyStatisticItem(<any>response_);
+                } catch (e) {
+                    return <Observable<EntityDtoOfInt64>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<EntityDtoOfInt64>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processCreateOrUpdateDailyStatisticItem(response: HttpResponseBase): Observable<EntityDtoOfInt64> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? EntityDtoOfInt64.fromJS(resultData200) : new EntityDtoOfInt64();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<EntityDtoOfInt64>(<any>null);
+    }
+}
+
+@Injectable()
 export class AlipayPaymentServiceProxy {
     private http: HttpClient;
     private baseUrl: string;
@@ -819,6 +1493,7 @@ export class AuditLogServiceProxy {
     }
 
     /**
+     * 获取审计日志
      * @param startDate (optional) 
      * @param endDate (optional) 
      * @param userName (optional) 
@@ -828,9 +1503,9 @@ export class AuditLogServiceProxy {
      * @param hasException (optional) 
      * @param minExecutionDuration (optional) 
      * @param maxExecutionDuration (optional) 
-     * @param sorting (optional) 
-     * @param maxResultCount (optional) 
-     * @param skipCount (optional) 
+     * @param sorting (optional) 排序字段 (eg:Id DESC)
+     * @param maxResultCount (optional) 最大结果数量(等同:PageSize)
+     * @param skipCount (optional) 列表跳过数量(等同: PageSize*PageIndex)
      * @return Success
      */
     getAuditLogs(startDate: moment.Moment | null | undefined, endDate: moment.Moment | null | undefined, userName: string | null | undefined, serviceName: string | null | undefined, methodName: string | null | undefined, browserInfo: string | null | undefined, hasException: boolean | null | undefined, minExecutionDuration: number | null | undefined, maxExecutionDuration: number | null | undefined, sorting: string | null | undefined, maxResultCount: number | null | undefined, skipCount: number | null | undefined): Observable<PagedResultDtoOfAuditLogListDto> {
@@ -906,6 +1581,7 @@ export class AuditLogServiceProxy {
     }
 
     /**
+     * 导入审计日志到Excel
      * @param startDate (optional) 
      * @param endDate (optional) 
      * @param userName (optional) 
@@ -915,9 +1591,9 @@ export class AuditLogServiceProxy {
      * @param hasException (optional) 
      * @param minExecutionDuration (optional) 
      * @param maxExecutionDuration (optional) 
-     * @param sorting (optional) 
-     * @param maxResultCount (optional) 
-     * @param skipCount (optional) 
+     * @param sorting (optional) 排序字段 (eg:Id DESC)
+     * @param maxResultCount (optional) 最大结果数量(等同:PageSize)
+     * @param skipCount (optional) 列表跳过数量(等同: PageSize*PageIndex)
      * @return Success
      */
     getAuditLogsToExcel(startDate: moment.Moment | null | undefined, endDate: moment.Moment | null | undefined, userName: string | null | undefined, serviceName: string | null | undefined, methodName: string | null | undefined, browserInfo: string | null | undefined, hasException: boolean | null | undefined, minExecutionDuration: number | null | undefined, maxExecutionDuration: number | null | undefined, sorting: string | null | undefined, maxResultCount: number | null | undefined, skipCount: number | null | undefined): Observable<FileDto> {
@@ -993,6 +1669,7 @@ export class AuditLogServiceProxy {
     }
 
     /**
+     * 获取实体记录对象类型
      * @return Success
      */
     getEntityHistoryObjectTypes(): Observable<NameValueDto[]> {
@@ -1048,13 +1725,14 @@ export class AuditLogServiceProxy {
     }
 
     /**
+     * 获取实体变更
      * @param startDate (optional) 
      * @param endDate (optional) 
      * @param userName (optional) 
      * @param entityTypeFullName (optional) 
-     * @param sorting (optional) 
-     * @param maxResultCount (optional) 
-     * @param skipCount (optional) 
+     * @param sorting (optional) 排序字段 (eg:Id DESC)
+     * @param maxResultCount (optional) 最大结果数量(等同:PageSize)
+     * @param skipCount (optional) 列表跳过数量(等同: PageSize*PageIndex)
      * @return Success
      */
     getEntityChanges(startDate: moment.Moment | null | undefined, endDate: moment.Moment | null | undefined, userName: string | null | undefined, entityTypeFullName: string | null | undefined, sorting: string | null | undefined, maxResultCount: number | null | undefined, skipCount: number | null | undefined): Observable<PagedResultDtoOfEntityChangeListDto> {
@@ -1120,13 +1798,14 @@ export class AuditLogServiceProxy {
     }
 
     /**
+     * 导出实体变更到Excel
      * @param startDate (optional) 
      * @param endDate (optional) 
      * @param userName (optional) 
      * @param entityTypeFullName (optional) 
-     * @param sorting (optional) 
-     * @param maxResultCount (optional) 
-     * @param skipCount (optional) 
+     * @param sorting (optional) 排序字段 (eg:Id DESC)
+     * @param maxResultCount (optional) 最大结果数量(等同:PageSize)
+     * @param skipCount (optional) 列表跳过数量(等同: PageSize*PageIndex)
      * @return Success
      */
     getEntityChangesToExcel(startDate: moment.Moment | null | undefined, endDate: moment.Moment | null | undefined, userName: string | null | undefined, entityTypeFullName: string | null | undefined, sorting: string | null | undefined, maxResultCount: number | null | undefined, skipCount: number | null | undefined): Observable<FileDto> {
@@ -1192,6 +1871,7 @@ export class AuditLogServiceProxy {
     }
 
     /**
+     * 获取字段变更
      * @param entityChangeId (optional) 
      * @return Success
      */
@@ -1430,9 +2110,9 @@ export class CategoryServiceProxy {
      * 获取所有分类
      * @param name (optional) 分类名称
      * @param parentCategoryId (optional) 父分类Id(0为所有)
-     * @param sorting (optional) 
-     * @param maxResultCount (optional) 
-     * @param skipCount (optional) 
+     * @param sorting (optional) 排序字段 (eg:Id DESC)
+     * @param maxResultCount (optional) 最大结果数量(等同:PageSize)
+     * @param skipCount (optional) 列表跳过数量(等同: PageSize*PageIndex)
      * @return Success
      */
     getCategorys(name: string | null | undefined, parentCategoryId: number | null | undefined, sorting: string | null | undefined, maxResultCount: number | null | undefined, skipCount: number | null | undefined): Observable<PagedResultDtoOfCategoryListDto> {
@@ -1659,7 +2339,7 @@ export class CategoryServiceProxy {
 
     /**
      * 删除分类
-     * @param ids (optional) 
+     * @param ids (optional) id数组
      * @return Success
      */
     deleteCategory(ids: number[] | null | undefined): Observable<void> {
@@ -1721,6 +2401,7 @@ export class CommonLookupServiceProxy {
     }
 
     /**
+     * 获取版本信息（Combobox数据源）
      * @param onlyFreeItems (optional) 
      * @return Success
      */
@@ -2019,9 +2700,9 @@ export class CustomerServiceProxy {
      * @param phoneNumber (optional) 电话号码
      * @param consumesForm (optional) 消费金额（起始）
      * @param consumesTo (optional) 消费金额（结束）
-     * @param sorting (optional) 
-     * @param maxResultCount (optional) 
-     * @param skipCount (optional) 
+     * @param sorting (optional) 排序字段 (eg:Id DESC)
+     * @param maxResultCount (optional) 最大结果数量(等同:PageSize)
+     * @param skipCount (optional) 列表跳过数量(等同: PageSize*PageIndex)
      * @return Success
      */
     getCustomers(name: string | null | undefined, phoneNumber: string | null | undefined, consumesForm: number | null | undefined, consumesTo: number | null | undefined, sorting: string | null | undefined, maxResultCount: number | null | undefined, skipCount: number | null | undefined): Observable<PagedResultDtoOfCustomerListDto> {
@@ -2200,7 +2881,7 @@ export class CustomerServiceProxy {
 
     /**
      * 删除客户
-     * @param ids (optional) 
+     * @param ids (optional) id数组
      * @return Success
      */
     deleteCustomer(ids: number[] | null | undefined): Observable<void> {
@@ -2476,7 +3157,7 @@ export class EditionServiceProxy {
      * 获取版本信息(Combobox)
      * @param selectedEditionId (optional) 选择版本Id
      * @param addAllItem (optional) 添加所有
-     * @param onlyFreeItems (optional) 
+     * @param onlyFreeItems (optional) 只获取免费版
      * @return Success
      */
     getEditionComboboxItems(selectedEditionId: number | null | undefined, addAllItem: boolean | null | undefined, onlyFreeItems: boolean | null | undefined): Observable<SubscribableEditionComboboxItemDto[]> {
@@ -2880,6 +3561,9 @@ export class FileServiceProxy {
 
     /**
      * 下载临时文件
+     * @param fileName 文件名称
+     * @param fileType 文件类型
+     * @param fileToken 文件 Token
      * @return Success
      */
     downloadTempFile(fileName: string, fileType: string, fileToken: string): Observable<void> {
@@ -3472,6 +4156,7 @@ export class IncomeStatisticsServiceServiceProxy {
     }
 
     /**
+     * 获取收入数据分析
      * @param startDate (optional) 
      * @param endDate (optional) 
      * @param dateInterval (optional) 
@@ -4243,9 +4928,9 @@ export class LogisticsServiceProxy {
     /**
      * 获取所有物流（平台）
      * @param name (optional) 快递名称
-     * @param sorting (optional) 
-     * @param maxResultCount (optional) 
-     * @param skipCount (optional) 
+     * @param sorting (optional) 排序字段 (eg:Id DESC)
+     * @param maxResultCount (optional) 最大结果数量(等同:PageSize)
+     * @param skipCount (optional) 列表跳过数量(等同: PageSize*PageIndex)
      * @return Success
      */
     getLogisticses(name: string | null | undefined, sorting: string | null | undefined, maxResultCount: number | null | undefined, skipCount: number | null | undefined): Observable<PagedResultDtoOfLogisticsListDto> {
@@ -4474,7 +5159,7 @@ export class LogisticsServiceProxy {
 
     /**
      * 删除物流
-     * @param ids (optional) 
+     * @param ids (optional) id数组
      * @return Success
      */
     deleteLogistics(ids: number[] | null | undefined): Observable<void> {
@@ -4526,9 +5211,9 @@ export class LogisticsServiceProxy {
     /**
      * 获取所有租户自选物流
      * @param name (optional) 快递名称
-     * @param sorting (optional) 
-     * @param maxResultCount (optional) 
-     * @param skipCount (optional) 
+     * @param sorting (optional) 排序字段 (eg:Id DESC)
+     * @param maxResultCount (optional) 最大结果数量(等同:PageSize)
+     * @param skipCount (optional) 列表跳过数量(等同: PageSize*PageIndex)
      * @return Success
      */
     getTenantLogisticses(name: string | null | undefined, sorting: string | null | undefined, maxResultCount: number | null | undefined, skipCount: number | null | undefined): Observable<PagedResultDtoOfTenantLogisticsDto> {
@@ -4757,7 +5442,7 @@ export class LogisticsServiceProxy {
 
     /**
      * 删除租户物流
-     * @param ids (optional) 
+     * @param ids (optional) id数组
      * @return Success
      */
     deleteTenantLogistics(ids: number[] | null | undefined): Observable<void> {
@@ -4808,7 +5493,7 @@ export class LogisticsServiceProxy {
 }
 
 @Injectable()
-export class MessageServiceServiceProxy {
+export class MessageServiceProxy {
     private http: HttpClient;
     private baseUrl: string;
     protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
@@ -4823,7 +5508,7 @@ export class MessageServiceServiceProxy {
      * @return Success
      */
     getAvailableTokenList(): Observable<TokensListDto[]> {
-        let url_ = this.baseUrl + "/api/services/app/MessageService/GetAvailableTokenList";
+        let url_ = this.baseUrl + "/api/services/app/Message/GetAvailableTokenList";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -4889,8 +5574,8 @@ export class NotificationServiceProxy {
     /**
      * 获取用户通知
      * @param state (optional) 通知状态（可空）
-     * @param maxResultCount (optional) 
-     * @param skipCount (optional) 
+     * @param maxResultCount (optional) 最大结果数量(等同:PageSize)
+     * @param skipCount (optional) 列表跳过数量(等同: PageSize*PageIndex)
      * @return Success
      */
     getUserNotifications(state: State | null | undefined, maxResultCount: number | null | undefined, skipCount: number | null | undefined): Observable<GetNotificationsOutput> {
@@ -5154,6 +5839,7 @@ export class NotificationServiceProxy {
     }
 
     /**
+     * 删除通知
      * @param id (optional) 
      * @return Success
      */
@@ -5220,10 +5906,10 @@ export class OrderServiceProxy {
      * @param productIds (optional) 商品Id
      * @param logisticsNumber (optional) 快递单号
      * @param orderNumber (optional) 订单号
-     * @param createdOn_FormDate (optional) 
-     * @param createdOn_ToDate (optional) 
-     * @param receivedOn_FormDate (optional) 
-     * @param receivedOn_ToDate (optional) 
+     * @param createdOn_FormDate (optional) 开始时间
+     * @param createdOn_ToDate (optional) 结束时间
+     * @param receivedOn_FormDate (optional) 开始时间
+     * @param receivedOn_ToDate (optional) 结束时间
      * @param shippingName (optional) 收件人姓名
      * @param phoneNumber (optional) 电话号码
      * @param provinceId (optional) 省份Id
@@ -5234,9 +5920,9 @@ export class OrderServiceProxy {
      * @param shippingStatuses (optional) 发货状态
      * @param orderTypes (optional) 订单类型
      * @param orderSources (optional) 订单来源
-     * @param sorting (optional) 
-     * @param maxResultCount (optional) 
-     * @param skipCount (optional) 
+     * @param sorting (optional) 排序字段 (eg:Id DESC)
+     * @param maxResultCount (optional) 最大结果数量(等同:PageSize)
+     * @param skipCount (optional) 列表跳过数量(等同: PageSize*PageIndex)
      * @return Success
      */
     getOrders(productIds: number[] | null | undefined, logisticsNumber: string | null | undefined, orderNumber: string | null | undefined, createdOn_FormDate: moment.Moment | null | undefined, createdOn_ToDate: moment.Moment | null | undefined, receivedOn_FormDate: moment.Moment | null | undefined, receivedOn_ToDate: moment.Moment | null | undefined, shippingName: string | null | undefined, phoneNumber: string | null | undefined, provinceId: number | null | undefined, cityId: number | null | undefined, districtId: number | null | undefined, orderStatuses: OrderStatuses[] | null | undefined, paymentStatuses: PaymentStatuses[] | null | undefined, shippingStatuses: ShippingStatuses[] | null | undefined, orderTypes: OrderTypes[] | null | undefined, orderSources: OrderSources[] | null | undefined, sorting: string | null | undefined, maxResultCount: number | null | undefined, skipCount: number | null | undefined): Observable<PagedResultDtoOfOrderListDto> {
@@ -5655,7 +6341,7 @@ export class OrderServiceProxy {
 
     /**
      * 删除订单
-     * @param ids (optional) 
+     * @param ids (optional) id数组
      * @return Success
      */
     deleteOrder(ids: number[] | null | undefined): Observable<void> {
@@ -5702,6 +6388,91 @@ export class OrderServiceProxy {
             }));
         }
         return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * 导出待发货订单到Excel
+     * @param productIds (optional) 商品Id
+     * @param storeIds (optional) 店铺Id
+     * @param orderNumber (optional) 订单号
+     * @param createdOn_FormDate (optional) 开始时间
+     * @param createdOn_ToDate (optional) 结束时间
+     * @param shippingName (optional) 收件人姓名
+     * @param phoneNumber (optional) 电话号码
+     * @param orderTypes (optional) 订单类型
+     * @param orderSources (optional) 订单来源
+     * @param adminComment (optional) 管理员备注
+     * @param customerComment (optional) 用户备注
+     * @return Success
+     */
+    getWaitShippingToExcel(productIds: number[] | null | undefined, storeIds: number[] | null | undefined, orderNumber: string | null | undefined, createdOn_FormDate: moment.Moment | null | undefined, createdOn_ToDate: moment.Moment | null | undefined, shippingName: string | null | undefined, phoneNumber: string | null | undefined, orderTypes: OrderTypes2[] | null | undefined, orderSources: OrderSources2[] | null | undefined, adminComment: string | null | undefined, customerComment: string | null | undefined): Observable<FileDto> {
+        let url_ = this.baseUrl + "/api/services/app/Order/GetWaitShippingToExcel?";
+        if (productIds !== undefined)
+            productIds && productIds.forEach(item => { url_ += "ProductIds=" + encodeURIComponent("" + item) + "&"; });
+        if (storeIds !== undefined)
+            storeIds && storeIds.forEach(item => { url_ += "StoreIds=" + encodeURIComponent("" + item) + "&"; });
+        if (orderNumber !== undefined)
+            url_ += "OrderNumber=" + encodeURIComponent("" + orderNumber) + "&"; 
+        if (createdOn_FormDate !== undefined)
+            url_ += "CreatedOn.FormDate=" + encodeURIComponent(createdOn_FormDate ? "" + createdOn_FormDate.toJSON() : "") + "&"; 
+        if (createdOn_ToDate !== undefined)
+            url_ += "CreatedOn.ToDate=" + encodeURIComponent(createdOn_ToDate ? "" + createdOn_ToDate.toJSON() : "") + "&"; 
+        if (shippingName !== undefined)
+            url_ += "ShippingName=" + encodeURIComponent("" + shippingName) + "&"; 
+        if (phoneNumber !== undefined)
+            url_ += "PhoneNumber=" + encodeURIComponent("" + phoneNumber) + "&"; 
+        if (orderTypes !== undefined)
+            orderTypes && orderTypes.forEach(item => { url_ += "OrderTypes=" + encodeURIComponent("" + item) + "&"; });
+        if (orderSources !== undefined)
+            orderSources && orderSources.forEach(item => { url_ += "OrderSources=" + encodeURIComponent("" + item) + "&"; });
+        if (adminComment !== undefined)
+            url_ += "AdminComment=" + encodeURIComponent("" + adminComment) + "&"; 
+        if (customerComment !== undefined)
+            url_ += "CustomerComment=" + encodeURIComponent("" + customerComment) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetWaitShippingToExcel(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetWaitShippingToExcel(<any>response_);
+                } catch (e) {
+                    return <Observable<FileDto>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<FileDto>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetWaitShippingToExcel(response: HttpResponseBase): Observable<FileDto> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? FileDto.fromJS(resultData200) : new FileDto();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<FileDto>(<any>null);
     }
 }
 
@@ -5771,9 +6542,9 @@ export class OrganizationUnitServiceProxy {
     /**
      * 获取组织单位成员
      * @param id (optional) 组织单位Id(大于0)
-     * @param sorting (optional) 
-     * @param maxResultCount (optional) 
-     * @param skipCount (optional) 
+     * @param sorting (optional) 排序字段 (eg:Id DESC)
+     * @param maxResultCount (optional) 最大结果数量(等同:PageSize)
+     * @param skipCount (optional) 列表跳过数量(等同: PageSize*PageIndex)
      * @return Success
      */
     getOrganizationUnitUsers(id: number | null | undefined, sorting: string | null | undefined, maxResultCount: number | null | undefined, skipCount: number | null | undefined): Observable<PagedResultDtoOfOrganizationUnitUserListDto> {
@@ -6343,6 +7114,7 @@ export class PaymentServiceProxy {
     }
 
     /**
+     * 取消支付
      * @param input (optional) 
      * @return Success
      */
@@ -6508,9 +7280,9 @@ export class PaymentServiceProxy {
 
     /**
      * 获取支付记录
-     * @param sorting (optional) 
-     * @param maxResultCount (optional) 
-     * @param skipCount (optional) 
+     * @param sorting (optional) 排序字段 (eg:Id DESC)
+     * @param maxResultCount (optional) 最大结果数量(等同:PageSize)
+     * @param skipCount (optional) 列表跳过数量(等同: PageSize*PageIndex)
      * @return Success
      */
     getPaymentHistory(sorting: string | null | undefined, maxResultCount: number | null | undefined, skipCount: number | null | undefined): Observable<PagedResultDtoOfSubscriptionPaymentListDto> {
@@ -6646,9 +7418,9 @@ export class PictureServiceProxy {
     /**
      * 获取分组下的图片
      * @param groupId (optional) 图片分组Id，-1 获取全部
-     * @param sorting (optional) 
-     * @param maxResultCount (optional) 
-     * @param skipCount (optional) 
+     * @param sorting (optional) 排序字段 (eg:Id DESC)
+     * @param maxResultCount (optional) 最大结果数量(等同:PageSize)
+     * @param skipCount (optional) 列表跳过数量(等同: PageSize*PageIndex)
      * @return Success
      */
     getPictureAsync(groupId: number | null | undefined, sorting: string | null | undefined, maxResultCount: number | null | undefined, skipCount: number | null | undefined): Observable<PagedResultDtoOfPictureListDto> {
@@ -6865,7 +7637,7 @@ export class PictureServiceProxy {
 
     /**
      * 批量删除图片
-     * @param ids (optional) 
+     * @param ids (optional) id数组
      * @return Success
      */
     deleteAsync(ids: number[] | null | undefined): Observable<void> {
@@ -7242,9 +8014,9 @@ export class ProductServiceProxy {
      * 获取所有商品
      * @param name (optional) 商品名称
      * @param sku (optional) 商品Sku
-     * @param sorting (optional) 
-     * @param maxResultCount (optional) 
-     * @param skipCount (optional) 
+     * @param sorting (optional) 排序字段 (eg:Id DESC)
+     * @param maxResultCount (optional) 最大结果数量(等同:PageSize)
+     * @param skipCount (optional) 列表跳过数量(等同: PageSize*PageIndex)
      * @return Success
      */
     getProducts(name: string | null | undefined, sku: string | null | undefined, sorting: string | null | undefined, maxResultCount: number | null | undefined, skipCount: number | null | undefined): Observable<PagedResultDtoOfProductListDto> {
@@ -7530,7 +8302,7 @@ export class ProductServiceProxy {
 
     /**
      * 删除商品
-     * @param ids (optional) 
+     * @param ids (optional) id数组
      * @return Success
      */
     deleteProduct(ids: number[] | null | undefined): Observable<void> {
@@ -8690,9 +9462,9 @@ export class RoleServiceProxy {
      * 获取所有角色
      * @param displayName (optional) 显示名
      * @param permission (optional) 权限
-     * @param sorting (optional) 
-     * @param maxResultCount (optional) 
-     * @param skipCount (optional) 
+     * @param sorting (optional) 排序字段 (eg:Id DESC)
+     * @param maxResultCount (optional) 最大结果数量(等同:PageSize)
+     * @param skipCount (optional) 列表跳过数量(等同: PageSize*PageIndex)
      * @return Success
      */
     getRoles(displayName: string | null | undefined, permission: string | null | undefined, sorting: string | null | undefined, maxResultCount: number | null | undefined, skipCount: number | null | undefined): Observable<PagedResultDtoOfRoleListDto> {
@@ -9041,32 +9813,83 @@ export class ShipmentServiceProxy {
     }
 
     /**
+     * 从Excel导入订单
+     * @param tenantLogisticsId (optional) 
+     * @return Success
+     */
+    importFromExcel(tenantLogisticsId: number | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/Shipment/ImportFromExcel?";
+        if (tenantLogisticsId !== undefined)
+            url_ += "tenantLogisticsId=" + encodeURIComponent("" + tenantLogisticsId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processImportFromExcel(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processImportFromExcel(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processImportFromExcel(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
      * 获取所有发货记录
      * @param status (optional) 空(全部)
      * @param trackingNumber (optional) 物流单号
-     * @param deliveryFrom (optional) 发货时间(开始时间-UTC)
-     * @param deliveryTo (optional) 发货时间(结束时间-UTC)
-     * @param receivedFrom (optional) 签收时间(开始时间-UTC)
-     * @param receivedTo (optional) 签收时间(结束时间-UTC)
-     * @param sorting (optional) 
-     * @param maxResultCount (optional) 
-     * @param skipCount (optional) 
+     * @param deliveriedOn_FormDate (optional) 开始时间
+     * @param deliveriedOn_ToDate (optional) 结束时间
+     * @param receivedOn_FormDate (optional) 开始时间
+     * @param receivedOn_ToDate (optional) 结束时间
+     * @param sorting (optional) 排序字段 (eg:Id DESC)
+     * @param maxResultCount (optional) 最大结果数量(等同:PageSize)
+     * @param skipCount (optional) 列表跳过数量(等同: PageSize*PageIndex)
      * @return Success
      */
-    getShipments(status: Status | null | undefined, trackingNumber: string | null | undefined, deliveryFrom: moment.Moment | null | undefined, deliveryTo: moment.Moment | null | undefined, receivedFrom: moment.Moment | null | undefined, receivedTo: moment.Moment | null | undefined, sorting: string | null | undefined, maxResultCount: number | null | undefined, skipCount: number | null | undefined): Observable<PagedResultDtoOfShipmentListDto> {
+    getShipments(status: Status | null | undefined, trackingNumber: string | null | undefined, deliveriedOn_FormDate: moment.Moment | null | undefined, deliveriedOn_ToDate: moment.Moment | null | undefined, receivedOn_FormDate: moment.Moment | null | undefined, receivedOn_ToDate: moment.Moment | null | undefined, sorting: string | null | undefined, maxResultCount: number | null | undefined, skipCount: number | null | undefined): Observable<PagedResultDtoOfShipmentListDto> {
         let url_ = this.baseUrl + "/api/services/app/Shipment/GetShipments?";
         if (status !== undefined)
             url_ += "Status=" + encodeURIComponent("" + status) + "&"; 
         if (trackingNumber !== undefined)
             url_ += "TrackingNumber=" + encodeURIComponent("" + trackingNumber) + "&"; 
-        if (deliveryFrom !== undefined)
-            url_ += "DeliveryFrom=" + encodeURIComponent(deliveryFrom ? "" + deliveryFrom.toJSON() : "") + "&"; 
-        if (deliveryTo !== undefined)
-            url_ += "DeliveryTo=" + encodeURIComponent(deliveryTo ? "" + deliveryTo.toJSON() : "") + "&"; 
-        if (receivedFrom !== undefined)
-            url_ += "ReceivedFrom=" + encodeURIComponent(receivedFrom ? "" + receivedFrom.toJSON() : "") + "&"; 
-        if (receivedTo !== undefined)
-            url_ += "ReceivedTo=" + encodeURIComponent(receivedTo ? "" + receivedTo.toJSON() : "") + "&"; 
+        if (deliveriedOn_FormDate !== undefined)
+            url_ += "DeliveriedOn.FormDate=" + encodeURIComponent(deliveriedOn_FormDate ? "" + deliveriedOn_FormDate.toJSON() : "") + "&"; 
+        if (deliveriedOn_ToDate !== undefined)
+            url_ += "DeliveriedOn.ToDate=" + encodeURIComponent(deliveriedOn_ToDate ? "" + deliveriedOn_ToDate.toJSON() : "") + "&"; 
+        if (receivedOn_FormDate !== undefined)
+            url_ += "ReceivedOn.FormDate=" + encodeURIComponent(receivedOn_FormDate ? "" + receivedOn_FormDate.toJSON() : "") + "&"; 
+        if (receivedOn_ToDate !== undefined)
+            url_ += "ReceivedOn.ToDate=" + encodeURIComponent(receivedOn_ToDate ? "" + receivedOn_ToDate.toJSON() : "") + "&"; 
         if (sorting !== undefined)
             url_ += "Sorting=" + encodeURIComponent("" + sorting) + "&"; 
         if (maxResultCount !== undefined)
@@ -9292,7 +10115,7 @@ export class ShipmentServiceProxy {
 
     /**
      * 删除发货记录
-     * @param ids (optional) 
+     * @param ids (optional) id数组
      * @return Success
      */
     deleteShipment(ids: number[] | null | undefined): Observable<void> {
@@ -9721,9 +10544,9 @@ export class SMSTemplateServiceProxy {
      * @param templateCode (optional) 短信模板编码
      * @param providerName (optional) 短信模板供应商
      * @param isActived (optional) 是否激活(Null代表所有)
-     * @param sorting (optional) 
-     * @param maxResultCount (optional) 
-     * @param skipCount (optional) 
+     * @param sorting (optional) 排序字段 (eg:Id DESC)
+     * @param maxResultCount (optional) 最大结果数量(等同:PageSize)
+     * @param skipCount (optional) 列表跳过数量(等同: PageSize*PageIndex)
      * @return Success
      */
     getSMSTemplates(name: string | null | undefined, templateCode: string | null | undefined, providerName: string | null | undefined, isActived: boolean | null | undefined, sorting: string | null | undefined, maxResultCount: number | null | undefined, skipCount: number | null | undefined): Observable<PagedResultDtoOfSMSTemplateListDto> {
@@ -10073,19 +10896,19 @@ export class StateServiceServiceProxy {
 
     /**
      * 获取所有省份
-     * @param sorting (optional) 
-     * @param maxResultCount (optional) 
-     * @param skipCount (optional) 
+     * @param maxResultCount (optional) 最大结果数量(等同:PageSize)
+     * @param skipCount (optional) 列表跳过数量(等同: PageSize*PageIndex)
+     * @param sorting (optional) 排序字段 (eg:Id DESC)
      * @return Success
      */
-    getProvinces(sorting: string | null | undefined, maxResultCount: number | null | undefined, skipCount: number | null | undefined): Observable<PagedResultDtoOfProvinceListDto> {
+    getProvinces(maxResultCount: number | null | undefined, skipCount: number | null | undefined, sorting: string | null | undefined): Observable<PagedResultDtoOfProvinceListDto> {
         let url_ = this.baseUrl + "/api/services/app/StateService/GetProvinces?";
-        if (sorting !== undefined)
-            url_ += "Sorting=" + encodeURIComponent("" + sorting) + "&"; 
         if (maxResultCount !== undefined)
             url_ += "MaxResultCount=" + encodeURIComponent("" + maxResultCount) + "&"; 
         if (skipCount !== undefined)
             url_ += "SkipCount=" + encodeURIComponent("" + skipCount) + "&"; 
+        if (sorting !== undefined)
+            url_ += "Sorting=" + encodeURIComponent("" + sorting) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -10295,9 +11118,9 @@ export class StateServiceServiceProxy {
     /**
      * 获取所有城市
      * @param provinceId (optional) 省份Id(必须大于0)
-     * @param sorting (optional) 
-     * @param maxResultCount (optional) 
-     * @param skipCount (optional) 
+     * @param sorting (optional) 排序字段 (eg:Id DESC)
+     * @param maxResultCount (optional) 最大结果数量(等同:PageSize)
+     * @param skipCount (optional) 列表跳过数量(等同: PageSize*PageIndex)
      * @return Success
      */
     getCitys(provinceId: number | null | undefined, sorting: string | null | undefined, maxResultCount: number | null | undefined, skipCount: number | null | undefined): Observable<PagedResultDtoOfCityListDto> {
@@ -10522,9 +11345,9 @@ export class StateServiceServiceProxy {
     /**
      * 获取所有区域
      * @param ctyId (optional) 城市Id(必须大于0)
-     * @param sorting (optional) 
-     * @param maxResultCount (optional) 
-     * @param skipCount (optional) 
+     * @param sorting (optional) 排序字段 (eg:Id DESC)
+     * @param maxResultCount (optional) 最大结果数量(等同:PageSize)
+     * @param skipCount (optional) 列表跳过数量(等同: PageSize*PageIndex)
      * @return Success
      */
     getDistricts(ctyId: number | null | undefined, sorting: string | null | undefined, maxResultCount: number | null | undefined, skipCount: number | null | undefined): Observable<PagedResultDtoOfDistrictListDto> {
@@ -10745,60 +11568,6 @@ export class StateServiceServiceProxy {
         }
         return _observableOf<void>(<any>null);
     }
-
-    /**
-     * @param filepath (optional) 
-     * @return Success
-     */
-    getFileJson(filepath: string | null | undefined): Observable<string> {
-        let url_ = this.baseUrl + "/api/services/app/StateService/GetFileJson?";
-        if (filepath !== undefined)
-            url_ += "filepath=" + encodeURIComponent("" + filepath) + "&"; 
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetFileJson(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processGetFileJson(<any>response_);
-                } catch (e) {
-                    return <Observable<string>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<string>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processGetFileJson(response: HttpResponseBase): Observable<string> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 !== undefined ? resultData200 : <any>null;
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<string>(<any>null);
-    }
 }
 
 @Injectable()
@@ -10816,9 +11585,9 @@ export class StoreServiceProxy {
      * 获取所有店铺
      * @param name (optional) 店铺名称
      * @param source (optional) 渠道来源(空-获取所有)
-     * @param sorting (optional) 
-     * @param maxResultCount (optional) 
-     * @param skipCount (optional) 
+     * @param sorting (optional) 排序字段 (eg:Id DESC)
+     * @param maxResultCount (optional) 最大结果数量(等同:PageSize)
+     * @param skipCount (optional) 列表跳过数量(等同: PageSize*PageIndex)
      * @return Success
      */
     getStores(name: string | null | undefined, source: Source | null | undefined, sorting: string | null | undefined, maxResultCount: number | null | undefined, skipCount: number | null | undefined): Observable<PagedResultDtoOfStoreListDto> {
@@ -11049,7 +11818,7 @@ export class StoreServiceProxy {
 
     /**
      * 删除店铺
-     * @param ids (optional) 
+     * @param ids (optional) id数组
      * @return Success
      */
     deleteStore(ids: number[] | null | undefined): Observable<void> {
@@ -11121,9 +11890,9 @@ export class TenantServiceProxy {
      * @param editionId (optional) 版本
      * @param editionIdSpecified (optional) 指定版本
      * @param isActive (optional) 是否启用(空代表全部)
-     * @param sorting (optional) 
-     * @param maxResultCount (optional) 
-     * @param skipCount (optional) 
+     * @param sorting (optional) 排序字段 (eg:Id DESC)
+     * @param maxResultCount (optional) 最大结果数量(等同:PageSize)
+     * @param skipCount (optional) 列表跳过数量(等同: PageSize*PageIndex)
      * @return Success
      */
     getTenants(tenancyName: string | null | undefined, name: string | null | undefined, subscriptionEndDateStart: moment.Moment | null | undefined, subscriptionEndDateEnd: moment.Moment | null | undefined, creationDateStart: moment.Moment | null | undefined, creationDateEnd: moment.Moment | null | undefined, editionId: number | null | undefined, editionIdSpecified: boolean | null | undefined, isActive: boolean | null | undefined, sorting: string | null | undefined, maxResultCount: number | null | undefined, skipCount: number | null | undefined): Observable<PagedResultDtoOfTenantListDto> {
@@ -13329,9 +14098,9 @@ export class UserServiceProxy {
      * @param permission (optional) 权限
      * @param roleIds (optional) 角色
      * @param onlyLockedUsers (optional) 只获取锁定用户
-     * @param sorting (optional) 
-     * @param maxResultCount (optional) 
-     * @param skipCount (optional) 
+     * @param sorting (optional) 排序字段 (eg:Id DESC)
+     * @param maxResultCount (optional) 最大结果数量(等同:PageSize)
+     * @param skipCount (optional) 列表跳过数量(等同: PageSize*PageIndex)
      * @return Success
      */
     getUsers(userName: string | null | undefined, surname: string | null | undefined, email: string | null | undefined, isEmailConfirmed: boolean | null | undefined, phoneNumber: string | null | undefined, isPhoneConfirmed: boolean | null | undefined, isActive: boolean | null | undefined, permission: string | null | undefined, roleIds: number[] | null | undefined, onlyLockedUsers: boolean | null | undefined, sorting: string | null | undefined, maxResultCount: number | null | undefined, skipCount: number | null | undefined): Observable<PagedResultDtoOfUserListDto> {
@@ -13963,9 +14732,9 @@ export class UserLinkServiceProxy {
 
     /**
      * 获取所有关联用户
-     * @param sorting (optional) 
-     * @param maxResultCount (optional) 
-     * @param skipCount (optional) 
+     * @param sorting (optional) 排序字段 (eg:Id DESC)
+     * @param maxResultCount (optional) 最大结果数量(等同:PageSize)
+     * @param skipCount (optional) 列表跳过数量(等同: PageSize*PageIndex)
      * @return Success
      */
     getLinkedUsers(sorting: string | null | undefined, maxResultCount: number | null | undefined, skipCount: number | null | undefined): Observable<PagedResultDtoOfLinkedUserDto> {
@@ -15177,6 +15946,610 @@ export interface ISwitchToLinkedAccountOutput {
     tenancyName: string | undefined;
 }
 
+export class PagedResultDtoOfAdvertAccountListDto implements IPagedResultDtoOfAdvertAccountListDto {
+    totalCount!: number | undefined;
+    items!: AdvertAccountListDto[] | undefined;
+
+    constructor(data?: IPagedResultDtoOfAdvertAccountListDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.totalCount = data["totalCount"];
+            if (data["items"] && data["items"].constructor === Array) {
+                this.items = [] as any;
+                for (let item of data["items"])
+                    this.items!.push(AdvertAccountListDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): PagedResultDtoOfAdvertAccountListDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new PagedResultDtoOfAdvertAccountListDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["totalCount"] = this.totalCount;
+        if (this.items && this.items.constructor === Array) {
+            data["items"] = [];
+            for (let item of this.items)
+                data["items"].push(item.toJSON());
+        }
+        return data; 
+    }
+}
+
+export interface IPagedResultDtoOfAdvertAccountListDto {
+    totalCount: number | undefined;
+    items: AdvertAccountListDto[] | undefined;
+}
+
+export class AdvertAccountListDto implements IAdvertAccountListDto {
+    /** 第三方Id */
+    thirdpartyId!: string | undefined;
+    /** 用户名 */
+    username!: string | undefined;
+    /** 显示名称 */
+    displayName!: string | undefined;
+    /** 产品 */
+    product!: string | undefined;
+    /** 渠道 */
+    channel!: string | undefined;
+    /** 数据自动同步 */
+    dataAutoSync!: boolean | undefined;
+    /** 历史消耗 */
+    totalCost!: number | undefined;
+    /** 总下单数 */
+    totalOrder!: number | undefined;
+    /** 创建时间 */
+    createdOn!: moment.Moment | undefined;
+    id!: number | undefined;
+
+    constructor(data?: IAdvertAccountListDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.thirdpartyId = data["thirdpartyId"];
+            this.username = data["username"];
+            this.displayName = data["displayName"];
+            this.product = data["product"];
+            this.channel = data["channel"];
+            this.dataAutoSync = data["dataAutoSync"];
+            this.totalCost = data["totalCost"];
+            this.totalOrder = data["totalOrder"];
+            this.createdOn = data["createdOn"] ? moment(data["createdOn"].toString()) : <any>undefined;
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): AdvertAccountListDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new AdvertAccountListDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["thirdpartyId"] = this.thirdpartyId;
+        data["username"] = this.username;
+        data["displayName"] = this.displayName;
+        data["product"] = this.product;
+        data["channel"] = this.channel;
+        data["dataAutoSync"] = this.dataAutoSync;
+        data["totalCost"] = this.totalCost;
+        data["totalOrder"] = this.totalOrder;
+        data["createdOn"] = this.createdOn ? this.createdOn.toISOString() : <any>undefined;
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface IAdvertAccountListDto {
+    /** 第三方Id */
+    thirdpartyId: string | undefined;
+    /** 用户名 */
+    username: string | undefined;
+    /** 显示名称 */
+    displayName: string | undefined;
+    /** 产品 */
+    product: string | undefined;
+    /** 渠道 */
+    channel: string | undefined;
+    /** 数据自动同步 */
+    dataAutoSync: boolean | undefined;
+    /** 历史消耗 */
+    totalCost: number | undefined;
+    /** 总下单数 */
+    totalOrder: number | undefined;
+    /** 创建时间 */
+    createdOn: moment.Moment | undefined;
+    id: number | undefined;
+}
+
+export class SelectListItemDtoOfInt64 implements ISelectListItemDtoOfInt64 {
+    /** 文本 */
+    text!: string | undefined;
+    /** 值 */
+    value!: number | undefined;
+
+    constructor(data?: ISelectListItemDtoOfInt64) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.text = data["text"];
+            this.value = data["value"];
+        }
+    }
+
+    static fromJS(data: any): SelectListItemDtoOfInt64 {
+        data = typeof data === 'object' ? data : {};
+        let result = new SelectListItemDtoOfInt64();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["text"] = this.text;
+        data["value"] = this.value;
+        return data; 
+    }
+}
+
+export interface ISelectListItemDtoOfInt64 {
+    /** 文本 */
+    text: string | undefined;
+    /** 值 */
+    value: number | undefined;
+}
+
+export class GetAdvertAccountForEditOutput implements IGetAdvertAccountForEditOutput {
+    /** 第三方Id */
+    thirdpartyId!: string | undefined;
+    /** 用户名 */
+    username!: string | undefined;
+    /** 产品Id */
+    productId!: number | undefined;
+    /** 显示名称 */
+    displayName!: string | undefined;
+    /** 渠道20 = Toutiao ; 40 = Tencent */
+    channel!: GetAdvertAccountForEditOutputChannel | undefined;
+    /** 数据自动同步 */
+    dataAutoSync!: boolean | undefined;
+    id!: number | undefined;
+
+    constructor(data?: IGetAdvertAccountForEditOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.thirdpartyId = data["thirdpartyId"];
+            this.username = data["username"];
+            this.productId = data["productId"];
+            this.displayName = data["displayName"];
+            this.channel = data["channel"];
+            this.dataAutoSync = data["dataAutoSync"];
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): GetAdvertAccountForEditOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new GetAdvertAccountForEditOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["thirdpartyId"] = this.thirdpartyId;
+        data["username"] = this.username;
+        data["productId"] = this.productId;
+        data["displayName"] = this.displayName;
+        data["channel"] = this.channel;
+        data["dataAutoSync"] = this.dataAutoSync;
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface IGetAdvertAccountForEditOutput {
+    /** 第三方Id */
+    thirdpartyId: string | undefined;
+    /** 用户名 */
+    username: string | undefined;
+    /** 产品Id */
+    productId: number | undefined;
+    /** 显示名称 */
+    displayName: string | undefined;
+    /** 渠道20 = Toutiao ; 40 = Tencent */
+    channel: GetAdvertAccountForEditOutputChannel | undefined;
+    /** 数据自动同步 */
+    dataAutoSync: boolean | undefined;
+    id: number | undefined;
+}
+
+export class CreateOrUpdateAdvertAccountInput implements ICreateOrUpdateAdvertAccountInput {
+    /** 第三方Id */
+    thirdpartyId!: string | undefined;
+    /** 用户名 */
+    username!: string | undefined;
+    /** 产品Id */
+    productId!: number | undefined;
+    /** 显示名称 */
+    displayName!: string | undefined;
+    /** 渠道20 = Toutiao ; 40 = Tencent */
+    channel!: CreateOrUpdateAdvertAccountInputChannel | undefined;
+    /** 数据自动同步 */
+    dataAutoSync!: boolean | undefined;
+    id!: number | undefined;
+
+    constructor(data?: ICreateOrUpdateAdvertAccountInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.thirdpartyId = data["thirdpartyId"];
+            this.username = data["username"];
+            this.productId = data["productId"];
+            this.displayName = data["displayName"];
+            this.channel = data["channel"];
+            this.dataAutoSync = data["dataAutoSync"];
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): CreateOrUpdateAdvertAccountInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new CreateOrUpdateAdvertAccountInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["thirdpartyId"] = this.thirdpartyId;
+        data["username"] = this.username;
+        data["productId"] = this.productId;
+        data["displayName"] = this.displayName;
+        data["channel"] = this.channel;
+        data["dataAutoSync"] = this.dataAutoSync;
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface ICreateOrUpdateAdvertAccountInput {
+    /** 第三方Id */
+    thirdpartyId: string | undefined;
+    /** 用户名 */
+    username: string | undefined;
+    /** 产品Id */
+    productId: number | undefined;
+    /** 显示名称 */
+    displayName: string | undefined;
+    /** 渠道20 = Toutiao ; 40 = Tencent */
+    channel: CreateOrUpdateAdvertAccountInputChannel | undefined;
+    /** 数据自动同步 */
+    dataAutoSync: boolean | undefined;
+    id: number | undefined;
+}
+
+export class EntityDtoOfInt64 implements IEntityDtoOfInt64 {
+    id!: number | undefined;
+
+    constructor(data?: IEntityDtoOfInt64) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): EntityDtoOfInt64 {
+        data = typeof data === 'object' ? data : {};
+        let result = new EntityDtoOfInt64();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface IEntityDtoOfInt64 {
+    id: number | undefined;
+}
+
+export class PagedResultDtoOfDailyStatisticDto implements IPagedResultDtoOfDailyStatisticDto {
+    totalCount!: number | undefined;
+    items!: DailyStatisticDto[] | undefined;
+
+    constructor(data?: IPagedResultDtoOfDailyStatisticDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.totalCount = data["totalCount"];
+            if (data["items"] && data["items"].constructor === Array) {
+                this.items = [] as any;
+                for (let item of data["items"])
+                    this.items!.push(DailyStatisticDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): PagedResultDtoOfDailyStatisticDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new PagedResultDtoOfDailyStatisticDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["totalCount"] = this.totalCount;
+        if (this.items && this.items.constructor === Array) {
+            data["items"] = [];
+            for (let item of this.items)
+                data["items"].push(item.toJSON());
+        }
+        return data; 
+    }
+}
+
+export interface IPagedResultDtoOfDailyStatisticDto {
+    totalCount: number | undefined;
+    items: DailyStatisticDto[] | undefined;
+}
+
+export class DailyStatisticDto implements IDailyStatisticDto {
+    /** 商品名Id */
+    productId!: number | undefined;
+    /** 商品名 */
+    productName!: string | undefined;
+    /** 广告账户Id */
+    advertAccountId!: number | undefined;
+    /** 广告账户 */
+    advertAccount!: string | undefined;
+    /** 展现数 */
+    displayNum!: number | undefined;
+    /** 点击数 */
+    clickNum!: number | undefined;
+    /** 点击价格 */
+    clickPrice!: number | undefined;
+    /** 点记录 */
+    clickRate!: number | undefined;
+    /** 千次展现花费 */
+    thDisplayCost!: number | undefined;
+    /** 消耗金额 */
+    totalCost!: number | undefined;
+    /** 统计时间 */
+    statisticOn!: string | undefined;
+    /** 条目(每小时) */
+    items!: AdvertStatisticItemDto[] | undefined;
+    id!: number | undefined;
+
+    constructor(data?: IDailyStatisticDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.productId = data["productId"];
+            this.productName = data["productName"];
+            this.advertAccountId = data["advertAccountId"];
+            this.advertAccount = data["advertAccount"];
+            this.displayNum = data["displayNum"];
+            this.clickNum = data["clickNum"];
+            this.clickPrice = data["clickPrice"];
+            this.clickRate = data["clickRate"];
+            this.thDisplayCost = data["thDisplayCost"];
+            this.totalCost = data["totalCost"];
+            this.statisticOn = data["statisticOn"];
+            if (data["items"] && data["items"].constructor === Array) {
+                this.items = [] as any;
+                for (let item of data["items"])
+                    this.items!.push(AdvertStatisticItemDto.fromJS(item));
+            }
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): DailyStatisticDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new DailyStatisticDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["productId"] = this.productId;
+        data["productName"] = this.productName;
+        data["advertAccountId"] = this.advertAccountId;
+        data["advertAccount"] = this.advertAccount;
+        data["displayNum"] = this.displayNum;
+        data["clickNum"] = this.clickNum;
+        data["clickPrice"] = this.clickPrice;
+        data["clickRate"] = this.clickRate;
+        data["thDisplayCost"] = this.thDisplayCost;
+        data["totalCost"] = this.totalCost;
+        data["statisticOn"] = this.statisticOn;
+        if (this.items && this.items.constructor === Array) {
+            data["items"] = [];
+            for (let item of this.items)
+                data["items"].push(item.toJSON());
+        }
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface IDailyStatisticDto {
+    /** 商品名Id */
+    productId: number | undefined;
+    /** 商品名 */
+    productName: string | undefined;
+    /** 广告账户Id */
+    advertAccountId: number | undefined;
+    /** 广告账户 */
+    advertAccount: string | undefined;
+    /** 展现数 */
+    displayNum: number | undefined;
+    /** 点击数 */
+    clickNum: number | undefined;
+    /** 点击价格 */
+    clickPrice: number | undefined;
+    /** 点记录 */
+    clickRate: number | undefined;
+    /** 千次展现花费 */
+    thDisplayCost: number | undefined;
+    /** 消耗金额 */
+    totalCost: number | undefined;
+    /** 统计时间 */
+    statisticOn: string | undefined;
+    /** 条目(每小时) */
+    items: AdvertStatisticItemDto[] | undefined;
+    id: number | undefined;
+}
+
+export class AdvertStatisticItemDto implements IAdvertStatisticItemDto {
+    /** 小时（24小时制） */
+    hourOfDay!: number | undefined;
+    /** 展示数量 */
+    displayNum!: number | undefined;
+    /** 点击数量 */
+    clickNum!: number | undefined;
+    /** 点击价格 */
+    clickPrice!: number | undefined;
+    /** 点记录 */
+    clickRate!: number | undefined;
+    /** 千次展示费用 */
+    thDisplayCost!: number | undefined;
+    /** 总消耗 */
+    totalCost!: number | undefined;
+    id!: number | undefined;
+
+    constructor(data?: IAdvertStatisticItemDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.hourOfDay = data["hourOfDay"];
+            this.displayNum = data["displayNum"];
+            this.clickNum = data["clickNum"];
+            this.clickPrice = data["clickPrice"];
+            this.clickRate = data["clickRate"];
+            this.thDisplayCost = data["thDisplayCost"];
+            this.totalCost = data["totalCost"];
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): AdvertStatisticItemDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new AdvertStatisticItemDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["hourOfDay"] = this.hourOfDay;
+        data["displayNum"] = this.displayNum;
+        data["clickNum"] = this.clickNum;
+        data["clickPrice"] = this.clickPrice;
+        data["clickRate"] = this.clickRate;
+        data["thDisplayCost"] = this.thDisplayCost;
+        data["totalCost"] = this.totalCost;
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface IAdvertStatisticItemDto {
+    /** 小时（24小时制） */
+    hourOfDay: number | undefined;
+    /** 展示数量 */
+    displayNum: number | undefined;
+    /** 点击数量 */
+    clickNum: number | undefined;
+    /** 点击价格 */
+    clickPrice: number | undefined;
+    /** 点记录 */
+    clickRate: number | undefined;
+    /** 千次展示费用 */
+    thDisplayCost: number | undefined;
+    /** 总消耗 */
+    totalCost: number | undefined;
+    id: number | undefined;
+}
+
 export class PagedResultDtoOfAuditLogListDto implements IPagedResultDtoOfAuditLogListDto {
     totalCount!: number | undefined;
     items!: AuditLogListDto[] | undefined;
@@ -15318,8 +16691,11 @@ export interface IAuditLogListDto {
 }
 
 export class FileDto implements IFileDto {
+    /** 文件名称 */
     fileName!: string;
+    /** 文件类型 */
     fileType!: string;
+    /** 文件 Token */
     fileToken!: string;
 
     constructor(data?: IFileDto) {
@@ -15356,15 +16732,17 @@ export class FileDto implements IFileDto {
 }
 
 export interface IFileDto {
+    /** 文件名称 */
     fileName: string;
+    /** 文件类型 */
     fileType: string;
+    /** 文件 Token */
     fileToken: string;
 }
 
 export class NameValueDto implements INameValueDto {
     name!: string | undefined;
     value!: string | undefined;
-
 
     constructor(data?: INameValueDto) {
         if (data) {
@@ -15822,46 +17200,6 @@ export interface ICategoryListDto {
     displayOrder: number | undefined;
 }
 
-export class SelectListItemDtoOfInt64 implements ISelectListItemDtoOfInt64 {
-    text!: string | undefined;
-    value!: number | undefined;
-
-    constructor(data?: ISelectListItemDtoOfInt64) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.text = data["text"];
-            this.value = data["value"];
-        }
-    }
-
-    static fromJS(data: any): SelectListItemDtoOfInt64 {
-        data = typeof data === 'object' ? data : {};
-        let result = new SelectListItemDtoOfInt64();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["text"] = this.text;
-        data["value"] = this.value;
-        return data; 
-    }
-}
-
-export interface ISelectListItemDtoOfInt64 {
-    text: string | undefined;
-    value: number | undefined;
-}
-
 export class GetCategoryForEditOutput implements IGetCategoryForEditOutput {
     /** Id */
     id!: number | undefined;
@@ -16231,7 +17569,9 @@ export interface IGetDefaultEditionNameOutput {
 }
 
 export class SelectListItemDtoOfInt32 implements ISelectListItemDtoOfInt32 {
+    /** 文本 */
     text!: string | undefined;
+    /** 值 */
     value!: number | undefined;
 
     constructor(data?: ISelectListItemDtoOfInt32) {
@@ -16266,12 +17606,16 @@ export class SelectListItemDtoOfInt32 implements ISelectListItemDtoOfInt32 {
 }
 
 export interface ISelectListItemDtoOfInt32 {
+    /** 文本 */
     text: string | undefined;
+    /** 值 */
     value: number | undefined;
 }
 
 export class SelectListItemDtoOfString implements ISelectListItemDtoOfString {
+    /** 文本 */
     text!: string | undefined;
+    /** 值 */
     value!: string | undefined;
 
     constructor(data?: ISelectListItemDtoOfString) {
@@ -16306,7 +17650,9 @@ export class SelectListItemDtoOfString implements ISelectListItemDtoOfString {
 }
 
 export interface ISelectListItemDtoOfString {
+    /** 文本 */
     text: string | undefined;
+    /** 值 */
     value: string | undefined;
 }
 
@@ -16583,42 +17929,6 @@ export interface ICreateOrUpdateCustomerInput {
     totalOrderNum: number | undefined;
     /** 备注 */
     remark: string | undefined;
-    id: number | undefined;
-}
-
-export class EntityDtoOfInt64 implements IEntityDtoOfInt64 {
-    id!: number | undefined;
-
-    constructor(data?: IEntityDtoOfInt64) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.id = data["id"];
-        }
-    }
-
-    static fromJS(data: any): EntityDtoOfInt64 {
-        data = typeof data === 'object' ? data : {};
-        let result = new EntityDtoOfInt64();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        return data; 
-    }
-}
-
-export interface IEntityDtoOfInt64 {
     id: number | undefined;
 }
 
@@ -18980,11 +20290,17 @@ export interface ISendTestEmailInput {
 }
 
 export class InstallDto implements IInstallDto {
+    /** 数据库连接字符串 */
     connectionString!: string;
+    /** 管理员密码(Admin) */
     adminPassword!: string;
+    /** Url */
     webSiteUrl!: string;
+    /** 服务端(Api) Url */
     serverUrl!: string | undefined;
+    /** 默认语言 */
     defaultLanguage!: string;
+    /** 邮箱设置 */
     smtpSettings!: EmailSettingsEditDto | undefined;
 
     constructor(data?: IInstallDto) {
@@ -19027,11 +20343,17 @@ export class InstallDto implements IInstallDto {
 }
 
 export interface IInstallDto {
+    /** 数据库连接字符串 */
     connectionString: string;
+    /** 管理员密码(Admin) */
     adminPassword: string;
+    /** Url */
     webSiteUrl: string;
+    /** 服务端(Api) Url */
     serverUrl: string | undefined;
+    /** 默认语言 */
     defaultLanguage: string;
+    /** 邮箱设置 */
     smtpSettings: EmailSettingsEditDto | undefined;
 }
 
@@ -31085,6 +32407,16 @@ export interface IGetJsApiSignatureOutput {
     signature: string | undefined;
 }
 
+export enum AdvertChannels {
+    _20 = 20, 
+    _40 = 40, 
+}
+
+export enum AdvertChannels2 {
+    _20 = 20, 
+    _40 = 40, 
+}
+
 export enum IncomeStatisticsDateInterval {
     _1 = 1, 
     _2 = 2, 
@@ -31146,6 +32478,19 @@ export enum OrderTypes {
 }
 
 export enum OrderSources {
+    _10 = 10, 
+    _20 = 20, 
+    _30 = 30, 
+    _40 = 40, 
+    _50 = 50, 
+}
+
+export enum OrderTypes2 {
+    _1 = 1, 
+    _2 = 2, 
+}
+
+export enum OrderSources2 {
     _10 = 10, 
     _20 = 20, 
     _30 = 30, 
@@ -31231,6 +32576,16 @@ export enum CheckEmailCodeInputCodeType {
     _60 = 60, 
     _70 = 70, 
     _80 = 80, 
+}
+
+export enum GetAdvertAccountForEditOutputChannel {
+    _20 = 20, 
+    _40 = 40, 
+}
+
+export enum CreateOrUpdateAdvertAccountInputChannel {
+    _20 = 20, 
+    _40 = 40, 
 }
 
 export enum EntityChangeListDtoChangeType {
