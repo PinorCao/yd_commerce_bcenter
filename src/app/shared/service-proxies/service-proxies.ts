@@ -744,7 +744,7 @@ export class AccountServiceProxy {
 }
 
 @Injectable()
-export class AdvertAccountAppSerivceServiceProxy {
+export class AdvertAccountServiceProxy {
     private http: HttpClient;
     private baseUrl: string;
     protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
@@ -767,7 +767,7 @@ export class AdvertAccountAppSerivceServiceProxy {
      * @return Success
      */
     getAccounts(advertChannels: AdvertChannels[] | null | undefined, thirdpartyId: string | null | undefined, userName: string | null | undefined, displayName: string | null | undefined, productId: number | null | undefined, sorting: string | null | undefined, maxResultCount: number | null | undefined, skipCount: number | null | undefined): Observable<PagedResultDtoOfAdvertAccountListDto> {
-        let url_ = this.baseUrl + "/api/services/app/AdvertAccountAppSerivce/GetAccounts?";
+        let url_ = this.baseUrl + "/api/services/app/AdvertAccount/GetAccounts?";
         if (advertChannels !== undefined)
             advertChannels && advertChannels.forEach(item => { url_ += "AdvertChannels=" + encodeURIComponent("" + item) + "&"; });
         if (thirdpartyId !== undefined)
@@ -835,7 +835,7 @@ export class AdvertAccountAppSerivceServiceProxy {
      * @return Success
      */
     getAccountSelectList(): Observable<SelectListItemDtoOfInt64[]> {
-        let url_ = this.baseUrl + "/api/services/app/AdvertAccountAppSerivce/GetAccountSelectList";
+        let url_ = this.baseUrl + "/api/services/app/AdvertAccount/GetAccountSelectList";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -892,7 +892,7 @@ export class AdvertAccountAppSerivceServiceProxy {
      * @return Success
      */
     getAccountForEdit(id: number | null | undefined): Observable<GetAdvertAccountForEditOutput> {
-        let url_ = this.baseUrl + "/api/services/app/AdvertAccountAppSerivce/GetAccountForEdit?";
+        let url_ = this.baseUrl + "/api/services/app/AdvertAccount/GetAccountForEdit?";
         if (id !== undefined)
             url_ += "Id=" + encodeURIComponent("" + id) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
@@ -947,7 +947,7 @@ export class AdvertAccountAppSerivceServiceProxy {
      * @return Success
      */
     createOrUpdateAccount(input: CreateOrUpdateAdvertAccountInput | null | undefined): Observable<EntityDtoOfInt64> {
-        let url_ = this.baseUrl + "/api/services/app/AdvertAccountAppSerivce/CreateOrUpdateAccount";
+        let url_ = this.baseUrl + "/api/services/app/AdvertAccount/CreateOrUpdateAccount";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input);
@@ -1004,7 +1004,7 @@ export class AdvertAccountAppSerivceServiceProxy {
      * @return Success
      */
     deleteAdvertAccount(ids: number[] | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/app/AdvertAccountAppSerivce/DeleteAdvertAccount?";
+        let url_ = this.baseUrl + "/api/services/app/AdvertAccount/DeleteAdvertAccount?";
         if (ids !== undefined)
             ids && ids.forEach(item => { url_ += "Ids=" + encodeURIComponent("" + item) + "&"; });
         url_ = url_.replace(/[?&]$/, "");
@@ -1051,7 +1051,7 @@ export class AdvertAccountAppSerivceServiceProxy {
 }
 
 @Injectable()
-export class AdvertDailyStatisticAppSerivceServiceProxy {
+export class AdvertStatisticServiceProxy {
     private http: HttpClient;
     private baseUrl: string;
     protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
@@ -1074,7 +1074,7 @@ export class AdvertDailyStatisticAppSerivceServiceProxy {
      * @return Success
      */
     getDailyStatistics(advertChannels: AdvertChannels2[] | null | undefined, productIds: number[] | null | undefined, accountIds: number[] | null | undefined, statisticOn_FormDate: moment.Moment | null | undefined, statisticOn_ToDate: moment.Moment | null | undefined, sorting: string | null | undefined, maxResultCount: number | null | undefined, skipCount: number | null | undefined): Observable<PagedResultDtoOfDailyStatisticDto> {
-        let url_ = this.baseUrl + "/api/services/app/AdvertDailyStatisticAppSerivce/GetDailyStatistics?";
+        let url_ = this.baseUrl + "/api/services/app/AdvertStatistic/GetDailyStatistics?";
         if (advertChannels !== undefined)
             advertChannels && advertChannels.forEach(item => { url_ += "AdvertChannels=" + encodeURIComponent("" + item) + "&"; });
         if (productIds !== undefined)
@@ -1143,7 +1143,7 @@ export class AdvertDailyStatisticAppSerivceServiceProxy {
      * @return Success
      */
     getDailyStatisticForEdit(id: number | null | undefined): Observable<DailyStatisticDto> {
-        let url_ = this.baseUrl + "/api/services/app/AdvertDailyStatisticAppSerivce/GetDailyStatisticForEdit?";
+        let url_ = this.baseUrl + "/api/services/app/AdvertStatistic/GetDailyStatisticForEdit?";
         if (id !== undefined)
             url_ += "Id=" + encodeURIComponent("" + id) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
@@ -1198,7 +1198,7 @@ export class AdvertDailyStatisticAppSerivceServiceProxy {
      * @return Success
      */
     createOrUpdateDailyStatistic(input: DailyStatisticDto | null | undefined): Observable<EntityDtoOfInt64> {
-        let url_ = this.baseUrl + "/api/services/app/AdvertDailyStatisticAppSerivce/CreateOrUpdateDailyStatistic";
+        let url_ = this.baseUrl + "/api/services/app/AdvertStatistic/CreateOrUpdateDailyStatistic";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input);
@@ -1255,7 +1255,7 @@ export class AdvertDailyStatisticAppSerivceServiceProxy {
      * @return Success
      */
     deleteDailyStatistic(ids: number[] | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/app/AdvertDailyStatisticAppSerivce/DeleteDailyStatistic?";
+        let url_ = this.baseUrl + "/api/services/app/AdvertStatistic/DeleteDailyStatistic?";
         if (ids !== undefined)
             ids && ids.forEach(item => { url_ += "Ids=" + encodeURIComponent("" + item) + "&"; });
         url_ = url_.replace(/[?&]$/, "");
@@ -1305,8 +1305,8 @@ export class AdvertDailyStatisticAppSerivceServiceProxy {
      * @param advertDailyStatisticId (optional) 广告统计Id
      * @return Success
      */
-    getDailyStatisticItems(advertDailyStatisticId: number | null | undefined): Observable<AdvertStatisticItemDto[]> {
-        let url_ = this.baseUrl + "/api/services/app/AdvertDailyStatisticAppSerivce/GetDailyStatisticItems?";
+    getDailyStatisticItems(advertDailyStatisticId: number | null | undefined): Observable<DailyStatisticItemDto[]> {
+        let url_ = this.baseUrl + "/api/services/app/AdvertStatistic/GetDailyStatisticItems?";
         if (advertDailyStatisticId !== undefined)
             url_ += "AdvertDailyStatisticId=" + encodeURIComponent("" + advertDailyStatisticId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
@@ -1326,14 +1326,14 @@ export class AdvertDailyStatisticAppSerivceServiceProxy {
                 try {
                     return this.processGetDailyStatisticItems(<any>response_);
                 } catch (e) {
-                    return <Observable<AdvertStatisticItemDto[]>><any>_observableThrow(e);
+                    return <Observable<DailyStatisticItemDto[]>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<AdvertStatisticItemDto[]>><any>_observableThrow(response_);
+                return <Observable<DailyStatisticItemDto[]>><any>_observableThrow(response_);
         }));
     }
 
-    protected processGetDailyStatisticItems(response: HttpResponseBase): Observable<AdvertStatisticItemDto[]> {
+    protected processGetDailyStatisticItems(response: HttpResponseBase): Observable<DailyStatisticItemDto[]> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -1347,7 +1347,7 @@ export class AdvertDailyStatisticAppSerivceServiceProxy {
             if (resultData200 && resultData200.constructor === Array) {
                 result200 = [] as any;
                 for (let item of resultData200)
-                    result200!.push(AdvertStatisticItemDto.fromJS(item));
+                    result200!.push(DailyStatisticItemDto.fromJS(item));
             }
             return _observableOf(result200);
             }));
@@ -1356,7 +1356,7 @@ export class AdvertDailyStatisticAppSerivceServiceProxy {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<AdvertStatisticItemDto[]>(<any>null);
+        return _observableOf<DailyStatisticItemDto[]>(<any>null);
     }
 
     /**
@@ -1364,8 +1364,8 @@ export class AdvertDailyStatisticAppSerivceServiceProxy {
      * @param input (optional) 
      * @return Success
      */
-    createOrUpdateDailyStatisticItem(input: AdvertStatisticItemDto | null | undefined): Observable<EntityDtoOfInt64> {
-        let url_ = this.baseUrl + "/api/services/app/AdvertDailyStatisticAppSerivce/CreateOrUpdateDailyStatisticItem";
+    createOrUpdateDailyStatisticItem(input: DailyStatisticItemDto | null | undefined): Observable<EntityDtoOfInt64> {
+        let url_ = this.baseUrl + "/api/services/app/AdvertStatistic/CreateOrUpdateDailyStatisticItem";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input);
@@ -6474,6 +6474,61 @@ export class OrderServiceProxy {
         }
         return _observableOf<FileDto>(<any>null);
     }
+
+    /**
+     * 导出选中订单到Excel
+     * @param orderIds (optional) 订单Id
+     * @return Success
+     */
+    getSelectedToExcel(orderIds: number[] | null | undefined): Observable<FileDto> {
+        let url_ = this.baseUrl + "/api/services/app/Order/GetSelectedToExcel?";
+        if (orderIds !== undefined)
+            orderIds && orderIds.forEach(item => { url_ += "OrderIds=" + encodeURIComponent("" + item) + "&"; });
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetSelectedToExcel(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetSelectedToExcel(<any>response_);
+                } catch (e) {
+                    return <Observable<FileDto>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<FileDto>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetSelectedToExcel(response: HttpResponseBase): Observable<FileDto> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? FileDto.fromJS(resultData200) : new FileDto();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<FileDto>(<any>null);
+    }
 }
 
 @Injectable()
@@ -9814,7 +9869,7 @@ export class ShipmentServiceProxy {
 
     /**
      * 从Excel导入订单
-     * @param tenantLogisticsId (optional) 
+     * @param tenantLogisticsId (optional) 自选物流Id，后期改成模板Id
      * @return Success
      */
     importFromExcel(tenantLogisticsId: number | null | undefined): Observable<void> {
@@ -16012,7 +16067,7 @@ export class AdvertAccountListDto implements IAdvertAccountListDto {
     /** 总下单数 */
     totalOrder!: number | undefined;
     /** 创建时间 */
-    createdOn!: moment.Moment | undefined;
+    creationTime!: moment.Moment | undefined;
     id!: number | undefined;
 
     constructor(data?: IAdvertAccountListDto) {
@@ -16034,7 +16089,7 @@ export class AdvertAccountListDto implements IAdvertAccountListDto {
             this.dataAutoSync = data["dataAutoSync"];
             this.totalCost = data["totalCost"];
             this.totalOrder = data["totalOrder"];
-            this.createdOn = data["createdOn"] ? moment(data["createdOn"].toString()) : <any>undefined;
+            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
             this.id = data["id"];
         }
     }
@@ -16056,7 +16111,7 @@ export class AdvertAccountListDto implements IAdvertAccountListDto {
         data["dataAutoSync"] = this.dataAutoSync;
         data["totalCost"] = this.totalCost;
         data["totalOrder"] = this.totalOrder;
-        data["createdOn"] = this.createdOn ? this.createdOn.toISOString() : <any>undefined;
+        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
         data["id"] = this.id;
         return data; 
     }
@@ -16080,7 +16135,7 @@ export interface IAdvertAccountListDto {
     /** 总下单数 */
     totalOrder: number | undefined;
     /** 创建时间 */
-    createdOn: moment.Moment | undefined;
+    creationTime: moment.Moment | undefined;
     id: number | undefined;
 }
 
@@ -16380,7 +16435,7 @@ export class DailyStatisticDto implements IDailyStatisticDto {
     /** 统计时间 */
     statisticOn!: string | undefined;
     /** 条目(每小时) */
-    items!: AdvertStatisticItemDto[] | undefined;
+    items!: DailyStatisticItemDto[] | undefined;
     id!: number | undefined;
 
     constructor(data?: IDailyStatisticDto) {
@@ -16408,7 +16463,7 @@ export class DailyStatisticDto implements IDailyStatisticDto {
             if (data["items"] && data["items"].constructor === Array) {
                 this.items = [] as any;
                 for (let item of data["items"])
-                    this.items!.push(AdvertStatisticItemDto.fromJS(item));
+                    this.items!.push(DailyStatisticItemDto.fromJS(item));
             }
             this.id = data["id"];
         }
@@ -16468,11 +16523,11 @@ export interface IDailyStatisticDto {
     /** 统计时间 */
     statisticOn: string | undefined;
     /** 条目(每小时) */
-    items: AdvertStatisticItemDto[] | undefined;
+    items: DailyStatisticItemDto[] | undefined;
     id: number | undefined;
 }
 
-export class AdvertStatisticItemDto implements IAdvertStatisticItemDto {
+export class DailyStatisticItemDto implements IDailyStatisticItemDto {
     /** 小时（24小时制） */
     hourOfDay!: number | undefined;
     /** 展示数量 */
@@ -16489,7 +16544,7 @@ export class AdvertStatisticItemDto implements IAdvertStatisticItemDto {
     totalCost!: number | undefined;
     id!: number | undefined;
 
-    constructor(data?: IAdvertStatisticItemDto) {
+    constructor(data?: IDailyStatisticItemDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -16511,9 +16566,9 @@ export class AdvertStatisticItemDto implements IAdvertStatisticItemDto {
         }
     }
 
-    static fromJS(data: any): AdvertStatisticItemDto {
+    static fromJS(data: any): DailyStatisticItemDto {
         data = typeof data === 'object' ? data : {};
-        let result = new AdvertStatisticItemDto();
+        let result = new DailyStatisticItemDto();
         result.init(data);
         return result;
     }
@@ -16532,7 +16587,7 @@ export class AdvertStatisticItemDto implements IAdvertStatisticItemDto {
     }
 }
 
-export interface IAdvertStatisticItemDto {
+export interface IDailyStatisticItemDto {
     /** 小时（24小时制） */
     hourOfDay: number | undefined;
     /** 展示数量 */
