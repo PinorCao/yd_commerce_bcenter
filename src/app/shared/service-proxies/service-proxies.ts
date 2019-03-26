@@ -21564,7 +21564,7 @@ export interface ITokensListDto {
 }
 
 export class GetNotificationsOutput implements IGetNotificationsOutput {
-    /** 唯独消息数量 */
+    /** 未读消息数量 */
     unreadCount!: number | undefined;
     totalCount!: number | undefined;
     items!: UserNotification[] | undefined;
@@ -21611,7 +21611,7 @@ export class GetNotificationsOutput implements IGetNotificationsOutput {
 }
 
 export interface IGetNotificationsOutput {
-    /** 唯独消息数量 */
+    /** 未读消息数量 */
     unreadCount: number | undefined;
     totalCount: number | undefined;
     items: UserNotification[] | undefined;
@@ -26613,12 +26613,20 @@ export interface IGetCurrentLoginInformationsOutput {
 }
 
 export class UserLoginInfoDto implements IUserLoginInfoDto {
+    /** 名 */
     name!: string | undefined;
+    /** 姓 */
     surname!: string | undefined;
+    /** 用户名 */
     userName!: string | undefined;
+    /** 邮箱地址 */
     emailAddress!: string | undefined;
-    profilePictureId!: string | undefined;
+    /** 头像Id */
+    profilePictureUrl!: string | undefined;
+    /** 电话号码 */
     phoneNumber!: string | undefined;
+    /** 未读消息数量 */
+    unreadNotificationCount!: number | undefined;
     id!: number | undefined;
 
     constructor(data?: IUserLoginInfoDto) {
@@ -26636,8 +26644,9 @@ export class UserLoginInfoDto implements IUserLoginInfoDto {
             this.surname = data["surname"];
             this.userName = data["userName"];
             this.emailAddress = data["emailAddress"];
-            this.profilePictureId = data["profilePictureId"];
+            this.profilePictureUrl = data["profilePictureUrl"];
             this.phoneNumber = data["phoneNumber"];
+            this.unreadNotificationCount = data["unreadNotificationCount"];
             this.id = data["id"];
         }
     }
@@ -26655,20 +26664,29 @@ export class UserLoginInfoDto implements IUserLoginInfoDto {
         data["surname"] = this.surname;
         data["userName"] = this.userName;
         data["emailAddress"] = this.emailAddress;
-        data["profilePictureId"] = this.profilePictureId;
+        data["profilePictureUrl"] = this.profilePictureUrl;
         data["phoneNumber"] = this.phoneNumber;
+        data["unreadNotificationCount"] = this.unreadNotificationCount;
         data["id"] = this.id;
         return data; 
     }
 }
 
 export interface IUserLoginInfoDto {
+    /** 名 */
     name: string | undefined;
+    /** 姓 */
     surname: string | undefined;
+    /** 用户名 */
     userName: string | undefined;
+    /** 邮箱地址 */
     emailAddress: string | undefined;
-    profilePictureId: string | undefined;
+    /** 头像Id */
+    profilePictureUrl: string | undefined;
+    /** 电话号码 */
     phoneNumber: string | undefined;
+    /** 未读消息数量 */
+    unreadNotificationCount: number | undefined;
     id: number | undefined;
 }
 
