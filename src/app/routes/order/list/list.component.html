@@ -33,7 +33,9 @@
                         <nz-form-item>
                             <nz-form-label nzFor="name">下单时间</nz-form-label>
                             <nz-form-control>
-                                <nz-range-picker ngModel (ngModelChange)="createOn($event)" [ngModelOptions]="{standalone: true}" [nzFormat]="'yyyy/MM/dd'"></nz-range-picker>
+                                <nz-range-picker ngModel (ngModelChange)="createOn($event)"
+                                                 [ngModelOptions]="{standalone: true}"
+                                                 [nzFormat]="'yyyy/MM/dd'"></nz-range-picker>
                             </nz-form-control>
                         </nz-form-item>
                     </nz-col>
@@ -41,7 +43,9 @@
                         <nz-form-item>
                             <nz-form-label nzFor="name">签收时间</nz-form-label>
                             <nz-form-control>
-                                <nz-range-picker ngModel (ngModelChange)="receiveOn($event)" [ngModelOptions]="{standalone: true}" [nzFormat]="'yyyy/MM/dd'"></nz-range-picker>
+                                <nz-range-picker ngModel (ngModelChange)="receiveOn($event)"
+                                                 [ngModelOptions]="{standalone: true}"
+                                                 [nzFormat]="'yyyy/MM/dd'"></nz-range-picker>
                             </nz-form-control>
                         </nz-form-item>
                     </nz-col>
@@ -90,7 +94,8 @@
                     </nz-col>
                 </nz-row>
                 <nz-row nzGutter="16" style="text-align: center">
-                    <button nz-button nzType="primary" nzSize="large" [nzLoading]="loading" (click)="getData()">提交</button>
+                    <button nz-button nzType="primary" nzSize="large" [nzLoading]="loading" (click)="getData()">提交
+                    </button>
                 </nz-row>
             </nz-card>
         </form>
@@ -104,18 +109,16 @@
             <i nz-icon type="plus"></i>
             <span>删除已选订单</span>
         </button>
-        <a *ngIf="numberOfChecked > 0" (click)="sendShip()" nz-button [nzType]="'primary'">
+        <!--<a *ngIf="numberOfChecked > 0" (click)="sendShip()" nz-button [nzType]="'primary'">
             <i nz-icon type="plus"></i>
             <span>批量发货</span>
-        </a>
+        </a>-->
         <div class="my-md">
             <nz-alert [nzType]="'info'" [nzShowIcon]="true" [nzMessage]="message">
                 <ng-template #message>
                     已选择
                     <strong class="text-primary">{{numberOfChecked}}</strong>
-                    项&nbsp;&nbsp; 订单金额总计
-                    <strong>{{totalCallNo}}</strong>
-                    万
+                    项
                     <a *ngIf="totalCallNo > 0" (click)="st.clearCheck()" class="ml-lg">清空</a>
                 </ng-template>
             </nz-alert>
@@ -183,8 +186,9 @@
                     <td>{{data.orderSourceString}}</td>
                     <td>{{data.createOn | date : 'yyyy/MM/dd HH:mm:ss'}}</td>
                     <td>
-                        <a [routerLink]="'/order/edit/' + data.id">发货</a>
-                        <nz-divider nzType="vertical"></nz-divider>
+                        <a *ngIf="data.shippingStatus === 200 || data.shippingStatus === 250"
+                           (click)="sendShip(data)">发货</a>
+                        <nz-divider *ngIf="data.shippingStatus === 200 || data.shippingStatus === 250" nzType="vertical"></nz-divider>
                         <a [routerLink]="'/order/edit/' + data.id">编辑</a>
                         <nz-divider nzType="vertical"></nz-divider>
                         <a>删除</a>

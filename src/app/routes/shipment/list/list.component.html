@@ -8,13 +8,16 @@
             <i nz-icon type="plus"></i>
             <span>删除</span>
         </button>
+        <button style="float: right;" nz-button (click)="showImport()" [nzType]="'default'">
+            <i nz-icon type="upload"></i>
+            <span>导入订单</span>
+        </button>
         <div class="my-md">
             <nz-alert [nzType]="'info'" [nzShowIcon]="true" [nzMessage]="message">
                 <ng-template #message>
                     已选择
                     <strong class="text-primary">{{numberOfChecked}}</strong>
                     项
-                    <a *ngIf="totalCallNo > 0" (click)="st.clearCheck()" class="ml-lg">清空</a>
                 </ng-template>
             </nz-alert>
         </div>

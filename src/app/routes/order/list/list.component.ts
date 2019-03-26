@@ -203,9 +203,9 @@ export class OrderListComponent {
       .subscribe();
   }
 
-  sendShip() {
+  sendShip(order) {
     this.drawer
-      .create(`批量发货`, OrderListMemoComponent, {}, {size: 350})
+      .create(`快速发送 #${order.orderNumber}`, OrderListMemoComponent, {order}, {size: 666})
       .subscribe((res: any) => {
         console.log(res);
       });
