@@ -60,19 +60,19 @@
           ]
         },
         {
-          "_text": "订单管理",
-          "i18n": "BusiCenter.SalesManage.Order",
+          "_text": "销售管理",
+          "i18n": "BusiCenter.SalesManage",
           "icon": "anticon anticon-radar-chart",
           "children": [
             {
-              "_text": "查找订单",
+              "_text": "订单管理",
               "link": "/order/list",
               "i18n": "BusiCenter.SalesManage.Order"
             },
             {
-              "_text": "创建订单",
-              "link": "/order/edit/0",
-              "i18n": "BusiCenter.SalesManage.Order.Create"
+              "_text": "发货管理",
+              "link": "/shipping/list",
+              "i18n": "BusiCenter.SalesManage.Shipment"
             }
           ]
         },

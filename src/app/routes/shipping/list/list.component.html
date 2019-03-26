@@ -113,10 +113,10 @@
             <i nz-icon type="plus"></i>
             <span>批量发货</span>E
         </a>-->
-        <!--<nz-button-group style="float: right;">
-            <button nz-button (click)="export(true)" nzType="default"><i nz-icon type="download"></i> 导出全部订单</button>
-            <button nz-button (click)="export(false)" nzType="default"><i nz-icon type="download"></i> 导出选中订单</button>
-        </nz-button-group>-->
+        <nz-button-group style="float: right;">
+            <button nz-button [nzLoading]="loading" (click)="export(true)" nzType="default"><i nz-icon type="download"></i> 导出全部订单</button>
+            <button nz-button [nzLoading]="loading" (click)="export(false)" nzType="default"><i nz-icon type="download"></i> 导出选中订单</button>
+        </nz-button-group>
         <div class="my-md">
             <nz-alert [nzType]="'info'" [nzShowIcon]="true" [nzMessage]="message">
                 <ng-template #message>
@@ -149,25 +149,15 @@
                         </div>
                     </nz-dropdown>-->
                 </th>
-                <th>
-                    商品
-                </th>
-                <th nzShowFilter [nzFilters]="enums.OrderStatus" (nzFilterChange)="filterChange('orderStatus',$event)">
-                    订单状态
-                </th>
-                <th nzShowFilter [nzFilters]="enums.PaymentStatus"
-                    (nzFilterChange)="filterChange('paymentStatus',$event)">
-                    付款状态
-                </th>
-                <th nzShowFilter [nzFilters]="enums.ShippingStatus"
-                    (nzFilterChange)="filterChange('shippingStatus',$event)">
-                    配送状态
-                </th>
-                <th nzShowFilter [nzFilters]="enums.OrderSource" (nzFilterChange)="filterChange('orderSource',$event)">
-                    订单来源
-                </th>
-                <th nzShowSort nzSortKey="createOn">更新时间</th>
-                <th>操作</th>
+                <th>商品</th>
+                <th width="80px">客户</th>
+                <th>手机号</th>
+                <th width="200px">收货地址</th>
+                <th>订单总额</th>
+                <th>留言</th>
+                <th>备注</th>
+                <th>商城</th>
+                <th nzShowSort nzSortKey="createOn">创建日期</th>
             </tr>
             </thead>
             <tbody>
@@ -176,27 +166,20 @@
                     <td nzShowCheckbox [(nzChecked)]="mapOfCheckedId[data.id]" (nzCheckedChange)="refreshStatus()"></td>
                     <td><a (click)="view(data)">{{data.orderNumber}}</a></td>
                     <td>
-                        <ng-container *ngFor="let g of data.items; let first=first">
-                            <a [ngClass]="{'pl-sm': !first}"
-                               nz-tooltip="{{g.productName}}，数量：{{g.quantity}}，价格：{{g.price | _currency}}"
-                               routerLink="/product/edit/{{g.id}}">
-                                <img src="{{g.pictureUrl}}" height="32" width="32"/>
+                        <ng-container *ngFor="let item of data.items; let first=first">
+                            <a routerLink="/product/edit/{{item.id}}">
+                                {{item.productName}} * {{item.quantity}}
                             </a>
                         </ng-container>
                     </td>
-                    <td>{{data.orderStatusString}}</td>
-                    <td>{{data.paymentStatusString}}</td>
-                    <td>{{data.shippingStatusString}}</td>
-                    <td>{{data.orderSourceString}}</td>
+                    <td>{{data.shippingName}}</td>
+                    <td>{{data.shippingPhoneNumber}}</td>
+                    <td>{{data.shippingAddress}}</td>
+                    <td>{{data.totalAmount}}</td>
+                    <td>{{data.customerComment}}</td>
+                    <td>{{data.adminComment}}</td>
+                    <td>{{data.store}}</td>
                     <td>{{data.createOn | date : 'yyyy/MM/dd HH:mm:ss'}}</td>
-                    <td>
-                        <a *ngIf="data.shippingStatus === 200 || data.shippingStatus === 250"
-                           (click)="sendShip(data)">发货</a>
-                        <nz-divider *ngIf="data.shippingStatus === 200 || data.shippingStatus === 250" nzType="vertical"></nz-divider>
-                        <a [routerLink]="'/order/edit/' + data.id">编辑</a>
-                        <nz-divider nzType="vertical"></nz-divider>
-                        <a>删除</a>
-                    </td>
                 </tr>
                 <!--<tr [nzExpand]="mapOfExpandData[data.id]">
                     <td></td>

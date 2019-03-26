@@ -6,21 +6,21 @@ import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {
   CommonLookupServiceProxy,
   OrderServiceProxy,
-  StateServiceServiceProxy
+  StateServiceServiceProxy,
+  ShipmentServiceProxy,
+  FileServiceProxy
 } from '@shared/service-proxies/service-proxies';
-import {_HttpClient, DrawerHelper} from '@delon/theme';
+import {DrawerHelper} from '@delon/theme';
 import {NzMessageService, NzModalService} from 'ng-zorro-antd';
-import {OrderListViewComponent} from './view.component';
-import {OrderListMemoComponent} from './memo.component';
 
 let that;
 
 @Component({
-  selector: 'app-order-list',
+  selector: 'app-shipping-list',
   templateUrl: './list.component.html',
   styleUrls: ['./list.component.scss']
 })
-export class OrderListComponent {
+export class ShippingListComponent {
   data;
   loading = false;
 
@@ -38,13 +38,13 @@ export class OrderListComponent {
   };
 
   constructor(
-    private http: _HttpClient,
     public msg: NzMessageService,
     private modalSrv: NzModalService,
     private drawer: DrawerHelper,
     private stateSvc: StateServiceServiceProxy,
     private enumsSvc: CommonLookupServiceProxy,
-    private orderSvc: OrderServiceProxy) {
+    private orderSvc: OrderServiceProxy,
+    private fileSvc: FileServiceProxy) {
     that = this;
   }
 
@@ -192,8 +192,31 @@ export class OrderListComponent {
   }
 
   export(isAll) {
+    this.loading = true;
     if (isAll) {
-
+      this.orderSvc.getWaitShippingToExcel(
+        this.searchForm.get('sorting').value,
+        this.searchForm.get('maxResultCount').value,
+        this.searchForm.get('skipCount').value,
+        this.searchForm.get('storeIds').value,
+        this.searchForm.get('productIds').value,
+        this.searchForm.get('orderNumber').value,
+        this.searchForm.get('createOn_FormDate').value,
+        this.searchForm.get('createOn_ToDate').value,
+        this.searchForm.get('shippingName').value,
+        this.searchForm.get('phoneNumber').value,
+        this.searchForm.get('provinceId').value,
+        this.searchForm.get('cityId').value,
+        this.searchForm.get('districtId').value,
+        this.searchForm.get('orderTypes').value,
+        this.searchForm.get('orderSource').value,
+        this.searchForm.get('adminComment').value,
+        this.searchForm.get('customerComment').value).subscribe(res => {
+        this.loading = false;
+        this.fileSvc.downloadTempFile(res.fileName, res.fileType, res.fileToken).subscribe(res => {
+          console.log(res);
+        });
+      });
     }
   }
 
@@ -209,26 +232,7 @@ export class OrderListComponent {
     return str;
   }
 
-  view(i: any) {
-    this.drawer
-      .create(`查看订单 #${i.orderNumber}`, OrderListViewComponent, {i}, {size: 666})
-      .subscribe();
-  }
-
-  sendShip(order) {
-    this.drawer
-      .create(`快速发送 #${order.orderNumber}`, OrderListMemoComponent, {order}, {size: 666})
-      .subscribe((res: any) => {
-        console.log(res);
-      });
-  }
-
   remove() {
-    /*this.http
-      .delete('/rule', {nos: this.selectedRows.map(i => i.no).join(',')})
-      .subscribe(() => {
-        this.getData();
-      });*/
   }
 
   search() {
