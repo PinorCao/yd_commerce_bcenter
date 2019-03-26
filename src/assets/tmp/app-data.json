@@ -61,68 +61,46 @@
         },
         {
           "_text": "订单管理",
-          "i18n": "BusiCenter.Order",
+          "i18n": "BusiCenter.SalesManage.Order",
           "icon": "anticon anticon-radar-chart",
           "children": [
             {
               "_text": "查找订单",
               "link": "/order/list",
-              "i18n": "BusiCenter.Order"
+              "i18n": "BusiCenter.SalesManage.Order"
             },
             {
               "_text": "创建订单",
               "link": "/order/edit/0",
-              "i18n": "BusiCenter.Order.Create"
+              "i18n": "BusiCenter.SalesManage.Order.Create"
             }
           ]
         },
         {
           "_text": "物流管理",
-          "i18n": "BusiCenter.TenantLogistics",
+          "i18n": "BusiCenter.StoreConfiguration.TenantLogistics",
           "icon": "anticon anticon-radar-chart",
           "children": [
             {
               "_text": "发货单查询",
               "link": "/shipment/list",
-              "i18n": "menu.shipment.list"
+              "i18n": "BusiCenter.StoreConfiguration.TenantLogistics"
             },
             {
               "_text": "创建发货记录",
               "link": "/shipment/edit/0",
-              "i18n": "menu.shipment.add"
+              "i18n": "BusiCenter.StoreConfiguration.TenantLogistics.Create"
             },
             {
               "_text": "物流供应商",
               "link": "/shipment/support/list",
-              "i18n": "BusiCenter.TenantLogistics"
-            }
-          ]
-        },
-        {
-          "_text": "发货管理",
-          "i18n": "BusiCenter.Shipment",
-          "icon": "anticon anticon-radar-chart",
-          "children": [
-            {
-              "_text": "发货单查询",
-              "link": "/shipment/list",
-              "i18n": "menu.shipment.list"
-            },
-            {
-              "_text": "创建发货记录",
-              "link": "/shipment/edit/0",
-              "i18n": "menu.shipment.add"
-            },
-            {
-              "_text": "物流供应商",
-              "link": "/shipment/support/list",
-              "i18n": "BusiCenter.TenantLogistics"
+              "i18n": "BusiCenter.StoreConfiguration.Logistics"
             }
           ]
         },
         {
           "_text": "店铺管理",
-          "i18n": "BusiCenter.Store",
+          "i18n": "BusiCenter.StoreConfiguration.Store",
           "icon": "anticon anticon-shop",
           "link": "/store/list"
         },
@@ -145,6 +123,16 @@
               "_text": "版本管理",
               "link": "/sys/edition/list",
               "i18n": "Admin.System.Editions"
+            },
+            {
+              "_text": "缓存",
+              "link": "/sys/edition/list",
+              "i18n": "Admin.System.Editions"
+            },
+            {
+              "_text": "日志",
+              "link": "/sys/edition/list",
+              "i18n": "Admin.System.Logs"
             }
           ]
         }

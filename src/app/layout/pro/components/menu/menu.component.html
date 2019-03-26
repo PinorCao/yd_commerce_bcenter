@@ -8,7 +8,7 @@
 <ul *ngIf="menus" nz-menu [nzMode]="mode" [nzTheme]="pro.theme"
     [nzInlineCollapsed]="pro.isMobile ? false : pro.collapsed">
     <ng-container *ngFor="let l1 of menus">
-        <li *ngIf="l1.children.length === 0" nz-menu-item class="alain-pro__menu-item"
+        <li *ngIf="l1.children.length === 0 && isGranted(l1.i18n)" nz-menu-item class="alain-pro__menu-item"
             [nzSelected]="l1._selected" [nzDisabled]="l1.disabled" (click)="to(l1)">
             <div class="alain-pro__menu-title">
                 <ng-template [ngTemplateOutlet]="icon" [ngTemplateOutletContext]="{$implicit: l1.icon}"></ng-template>
@@ -18,7 +18,7 @@
                 </div>
             </div>
         </li>
-        <li *ngIf="l1.children.length > 0" nz-submenu class="alain-pro__menu-item"
+        <li *ngIf="l1.children.length > 0 && isGranted(l1.i18n)" nz-submenu class="alain-pro__menu-item"
             [class.text-white]="pro.theme === 'dark' && l1._selected"
             [nzOpen]="l1._open" [nzDisabled]="l1.disabled" (nzOpenChange)="openChange(l1, $event)">
       <span title class="alain-pro__menu-title">
@@ -30,16 +30,16 @@
       </span>
             <ul>
                 <ng-container *ngFor="let l2 of l1.children">
-                    <li *ngIf="!l2._hidden && l2.children.length === 0" nz-menu-item [nzSelected]="l2._selected"
+                    <li *ngIf="!l2._hidden && l2.children.length === 0 && isGranted(l2.i18n)" nz-menu-item [nzSelected]="l2._selected"
                         [nzDisabled]="l2.disabled" (click)="to(l2)">
                         {{l2._text}}
                     </li>
-                    <li *ngIf="!l2._hidden && l2.children.length > 0" nz-submenu [nzOpen]="l2._open"
+                    <li *ngIf="!l2._hidden && l2.children.length > 0 && isGranted(l2.i18n)" nz-submenu [nzOpen]="l2._open"
                         [nzDisabled]="l2.disabled" (nzOpenChange)="openChange(l2, $event)">
                         <span title><span>{{l2.text}}</span></span>
                         <ul>
                             <ng-container *ngFor="let l3 of l2.children">
-                                <li *ngIf="!l2._hidden" nz-menu-item [nzSelected]="l3._selected"
+                                <li *ngIf="!l2._hidden && isGranted(l3.i18n)" nz-menu-item [nzSelected]="l3._selected"
                                     [nzDisabled]="l3.disabled" (click)="to(l3)">{{l3._text}}</li>
                             </ng-container>
                         </ul>
