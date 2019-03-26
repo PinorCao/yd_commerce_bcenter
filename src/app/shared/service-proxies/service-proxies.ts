@@ -5903,44 +5903,55 @@ export class OrderServiceProxy {
 
     /**
      * 获取所有订单
-     * @param productIds (optional) 商品Id
      * @param logisticsNumber (optional) 快递单号
+     * @param receivedOn_FormDate (optional) 开始时间
+     * @param receivedOn_ToDate (optional) 结束时间
+     * @param orderStatuses (optional) 订单状态
+     * @param paymentStatuses (optional) 付款状态
+     * @param shippingStatuses (optional) 发货状态
+     * @param storeIds (optional) 店铺Id
+     * @param productIds (optional) 商品Id
      * @param orderNumber (optional) 订单号
      * @param createdOn_FormDate (optional) 开始时间
      * @param createdOn_ToDate (optional) 结束时间
-     * @param receivedOn_FormDate (optional) 开始时间
-     * @param receivedOn_ToDate (optional) 结束时间
      * @param shippingName (optional) 收件人姓名
      * @param phoneNumber (optional) 电话号码
      * @param provinceId (optional) 省份Id
      * @param cityId (optional) 城市Id
      * @param districtId (optional) 区域Id
-     * @param orderStatuses (optional) 订单状态
-     * @param paymentStatuses (optional) 付款状态
-     * @param shippingStatuses (optional) 发货状态
      * @param orderTypes (optional) 订单类型
      * @param orderSources (optional) 订单来源
+     * @param adminComment (optional) 管理员备注
+     * @param customerComment (optional) 用户备注
      * @param sorting (optional) 排序字段 (eg:Id DESC)
      * @param maxResultCount (optional) 最大结果数量(等同:PageSize)
      * @param skipCount (optional) 列表跳过数量(等同: PageSize*PageIndex)
      * @return Success
      */
-    getOrders(productIds: number[] | null | undefined, logisticsNumber: string | null | undefined, orderNumber: string | null | undefined, createdOn_FormDate: moment.Moment | null | undefined, createdOn_ToDate: moment.Moment | null | undefined, receivedOn_FormDate: moment.Moment | null | undefined, receivedOn_ToDate: moment.Moment | null | undefined, shippingName: string | null | undefined, phoneNumber: string | null | undefined, provinceId: number | null | undefined, cityId: number | null | undefined, districtId: number | null | undefined, orderStatuses: OrderStatuses[] | null | undefined, paymentStatuses: PaymentStatuses[] | null | undefined, shippingStatuses: ShippingStatuses[] | null | undefined, orderTypes: OrderTypes[] | null | undefined, orderSources: OrderSources[] | null | undefined, sorting: string | null | undefined, maxResultCount: number | null | undefined, skipCount: number | null | undefined): Observable<PagedResultDtoOfOrderListDto> {
+    getOrders(logisticsNumber: string | null | undefined, receivedOn_FormDate: moment.Moment | null | undefined, receivedOn_ToDate: moment.Moment | null | undefined, orderStatuses: OrderStatuses[] | null | undefined, paymentStatuses: PaymentStatuses[] | null | undefined, shippingStatuses: ShippingStatuses[] | null | undefined, storeIds: number[] | null | undefined, productIds: number[] | null | undefined, orderNumber: string | null | undefined, createdOn_FormDate: moment.Moment | null | undefined, createdOn_ToDate: moment.Moment | null | undefined, shippingName: string | null | undefined, phoneNumber: string | null | undefined, provinceId: number | null | undefined, cityId: number | null | undefined, districtId: number | null | undefined, orderTypes: OrderTypes[] | null | undefined, orderSources: OrderSources[] | null | undefined, adminComment: string | null | undefined, customerComment: string | null | undefined, sorting: string | null | undefined, maxResultCount: number | null | undefined, skipCount: number | null | undefined): Observable<PagedResultDtoOfOrderListDto> {
         let url_ = this.baseUrl + "/api/services/app/Order/GetOrders?";
-        if (productIds !== undefined)
-            productIds && productIds.forEach(item => { url_ += "ProductIds=" + encodeURIComponent("" + item) + "&"; });
         if (logisticsNumber !== undefined)
             url_ += "LogisticsNumber=" + encodeURIComponent("" + logisticsNumber) + "&"; 
+        if (receivedOn_FormDate !== undefined)
+            url_ += "ReceivedOn.FormDate=" + encodeURIComponent(receivedOn_FormDate ? "" + receivedOn_FormDate.toJSON() : "") + "&"; 
+        if (receivedOn_ToDate !== undefined)
+            url_ += "ReceivedOn.ToDate=" + encodeURIComponent(receivedOn_ToDate ? "" + receivedOn_ToDate.toJSON() : "") + "&"; 
+        if (orderStatuses !== undefined)
+            orderStatuses && orderStatuses.forEach(item => { url_ += "OrderStatuses=" + encodeURIComponent("" + item) + "&"; });
+        if (paymentStatuses !== undefined)
+            paymentStatuses && paymentStatuses.forEach(item => { url_ += "PaymentStatuses=" + encodeURIComponent("" + item) + "&"; });
+        if (shippingStatuses !== undefined)
+            shippingStatuses && shippingStatuses.forEach(item => { url_ += "ShippingStatuses=" + encodeURIComponent("" + item) + "&"; });
+        if (storeIds !== undefined)
+            storeIds && storeIds.forEach(item => { url_ += "StoreIds=" + encodeURIComponent("" + item) + "&"; });
+        if (productIds !== undefined)
+            productIds && productIds.forEach(item => { url_ += "ProductIds=" + encodeURIComponent("" + item) + "&"; });
         if (orderNumber !== undefined)
             url_ += "OrderNumber=" + encodeURIComponent("" + orderNumber) + "&"; 
         if (createdOn_FormDate !== undefined)
             url_ += "CreatedOn.FormDate=" + encodeURIComponent(createdOn_FormDate ? "" + createdOn_FormDate.toJSON() : "") + "&"; 
         if (createdOn_ToDate !== undefined)
             url_ += "CreatedOn.ToDate=" + encodeURIComponent(createdOn_ToDate ? "" + createdOn_ToDate.toJSON() : "") + "&"; 
-        if (receivedOn_FormDate !== undefined)
-            url_ += "ReceivedOn.FormDate=" + encodeURIComponent(receivedOn_FormDate ? "" + receivedOn_FormDate.toJSON() : "") + "&"; 
-        if (receivedOn_ToDate !== undefined)
-            url_ += "ReceivedOn.ToDate=" + encodeURIComponent(receivedOn_ToDate ? "" + receivedOn_ToDate.toJSON() : "") + "&"; 
         if (shippingName !== undefined)
             url_ += "ShippingName=" + encodeURIComponent("" + shippingName) + "&"; 
         if (phoneNumber !== undefined)
@@ -5951,16 +5962,14 @@ export class OrderServiceProxy {
             url_ += "CityId=" + encodeURIComponent("" + cityId) + "&"; 
         if (districtId !== undefined)
             url_ += "DistrictId=" + encodeURIComponent("" + districtId) + "&"; 
-        if (orderStatuses !== undefined)
-            orderStatuses && orderStatuses.forEach(item => { url_ += "OrderStatuses=" + encodeURIComponent("" + item) + "&"; });
-        if (paymentStatuses !== undefined)
-            paymentStatuses && paymentStatuses.forEach(item => { url_ += "PaymentStatuses=" + encodeURIComponent("" + item) + "&"; });
-        if (shippingStatuses !== undefined)
-            shippingStatuses && shippingStatuses.forEach(item => { url_ += "ShippingStatuses=" + encodeURIComponent("" + item) + "&"; });
         if (orderTypes !== undefined)
             orderTypes && orderTypes.forEach(item => { url_ += "OrderTypes=" + encodeURIComponent("" + item) + "&"; });
         if (orderSources !== undefined)
             orderSources && orderSources.forEach(item => { url_ += "OrderSources=" + encodeURIComponent("" + item) + "&"; });
+        if (adminComment !== undefined)
+            url_ += "AdminComment=" + encodeURIComponent("" + adminComment) + "&"; 
+        if (customerComment !== undefined)
+            url_ += "CustomerComment=" + encodeURIComponent("" + customerComment) + "&"; 
         if (sorting !== undefined)
             url_ += "Sorting=" + encodeURIComponent("" + sorting) + "&"; 
         if (maxResultCount !== undefined)
@@ -6392,25 +6401,37 @@ export class OrderServiceProxy {
 
     /**
      * 导出待发货订单到Excel
-     * @param productIds (optional) 商品Id
+     * @param sorting (optional) 排序字段 (eg:Id DESC)
+     * @param maxResultCount (optional) 最大结果数量(等同:PageSize)
+     * @param skipCount (optional) 列表跳过数量(等同: PageSize*PageIndex)
      * @param storeIds (optional) 店铺Id
+     * @param productIds (optional) 商品Id
      * @param orderNumber (optional) 订单号
      * @param createdOn_FormDate (optional) 开始时间
      * @param createdOn_ToDate (optional) 结束时间
      * @param shippingName (optional) 收件人姓名
      * @param phoneNumber (optional) 电话号码
+     * @param provinceId (optional) 省份Id
+     * @param cityId (optional) 城市Id
+     * @param districtId (optional) 区域Id
      * @param orderTypes (optional) 订单类型
      * @param orderSources (optional) 订单来源
      * @param adminComment (optional) 管理员备注
      * @param customerComment (optional) 用户备注
      * @return Success
      */
-    getWaitShippingToExcel(productIds: number[] | null | undefined, storeIds: number[] | null | undefined, orderNumber: string | null | undefined, createdOn_FormDate: moment.Moment | null | undefined, createdOn_ToDate: moment.Moment | null | undefined, shippingName: string | null | undefined, phoneNumber: string | null | undefined, orderTypes: OrderTypes2[] | null | undefined, orderSources: OrderSources2[] | null | undefined, adminComment: string | null | undefined, customerComment: string | null | undefined): Observable<FileDto> {
+    getWaitShippingToExcel(sorting: string | null | undefined, maxResultCount: number | null | undefined, skipCount: number | null | undefined, storeIds: number[] | null | undefined, productIds: number[] | null | undefined, orderNumber: string | null | undefined, createdOn_FormDate: moment.Moment | null | undefined, createdOn_ToDate: moment.Moment | null | undefined, shippingName: string | null | undefined, phoneNumber: string | null | undefined, provinceId: number | null | undefined, cityId: number | null | undefined, districtId: number | null | undefined, orderTypes: OrderTypes2[] | null | undefined, orderSources: OrderSources2[] | null | undefined, adminComment: string | null | undefined, customerComment: string | null | undefined): Observable<FileDto> {
         let url_ = this.baseUrl + "/api/services/app/Order/GetWaitShippingToExcel?";
-        if (productIds !== undefined)
-            productIds && productIds.forEach(item => { url_ += "ProductIds=" + encodeURIComponent("" + item) + "&"; });
+        if (sorting !== undefined)
+            url_ += "Sorting=" + encodeURIComponent("" + sorting) + "&"; 
+        if (maxResultCount !== undefined)
+            url_ += "MaxResultCount=" + encodeURIComponent("" + maxResultCount) + "&"; 
+        if (skipCount !== undefined)
+            url_ += "SkipCount=" + encodeURIComponent("" + skipCount) + "&"; 
         if (storeIds !== undefined)
             storeIds && storeIds.forEach(item => { url_ += "StoreIds=" + encodeURIComponent("" + item) + "&"; });
+        if (productIds !== undefined)
+            productIds && productIds.forEach(item => { url_ += "ProductIds=" + encodeURIComponent("" + item) + "&"; });
         if (orderNumber !== undefined)
             url_ += "OrderNumber=" + encodeURIComponent("" + orderNumber) + "&"; 
         if (createdOn_FormDate !== undefined)
@@ -6421,6 +6442,12 @@ export class OrderServiceProxy {
             url_ += "ShippingName=" + encodeURIComponent("" + shippingName) + "&"; 
         if (phoneNumber !== undefined)
             url_ += "PhoneNumber=" + encodeURIComponent("" + phoneNumber) + "&"; 
+        if (provinceId !== undefined)
+            url_ += "ProvinceId=" + encodeURIComponent("" + provinceId) + "&"; 
+        if (cityId !== undefined)
+            url_ += "CityId=" + encodeURIComponent("" + cityId) + "&"; 
+        if (districtId !== undefined)
+            url_ += "DistrictId=" + encodeURIComponent("" + districtId) + "&"; 
         if (orderTypes !== undefined)
             orderTypes && orderTypes.forEach(item => { url_ += "OrderTypes=" + encodeURIComponent("" + item) + "&"; });
         if (orderSources !== undefined)
