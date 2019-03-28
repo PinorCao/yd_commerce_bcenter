@@ -1,61 +1,60 @@
-import { NgModule, Optional, SkipSelf, ModuleWithProviders } from '@angular/core';
-import { throwIfAlreadyLoaded } from '@core/module-import-guard';
+import {NgModule, Optional, SkipSelf, ModuleWithProviders} from '@angular/core';
+import {throwIfAlreadyLoaded} from '@core/module-import-guard';
 
-import { AlainThemeModule } from '@delon/theme';
+import {AlainThemeModule} from '@delon/theme';
 
 // #region mock
-import { DelonMockModule } from '@delon/mock';
-import * as MOCKDATA from '../../_mock';
-import { environment } from '@env/environment';
-const MOCK_MODULES = !environment.production
-  ? [DelonMockModule.forRoot({ data: MOCKDATA })]
-  : [];
+import {environment} from '@env/environment';
 // #endregion
 
 // #region reuse-tab
 /**
  * Pls refer to [reuse-tab](https://ng-alain.com/components/reuse-tab).
  */
-import { RouteReuseStrategy } from '@angular/router';
-import { ReuseTabService, ReuseTabStrategy, ReuseTabMatchMode } from '@delon/abc/reuse-tab';
+import {RouteReuseStrategy} from '@angular/router';
+import {ReuseTabService, ReuseTabStrategy, ReuseTabMatchMode} from '@delon/abc/reuse-tab';
+
 const REUSETAB_PROVIDES = [
   {
     provide: RouteReuseStrategy,
     useClass: ReuseTabStrategy,
-    deps: [ReuseTabService],
-  },
+    deps: [ReuseTabService]
+  }
 ];
 // #endregion
 
 // #region global config functions
 
-import { PageHeaderConfig } from '@delon/abc';
+import {PageHeaderConfig} from '@delon/abc';
+
 export function fnPageHeaderConfig(): PageHeaderConfig {
-  return Object.assign(new PageHeaderConfig(), { homeI18n: 'home' });
+  return Object.assign(new PageHeaderConfig(), {homeI18n: 'home'});
 }
 
-import { DelonAuthConfig } from '@delon/auth';
+import {DelonAuthConfig} from '@delon/auth';
+
 export function fnDelonAuthConfig(): DelonAuthConfig {
   return Object.assign(new DelonAuthConfig(), <DelonAuthConfig>{
-    login_url: '/passport/login',
+    login_url: '/passport/login'
   });
 }
 
-import { STConfig } from '@delon/abc';
+import {STConfig} from '@delon/abc';
+
 export function fnSTConfig(): STConfig {
   return {
     ...new STConfig(),
     ...{
-      modal: { size: 'lg' }
+      modal: {size: 'lg'}
     }
   };
 }
 
 const GLOBAL_CONFIG_PROVIDES = [
   // NOTICE: @delon/abc global configuration
-  { provide: STConfig, useFactory: fnSTConfig },
-  { provide: PageHeaderConfig, useFactory: fnPageHeaderConfig },
-  { provide: DelonAuthConfig, useFactory: fnDelonAuthConfig },
+  {provide: STConfig, useFactory: fnSTConfig},
+  {provide: PageHeaderConfig, useFactory: fnPageHeaderConfig},
+  {provide: DelonAuthConfig, useFactory: fnDelonAuthConfig}
 ];
 
 // #endregion
@@ -64,8 +63,8 @@ const GLOBAL_CONFIG_PROVIDES = [
   imports: [
     AlainThemeModule.forRoot(),
     // mock
-    ...MOCK_MODULES,
-  ],
+    //...MOCK_MODULES
+  ]
 })
 export class DelonModule {
   constructor(
@@ -83,7 +82,7 @@ export class DelonModule {
   static forRoot(): ModuleWithProviders {
     return {
       ngModule: DelonModule,
-      providers: [...REUSETAB_PROVIDES, ...GLOBAL_CONFIG_PROVIDES],
+      providers: [...REUSETAB_PROVIDES, ...GLOBAL_CONFIG_PROVIDES]
     };
   }
 }

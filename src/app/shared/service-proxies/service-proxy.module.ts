@@ -42,7 +42,8 @@ import {NgModule} from '@angular/core';
     ApiServiceProxies.OrderServiceProxy,
     ApiServiceProxies.StateServiceServiceProxy,
     ApiServiceProxies.ShipmentServiceProxy,
-    ApiServiceProxies.LogisticsServiceProxy
+    ApiServiceProxies.LogisticsServiceProxy,
+    ApiServiceProxies.FileServiceProxy
   ]
 })
 export class ServiceProxyModule {
