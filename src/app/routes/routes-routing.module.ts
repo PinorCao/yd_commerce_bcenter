@@ -37,6 +37,7 @@ const routes: Routes = [
       {path: 'order', loadChildren: './order/order.module#OrderModule'},
       {path: 'shipping', loadChildren: './shipping/shipping.module#ShippingModule'},
       {path: 'shipment', loadChildren: './shipment/shipment.module#ShipmentModule'},
+      {path: 'advert', loadChildren: './advert/advert.module#AdvertModule'},
       {path: 'pro', loadChildren: './pro/pro.module#ProModule'},
       {path: 'sys', loadChildren: './sys/sys.module#SysModule'},
       {path: 'ec', loadChildren: './ec/ec.module#ECModule'},

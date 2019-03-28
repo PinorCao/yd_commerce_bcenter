@@ -32,7 +32,7 @@
             },
             {
               "_text": "属性管理",
-              "link": "/dashboard/monitor",
+              "link": "/goods/attribute/list",
               "i18n": "BusiCenter.Catelog.ProductAttribute"
             }
           ]
@@ -62,7 +62,7 @@
         {
           "_text": "销售管理",
           "i18n": "BusiCenter.SalesManage",
-          "icon": "anticon anticon-radar-chart",
+          "icon": "anticon anticon-shopping",
           "children": [
             {
               "_text": "订单管理",
@@ -99,6 +99,23 @@
           ]
         },
         {
+          "_text": "广告管理",
+          "i18n": "BusiCenter.AdvertManage",
+          "icon": "anticon anticon-line-chart",
+          "children": [
+            {
+              "_text": "广告账户",
+              "link": "/advert/list",
+              "i18n": "BusiCenter.AdvertManage.Account"
+            },
+            {
+              "_text": "广告统计",
+              "link": "/advert/statistics",
+              "i18n": "BusiCenter.AdvertManage.DailyStatistic"
+            }
+          ]
+        },
+        {
           "_text": "店铺管理",
           "i18n": "BusiCenter.StoreConfiguration.Store",
           "icon": "anticon anticon-shop",
@@ -125,14 +142,9 @@
               "i18n": "Admin.System.Editions"
             },
             {
-              "_text": "缓存",
-              "link": "/sys/edition/list",
-              "i18n": "Admin.System.Editions"
-            },
-            {
-              "_text": "日志",
-              "link": "/sys/edition/list",
-              "i18n": "Admin.System.Logs"
+              "_text": "维护",
+              "link": "/sys/maintenance",
+              "i18n": "Admin.System.Host.Maintenance"
             }
           ]
         }

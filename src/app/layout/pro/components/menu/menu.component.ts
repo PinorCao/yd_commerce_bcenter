@@ -5,8 +5,9 @@ import {filter, takeUntil} from 'rxjs/operators';
 import {Menu, MenuService} from '@delon/theme';
 import {InputBoolean} from '@delon/util';
 
-import {BrandService} from '../../pro.service';
-import {ProMenu} from '../../pro.types';
+import {BrandService} from '@brand/pro.service';
+import {ProMenu} from '@brand/pro.types';
+
 import {AppComponentBase} from '@shared/app-component-base';
 
 @Component({

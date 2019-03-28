@@ -14,6 +14,9 @@ import {SysFileManagerComponent} from './file-manager/file-manager.component';
 import {SysSettingsComponent} from './settings/settings.component';
 import {SysEditionListComponent} from './edition/list/list.component';
 import {SysEditionEditComponent} from './edition/edit/edit.component';
+import {SysMaintenanceComponent} from './maintenance/maintenance.component';
+import {SysMaintenanceCacheComponent} from './maintenance/cache/cache.component';
+import {SysMaintenanceLogComponent} from './maintenance/log/log.component';
 
 
 const COMPONENTS = [
@@ -27,10 +30,11 @@ const COMPONENTS = [
   SysFileManagerComponent,
   SysSettingsComponent,
   SysEditionListComponent,
-  SysEditionEditComponent
+  SysEditionEditComponent,
+  SysMaintenanceComponent
 ];
 
-const COMPONENTS_NOROUNT = [];
+const COMPONENTS_NOROUNT = [SysMaintenanceCacheComponent, SysMaintenanceLogComponent];
 
 @NgModule({
   imports: [SharedModule, SysRoutingModule],

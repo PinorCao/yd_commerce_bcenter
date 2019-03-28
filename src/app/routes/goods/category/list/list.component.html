@@ -4,26 +4,14 @@
       <nz-row [nzGutter]="{ md: 8, lg: 24, xl: 48 }">
         <nz-col nzMd="8" nzSm="24">
           <nz-form-item>
-            <nz-form-label nzFor="no">店铺编号</nz-form-label>
+            <nz-form-label nzFor="no">分类名称</nz-form-label>
             <nz-form-control>
               <input nz-input [(ngModel)]="q.name" name="no" placeholder="请输入">
             </nz-form-control>
           </nz-form-item>
         </nz-col>
-        <nz-col nzMd="8" nzSm="24">
-          <nz-form-item>
-            <nz-form-label nzFor="status">分类</nz-form-label>
-            <nz-form-control>
-              <nz-select [(ngModel)]="q.parentCategoryId" name="parentCategoryId" required>
-                <nz-option [nzLabel]="'顶级分类'" [nzValue]="0"></nz-option>
-                <nz-option *ngFor="let item of categories" [nzLabel]="item.text" [nzValue]="item.value"></nz-option>
-              </nz-select>
-            </nz-form-control>
-          </nz-form-item>
-        </nz-col>
         <nz-col [nzSpan]="expandForm ? 24 : 8" [class.text-right]="expandForm">
           <button nz-button type="submit" [nzType]="'primary'" [nzLoading]="loading">查询</button>
-          <button nz-button type="reset" (click)="reset()" class="mx-sm">重置</button>
         </nz-col>
       </nz-row>
     </form>

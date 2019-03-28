@@ -56,7 +56,6 @@ export class LayoutProWidgetNotifyComponent {
     this.loading = true;
     const data = [];
     this.notificationSvc.getUserNotifications(undefined, 10, 0).subscribe(res => {
-      console.log(res);
       this.count = res.unreadCount;
       res.items.forEach(item => {
         data.push({

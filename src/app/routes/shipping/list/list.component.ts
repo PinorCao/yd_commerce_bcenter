@@ -11,7 +11,10 @@ import {
   FileServiceProxy
 } from '@shared/service-proxies/service-proxies';
 import {DrawerHelper} from '@delon/theme';
+
 import {NzMessageService, NzModalService} from 'ng-zorro-antd';
+
+import {FileService} from '@core/service/file.service';
 
 let that;
 
@@ -25,7 +28,6 @@ export class ShippingListComponent {
   loading = false;
 
   isAllDisplayDataChecked = false;
-  isIndeterminate = false;
   mapOfCheckedId = {};
   numberOfChecked = 0;
 
@@ -44,7 +46,7 @@ export class ShippingListComponent {
     private stateSvc: StateServiceServiceProxy,
     private enumsSvc: CommonLookupServiceProxy,
     private orderSvc: OrderServiceProxy,
-    private fileSvc: FileServiceProxy) {
+    private fileSvc: FileService) {
     that = this;
   }
 
@@ -109,7 +111,6 @@ export class ShippingListComponent {
 
   refreshStatus(): void {
     this.isAllDisplayDataChecked = this.data.items.filter(item => !item.disabled).every(item => this.mapOfCheckedId[item.id]);
-    this.isIndeterminate = this.data.items.filter(item => !item.disabled).some(item => this.mapOfCheckedId[item.id]) && !this.isAllDisplayDataChecked;
     this.numberOfChecked = this.data.items.filter(item => this.mapOfCheckedId[item.id]).length;
   }
 
@@ -213,10 +214,23 @@ export class ShippingListComponent {
         this.searchForm.get('adminComment').value,
         this.searchForm.get('customerComment').value).subscribe(res => {
         this.loading = false;
-        this.fileSvc.downloadTempFile(res.fileName, res.fileType, res.fileToken).subscribe(res => {
-          console.log(res);
-        });
+        this.fileSvc.downloadTempFile(res.fileName, res.fileType, res.fileToken);
       });
+    } else {
+      const ids = [];
+      for (const id in this.mapOfCheckedId) {
+        if (this.mapOfCheckedId[id]) {
+          ids.push(id);
+        }
+      }
+      if (ids.length > 0) {
+        this.orderSvc.getSelectedToExcel(ids).subscribe(res => {
+          this.loading = false;
+          this.fileSvc.downloadTempFile(res.fileName, res.fileType, res.fileToken);
+        });
+      }else {
+        this.loading = false;
+      }
     }
   }
 
@@ -233,6 +247,9 @@ export class ShippingListComponent {
   }
 
   remove() {
+  }
+
+  clearCheck() {
   }
 
   search() {
