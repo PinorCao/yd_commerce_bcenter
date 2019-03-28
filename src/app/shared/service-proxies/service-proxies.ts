@@ -16077,6 +16077,8 @@ export interface IPagedResultDtoOfAdvertAccountListDto {
 }
 
 export class AdvertAccountListDto implements IAdvertAccountListDto {
+    /** 店铺 */
+    store!: string | undefined;
     /** 第三方Id */
     thirdpartyId!: string | undefined;
     /** 用户名 */
@@ -16093,6 +16095,10 @@ export class AdvertAccountListDto implements IAdvertAccountListDto {
     totalCost!: number | undefined;
     /** 总下单数 */
     totalOrder!: number | undefined;
+    /** 余额 */
+    balance!: number | undefined;
+    /** 是否已授权 */
+    isAuthed!: boolean | undefined;
     /** 创建时间 */
     creationTime!: moment.Moment | undefined;
     id!: number | undefined;
@@ -16108,6 +16114,7 @@ export class AdvertAccountListDto implements IAdvertAccountListDto {
 
     init(data?: any) {
         if (data) {
+            this.store = data["store"];
             this.thirdpartyId = data["thirdpartyId"];
             this.username = data["username"];
             this.displayName = data["displayName"];
@@ -16116,6 +16123,8 @@ export class AdvertAccountListDto implements IAdvertAccountListDto {
             this.dataAutoSync = data["dataAutoSync"];
             this.totalCost = data["totalCost"];
             this.totalOrder = data["totalOrder"];
+            this.balance = data["balance"];
+            this.isAuthed = data["isAuthed"];
             this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
             this.id = data["id"];
         }
@@ -16130,6 +16139,7 @@ export class AdvertAccountListDto implements IAdvertAccountListDto {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["store"] = this.store;
         data["thirdpartyId"] = this.thirdpartyId;
         data["username"] = this.username;
         data["displayName"] = this.displayName;
@@ -16138,6 +16148,8 @@ export class AdvertAccountListDto implements IAdvertAccountListDto {
         data["dataAutoSync"] = this.dataAutoSync;
         data["totalCost"] = this.totalCost;
         data["totalOrder"] = this.totalOrder;
+        data["balance"] = this.balance;
+        data["isAuthed"] = this.isAuthed;
         data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
         data["id"] = this.id;
         return data; 
@@ -16145,6 +16157,8 @@ export class AdvertAccountListDto implements IAdvertAccountListDto {
 }
 
 export interface IAdvertAccountListDto {
+    /** 店铺 */
+    store: string | undefined;
     /** 第三方Id */
     thirdpartyId: string | undefined;
     /** 用户名 */
@@ -16161,6 +16175,10 @@ export interface IAdvertAccountListDto {
     totalCost: number | undefined;
     /** 总下单数 */
     totalOrder: number | undefined;
+    /** 余额 */
+    balance: number | undefined;
+    /** 是否已授权 */
+    isAuthed: boolean | undefined;
     /** 创建时间 */
     creationTime: moment.Moment | undefined;
     id: number | undefined;
@@ -16211,6 +16229,8 @@ export interface ISelectListItemDtoOfInt64 {
 }
 
 export class GetAdvertAccountForEditOutput implements IGetAdvertAccountForEditOutput {
+    /** 店铺（必填） */
+    storeId!: number | undefined;
     /** 第三方Id */
     thirdpartyId!: string | undefined;
     /** 用户名 */
@@ -16221,8 +16241,12 @@ export class GetAdvertAccountForEditOutput implements IGetAdvertAccountForEditOu
     displayName!: string | undefined;
     /** 渠道20 = Toutiao ; 40 = Tencent */
     channel!: GetAdvertAccountForEditOutputChannel | undefined;
+    /** 余额 */
+    balance!: number | undefined;
     /** 数据自动同步 */
     dataAutoSync!: boolean | undefined;
+    /** 是否已授权 */
+    isAuthed!: boolean | undefined;
     id!: number | undefined;
 
     constructor(data?: IGetAdvertAccountForEditOutput) {
@@ -16236,12 +16260,15 @@ export class GetAdvertAccountForEditOutput implements IGetAdvertAccountForEditOu
 
     init(data?: any) {
         if (data) {
+            this.storeId = data["storeId"];
             this.thirdpartyId = data["thirdpartyId"];
             this.username = data["username"];
             this.productId = data["productId"];
             this.displayName = data["displayName"];
             this.channel = data["channel"];
+            this.balance = data["balance"];
             this.dataAutoSync = data["dataAutoSync"];
+            this.isAuthed = data["isAuthed"];
             this.id = data["id"];
         }
     }
@@ -16255,18 +16282,23 @@ export class GetAdvertAccountForEditOutput implements IGetAdvertAccountForEditOu
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["storeId"] = this.storeId;
         data["thirdpartyId"] = this.thirdpartyId;
         data["username"] = this.username;
         data["productId"] = this.productId;
         data["displayName"] = this.displayName;
         data["channel"] = this.channel;
+        data["balance"] = this.balance;
         data["dataAutoSync"] = this.dataAutoSync;
+        data["isAuthed"] = this.isAuthed;
         data["id"] = this.id;
         return data; 
     }
 }
 
 export interface IGetAdvertAccountForEditOutput {
+    /** 店铺（必填） */
+    storeId: number | undefined;
     /** 第三方Id */
     thirdpartyId: string | undefined;
     /** 用户名 */
@@ -16277,12 +16309,18 @@ export interface IGetAdvertAccountForEditOutput {
     displayName: string | undefined;
     /** 渠道20 = Toutiao ; 40 = Tencent */
     channel: GetAdvertAccountForEditOutputChannel | undefined;
+    /** 余额 */
+    balance: number | undefined;
     /** 数据自动同步 */
     dataAutoSync: boolean | undefined;
+    /** 是否已授权 */
+    isAuthed: boolean | undefined;
     id: number | undefined;
 }
 
 export class CreateOrUpdateAdvertAccountInput implements ICreateOrUpdateAdvertAccountInput {
+    /** 店铺（必填） */
+    storeId!: number | undefined;
     /** 第三方Id */
     thirdpartyId!: string | undefined;
     /** 用户名 */
@@ -16293,8 +16331,12 @@ export class CreateOrUpdateAdvertAccountInput implements ICreateOrUpdateAdvertAc
     displayName!: string | undefined;
     /** 渠道20 = Toutiao ; 40 = Tencent */
     channel!: CreateOrUpdateAdvertAccountInputChannel | undefined;
+    /** 余额 */
+    balance!: number | undefined;
     /** 数据自动同步 */
     dataAutoSync!: boolean | undefined;
+    /** 是否已授权 */
+    isAuthed!: boolean | undefined;
     id!: number | undefined;
 
     constructor(data?: ICreateOrUpdateAdvertAccountInput) {
@@ -16308,12 +16350,15 @@ export class CreateOrUpdateAdvertAccountInput implements ICreateOrUpdateAdvertAc
 
     init(data?: any) {
         if (data) {
+            this.storeId = data["storeId"];
             this.thirdpartyId = data["thirdpartyId"];
             this.username = data["username"];
             this.productId = data["productId"];
             this.displayName = data["displayName"];
             this.channel = data["channel"];
+            this.balance = data["balance"];
             this.dataAutoSync = data["dataAutoSync"];
+            this.isAuthed = data["isAuthed"];
             this.id = data["id"];
         }
     }
@@ -16327,18 +16372,23 @@ export class CreateOrUpdateAdvertAccountInput implements ICreateOrUpdateAdvertAc
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["storeId"] = this.storeId;
         data["thirdpartyId"] = this.thirdpartyId;
         data["username"] = this.username;
         data["productId"] = this.productId;
         data["displayName"] = this.displayName;
         data["channel"] = this.channel;
+        data["balance"] = this.balance;
         data["dataAutoSync"] = this.dataAutoSync;
+        data["isAuthed"] = this.isAuthed;
         data["id"] = this.id;
         return data; 
     }
 }
 
 export interface ICreateOrUpdateAdvertAccountInput {
+    /** 店铺（必填） */
+    storeId: number | undefined;
     /** 第三方Id */
     thirdpartyId: string | undefined;
     /** 用户名 */
@@ -16349,8 +16399,12 @@ export interface ICreateOrUpdateAdvertAccountInput {
     displayName: string | undefined;
     /** 渠道20 = Toutiao ; 40 = Tencent */
     channel: CreateOrUpdateAdvertAccountInputChannel | undefined;
+    /** 余额 */
+    balance: number | undefined;
     /** 数据自动同步 */
     dataAutoSync: boolean | undefined;
+    /** 是否已授权 */
+    isAuthed: boolean | undefined;
     id: number | undefined;
 }
 
