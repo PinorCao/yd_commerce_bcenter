@@ -12,6 +12,7 @@ import {SysFileManagerComponent} from './file-manager/file-manager.component';
 import {SysSettingsComponent} from './settings/settings.component';
 import {SysEditionListComponent} from './edition/list/list.component';
 import {SysEditionEditComponent} from './edition/edit/edit.component';
+import {SysMaintenanceComponent} from './maintenance/maintenance.component';
 
 const routes: Routes = [
   {path: 'user', component: SysUserComponent},
@@ -21,6 +22,7 @@ const routes: Routes = [
   {path: 'permission', component: SysPermissionComponent},
   {path: 'role', component: SysRoleComponent},
   {path: 'log', component: SysLogComponent},
+  {path: 'maintenance', component: SysMaintenanceComponent},
   {path: 'file-manager', component: SysFileManagerComponent},
   {path: 'settings', component: SysSettingsComponent},
   {path: 'edition/list', component: SysEditionListComponent},

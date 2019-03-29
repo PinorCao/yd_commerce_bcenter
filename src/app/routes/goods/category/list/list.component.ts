@@ -141,9 +141,4 @@ export class GoodsCategoryListComponent implements OnInit {
       },
     });
   }
-
-  reset() {
-    // wait form reset updated finished
-    setTimeout(() => this.getData());
-  }
 }

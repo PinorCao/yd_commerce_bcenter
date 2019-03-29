@@ -8,6 +8,9 @@ import {GoodsCategoryListComponent} from './category/list/list.component';
 import {GoodsCategoryAddComponent} from './category/add/add.component';
 import {GoodsCategoryEditComponent} from './category/edit/edit.component';
 
+import {GoodsAttributeListComponent} from './attribute/list/list.component';
+import {GoodsAttributeEditComponent} from './attribute/edit/edit.component';
+
 
 const routes: Routes = [
   {
@@ -24,6 +27,12 @@ const routes: Routes = [
   },
   {
     path: 'category/edit/:id', component: GoodsCategoryEditComponent
+  },
+  {
+    path: 'attribute/list', component: GoodsAttributeListComponent
+  },
+  {
+    path: 'attribute/edit/:id', component: GoodsAttributeEditComponent
   }
 ];
 

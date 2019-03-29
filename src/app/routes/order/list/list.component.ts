@@ -11,7 +11,8 @@ import {
 import {_HttpClient, DrawerHelper} from '@delon/theme';
 import {NzMessageService, NzModalService} from 'ng-zorro-antd';
 import {OrderListViewComponent} from './view.component';
-import {OrderListMemoComponent} from './memo.component';
+
+import {OrderListShippingComponent} from './shipping.component';
 
 let that;
 
@@ -217,7 +218,7 @@ export class OrderListComponent {
 
   sendShip(order) {
     this.drawer
-      .create(`快速发送 #${order.orderNumber}`, OrderListMemoComponent, {order}, {size: 666})
+      .create(`快速发送 #${order.orderNumber}`, OrderListShippingComponent, {order}, {size: 666})
       .subscribe((res: any) => {
         console.log(res);
       });

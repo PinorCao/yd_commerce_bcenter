@@ -123,7 +123,7 @@
                     已选择
                     <strong class="text-primary">{{numberOfChecked}}</strong>
                     项
-                    <a *ngIf="totalCallNo > 0" (click)="st.clearCheck()" class="ml-lg">清空</a>
+                    <a *ngIf="numberOfChecked > 0" (click)="clearCheck()" class="ml-lg">清空</a>
                 </ng-template>
             </nz-alert>
         </div>
@@ -132,7 +132,7 @@
                   (nzPageIndexChange)="pageChange($event)">
             <thead>
             <tr>
-                <th nzShowCheckbox [(nzChecked)]="isAllDisplayDataChecked" [nzIndeterminate]="isIndeterminate"
+                <th nzShowCheckbox [(nzChecked)]="isAllDisplayDataChecked"
                     (nzCheckedChange)="checkAll($event)"></th>
                 <th nzCustomFilter>
                     订单号

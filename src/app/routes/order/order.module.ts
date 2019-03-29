@@ -7,7 +7,8 @@ import {OrderListComponent} from './list/list.component';
 import {OrderEditComponent} from './edit/edit.component';
 
 import {OrderListViewComponent} from './list/view.component';
-import {OrderListMemoComponent} from './list/memo.component';
+
+import {OrderListShippingComponent} from './list/shipping.component';
 
 const COMPONENTS = [
   OrderListComponent,
@@ -16,7 +17,7 @@ const COMPONENTS = [
 
 const COMPONENTS_NOROUNT = [
   OrderListViewComponent,
-  OrderListMemoComponent
+  OrderListShippingComponent
 ];
 
 @NgModule({
