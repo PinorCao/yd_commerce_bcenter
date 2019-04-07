@@ -10,7 +10,7 @@ import {
   OrderServiceProxy,
   ProductServiceProxy,
   ProductListDto,
-  StateServiceServiceProxy,
+  StateServiceProxy,
   StoreServiceProxy,
   CommonLookupServiceProxy
 } from '@shared/service-proxies/service-proxies';
@@ -47,7 +47,7 @@ export class OrderEditComponent implements OnInit {
   constructor(private route: ActivatedRoute,
               private productSvc: ProductServiceProxy,
               private orderSvc: OrderServiceProxy,
-              private stateSvc: StateServiceServiceProxy,
+              private stateSvc: StateServiceProxy,
               private storeSvc: StoreServiceProxy,
               private enumsSvc: CommonLookupServiceProxy,
               private currency: CNCurrencyPipe) {

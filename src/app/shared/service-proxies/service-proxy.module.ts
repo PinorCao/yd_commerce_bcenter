@@ -40,7 +40,7 @@ import {NgModule} from '@angular/core';
     ApiServiceProxies.ProductServiceProxy,
     ApiServiceProxies.ProductAttributeServiceProxy,
     ApiServiceProxies.OrderServiceProxy,
-    ApiServiceProxies.StateServiceServiceProxy,
+    ApiServiceProxies.StateServiceProxy,
     ApiServiceProxies.ShipmentServiceProxy,
     ApiServiceProxies.LogisticsServiceProxy,
     ApiServiceProxies.FileServiceProxy,

@@ -6,7 +6,7 @@ import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {
   CommonLookupServiceProxy,
   OrderServiceProxy,
-  StateServiceServiceProxy,
+  StateServiceProxy,
   ShipmentServiceProxy,
   FileServiceProxy
 } from '@shared/service-proxies/service-proxies';
@@ -43,7 +43,7 @@ export class ShippingListComponent {
     public msg: NzMessageService,
     private modalSrv: NzModalService,
     private drawer: DrawerHelper,
-    private stateSvc: StateServiceServiceProxy,
+    private stateSvc: StateServiceProxy,
     private enumsSvc: CommonLookupServiceProxy,
     private orderSvc: OrderServiceProxy,
     private fileSvc: FileService) {
