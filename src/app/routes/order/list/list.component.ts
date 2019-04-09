@@ -6,7 +6,7 @@ import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {
   CommonLookupServiceProxy,
   OrderServiceProxy,
-  StateServiceServiceProxy
+  StateServiceProxy
 } from '@shared/service-proxies/service-proxies';
 import {_HttpClient, DrawerHelper} from '@delon/theme';
 import {NzMessageService, NzModalService} from 'ng-zorro-antd';
@@ -43,7 +43,7 @@ export class OrderListComponent {
     public msg: NzMessageService,
     private modalSrv: NzModalService,
     private drawer: DrawerHelper,
-    private stateSvc: StateServiceServiceProxy,
+    private stateSvc: StateServiceProxy,
     private enumsSvc: CommonLookupServiceProxy,
     private orderSvc: OrderServiceProxy) {
     that = this;

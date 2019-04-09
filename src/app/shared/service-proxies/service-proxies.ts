@@ -767,7 +767,7 @@ export class AdvertAccountServiceProxy {
      * @return Success
      */
     getAccounts(advertChannels: AdvertChannels[] | null | undefined, thirdpartyId: string | null | undefined, userName: string | null | undefined, displayName: string | null | undefined, productId: number | null | undefined, sorting: string | null | undefined, maxResultCount: number | null | undefined, skipCount: number | null | undefined): Observable<PagedResultDtoOfAdvertAccountListDto> {
-        let url_ = this.baseUrl + "/api/services/app/AdvertAccount/GetAccounts?";
+        let url_ = this.baseUrl + "/api/services/advert/AdvertAccount/GetAccounts?";
         if (advertChannels !== undefined)
             advertChannels && advertChannels.forEach(item => { url_ += "AdvertChannels=" + encodeURIComponent("" + item) + "&"; });
         if (thirdpartyId !== undefined)
@@ -835,7 +835,7 @@ export class AdvertAccountServiceProxy {
      * @return Success
      */
     getAccountSelectList(): Observable<SelectListItemDtoOfInt64[]> {
-        let url_ = this.baseUrl + "/api/services/app/AdvertAccount/GetAccountSelectList";
+        let url_ = this.baseUrl + "/api/services/advert/AdvertAccount/GetAccountSelectList";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -892,7 +892,7 @@ export class AdvertAccountServiceProxy {
      * @return Success
      */
     getAccountForEdit(id: number | null | undefined): Observable<GetAdvertAccountForEditOutput> {
-        let url_ = this.baseUrl + "/api/services/app/AdvertAccount/GetAccountForEdit?";
+        let url_ = this.baseUrl + "/api/services/advert/AdvertAccount/GetAccountForEdit?";
         if (id !== undefined)
             url_ += "Id=" + encodeURIComponent("" + id) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
@@ -947,7 +947,7 @@ export class AdvertAccountServiceProxy {
      * @return Success
      */
     createOrUpdateAccount(input: CreateOrUpdateAdvertAccountInput | null | undefined): Observable<EntityDtoOfInt64> {
-        let url_ = this.baseUrl + "/api/services/app/AdvertAccount/CreateOrUpdateAccount";
+        let url_ = this.baseUrl + "/api/services/advert/AdvertAccount/CreateOrUpdateAccount";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input);
@@ -1004,7 +1004,7 @@ export class AdvertAccountServiceProxy {
      * @return Success
      */
     deleteAdvertAccount(ids: number[] | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/app/AdvertAccount/DeleteAdvertAccount?";
+        let url_ = this.baseUrl + "/api/services/advert/AdvertAccount/DeleteAdvertAccount?";
         if (ids !== undefined)
             ids && ids.forEach(item => { url_ += "Ids=" + encodeURIComponent("" + item) + "&"; });
         url_ = url_.replace(/[?&]$/, "");
@@ -1048,6 +1048,60 @@ export class AdvertAccountServiceProxy {
         }
         return _observableOf<void>(<any>null);
     }
+
+    /**
+     * 获取 授权账户 AccessToken
+     * @param accountId (optional) 账户Id
+     * @param code (optional) 授权码
+     * @return Success
+     */
+    getAccessToken(accountId: number | null | undefined, code: string | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/advert/AdvertAccount/GetAccessToken?";
+        if (accountId !== undefined)
+            url_ += "AccountId=" + encodeURIComponent("" + accountId) + "&"; 
+        if (code !== undefined)
+            url_ += "Code=" + encodeURIComponent("" + code) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetAccessToken(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetAccessToken(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetAccessToken(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
 }
 
 @Injectable()
@@ -1074,7 +1128,7 @@ export class AdvertStatisticServiceProxy {
      * @return Success
      */
     getDailyStatistics(advertChannels: AdvertChannels2[] | null | undefined, productIds: number[] | null | undefined, accountIds: number[] | null | undefined, statisticOn_FormDate: moment.Moment | null | undefined, statisticOn_ToDate: moment.Moment | null | undefined, sorting: string | null | undefined, maxResultCount: number | null | undefined, skipCount: number | null | undefined): Observable<PagedResultDtoOfDailyStatisticDto> {
-        let url_ = this.baseUrl + "/api/services/app/AdvertStatistic/GetDailyStatistics?";
+        let url_ = this.baseUrl + "/api/services/advert/AdvertStatistic/GetDailyStatistics?";
         if (advertChannels !== undefined)
             advertChannels && advertChannels.forEach(item => { url_ += "AdvertChannels=" + encodeURIComponent("" + item) + "&"; });
         if (productIds !== undefined)
@@ -1143,7 +1197,7 @@ export class AdvertStatisticServiceProxy {
      * @return Success
      */
     getDailyStatisticForEdit(id: number | null | undefined): Observable<DailyStatisticDto> {
-        let url_ = this.baseUrl + "/api/services/app/AdvertStatistic/GetDailyStatisticForEdit?";
+        let url_ = this.baseUrl + "/api/services/advert/AdvertStatistic/GetDailyStatisticForEdit?";
         if (id !== undefined)
             url_ += "Id=" + encodeURIComponent("" + id) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
@@ -1198,7 +1252,7 @@ export class AdvertStatisticServiceProxy {
      * @return Success
      */
     createOrUpdateDailyStatistic(input: DailyStatisticDto | null | undefined): Observable<EntityDtoOfInt64> {
-        let url_ = this.baseUrl + "/api/services/app/AdvertStatistic/CreateOrUpdateDailyStatistic";
+        let url_ = this.baseUrl + "/api/services/advert/AdvertStatistic/CreateOrUpdateDailyStatistic";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input);
@@ -1255,7 +1309,7 @@ export class AdvertStatisticServiceProxy {
      * @return Success
      */
     deleteDailyStatistic(ids: number[] | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/app/AdvertStatistic/DeleteDailyStatistic?";
+        let url_ = this.baseUrl + "/api/services/advert/AdvertStatistic/DeleteDailyStatistic?";
         if (ids !== undefined)
             ids && ids.forEach(item => { url_ += "Ids=" + encodeURIComponent("" + item) + "&"; });
         url_ = url_.replace(/[?&]$/, "");
@@ -1306,7 +1360,7 @@ export class AdvertStatisticServiceProxy {
      * @return Success
      */
     getDailyStatisticItems(advertDailyStatisticId: number | null | undefined): Observable<DailyStatisticItemDto[]> {
-        let url_ = this.baseUrl + "/api/services/app/AdvertStatistic/GetDailyStatisticItems?";
+        let url_ = this.baseUrl + "/api/services/advert/AdvertStatistic/GetDailyStatisticItems?";
         if (advertDailyStatisticId !== undefined)
             url_ += "AdvertDailyStatisticId=" + encodeURIComponent("" + advertDailyStatisticId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
@@ -1365,7 +1419,7 @@ export class AdvertStatisticServiceProxy {
      * @return Success
      */
     createOrUpdateDailyStatisticItem(input: DailyStatisticItemDto | null | undefined): Observable<EntityDtoOfInt64> {
-        let url_ = this.baseUrl + "/api/services/app/AdvertStatistic/CreateOrUpdateDailyStatisticItem";
+        let url_ = this.baseUrl + "/api/services/advert/AdvertStatistic/CreateOrUpdateDailyStatisticItem";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input);
@@ -2116,7 +2170,7 @@ export class CategoryServiceProxy {
      * @return Success
      */
     getCategorys(name: string | null | undefined, parentCategoryId: number | null | undefined, sorting: string | null | undefined, maxResultCount: number | null | undefined, skipCount: number | null | undefined): Observable<PagedResultDtoOfCategoryListDto> {
-        let url_ = this.baseUrl + "/api/services/app/Category/GetCategorys?";
+        let url_ = this.baseUrl + "/api/services/ecommerce/Category/GetCategorys?";
         if (name !== undefined)
             url_ += "Name=" + encodeURIComponent("" + name) + "&"; 
         if (parentCategoryId !== undefined)
@@ -2178,7 +2232,7 @@ export class CategoryServiceProxy {
      * @return Success
      */
     getCategorySelectList(): Observable<SelectListItemDtoOfInt64[]> {
-        let url_ = this.baseUrl + "/api/services/app/Category/GetCategorySelectList";
+        let url_ = this.baseUrl + "/api/services/ecommerce/Category/GetCategorySelectList";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -2235,7 +2289,7 @@ export class CategoryServiceProxy {
      * @return Success
      */
     getCategoryForEdit(id: number | null | undefined): Observable<GetCategoryForEditOutput> {
-        let url_ = this.baseUrl + "/api/services/app/Category/GetCategoryForEdit?";
+        let url_ = this.baseUrl + "/api/services/ecommerce/Category/GetCategoryForEdit?";
         if (id !== undefined)
             url_ += "Id=" + encodeURIComponent("" + id) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
@@ -2290,7 +2344,7 @@ export class CategoryServiceProxy {
      * @return Success
      */
     createOrUpdateCategory(input: CreateOrUpdateCategoryInput | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/app/Category/CreateOrUpdateCategory";
+        let url_ = this.baseUrl + "/api/services/ecommerce/Category/CreateOrUpdateCategory";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input);
@@ -2343,7 +2397,7 @@ export class CategoryServiceProxy {
      * @return Success
      */
     deleteCategory(ids: number[] | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/app/Category/DeleteCategory?";
+        let url_ = this.baseUrl + "/api/services/ecommerce/Category/DeleteCategory?";
         if (ids !== undefined)
             ids && ids.forEach(item => { url_ += "Ids=" + encodeURIComponent("" + item) + "&"; });
         url_ = url_.replace(/[?&]$/, "");
@@ -2706,7 +2760,7 @@ export class CustomerServiceProxy {
      * @return Success
      */
     getCustomers(name: string | null | undefined, phoneNumber: string | null | undefined, consumesForm: number | null | undefined, consumesTo: number | null | undefined, sorting: string | null | undefined, maxResultCount: number | null | undefined, skipCount: number | null | undefined): Observable<PagedResultDtoOfCustomerListDto> {
-        let url_ = this.baseUrl + "/api/services/app/Customer/GetCustomers?";
+        let url_ = this.baseUrl + "/api/services/ecommerce/Customer/GetCustomers?";
         if (name !== undefined)
             url_ += "Name=" + encodeURIComponent("" + name) + "&"; 
         if (phoneNumber !== undefined)
@@ -2773,7 +2827,7 @@ export class CustomerServiceProxy {
      * @return Success
      */
     getCustomerForEdit(id: number | null | undefined): Observable<CustomerDetailDto> {
-        let url_ = this.baseUrl + "/api/services/app/Customer/GetCustomerForEdit?";
+        let url_ = this.baseUrl + "/api/services/ecommerce/Customer/GetCustomerForEdit?";
         if (id !== undefined)
             url_ += "Id=" + encodeURIComponent("" + id) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
@@ -2828,7 +2882,7 @@ export class CustomerServiceProxy {
      * @return Success
      */
     createOrUpdateCustomer(input: CreateOrUpdateCustomerInput | null | undefined): Observable<EntityDtoOfInt64> {
-        let url_ = this.baseUrl + "/api/services/app/Customer/CreateOrUpdateCustomer";
+        let url_ = this.baseUrl + "/api/services/ecommerce/Customer/CreateOrUpdateCustomer";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input);
@@ -2885,7 +2939,7 @@ export class CustomerServiceProxy {
      * @return Success
      */
     deleteCustomer(ids: number[] | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/app/Customer/DeleteCustomer?";
+        let url_ = this.baseUrl + "/api/services/ecommerce/Customer/DeleteCustomer?";
         if (ids !== undefined)
             ids && ids.forEach(item => { url_ += "Ids=" + encodeURIComponent("" + item) + "&"; });
         url_ = url_.replace(/[?&]$/, "");
@@ -4934,7 +4988,7 @@ export class LogisticsServiceProxy {
      * @return Success
      */
     getLogisticses(name: string | null | undefined, sorting: string | null | undefined, maxResultCount: number | null | undefined, skipCount: number | null | undefined): Observable<PagedResultDtoOfLogisticsListDto> {
-        let url_ = this.baseUrl + "/api/services/app/Logistics/GetLogisticses?";
+        let url_ = this.baseUrl + "/api/services/ecommerce/Logistics/GetLogisticses?";
         if (name !== undefined)
             url_ += "Name=" + encodeURIComponent("" + name) + "&"; 
         if (sorting !== undefined)
@@ -4994,7 +5048,7 @@ export class LogisticsServiceProxy {
      * @return Success
      */
     getLogisticsSelectList(): Observable<SelectListItemDtoOfInt64[]> {
-        let url_ = this.baseUrl + "/api/services/app/Logistics/GetLogisticsSelectList";
+        let url_ = this.baseUrl + "/api/services/ecommerce/Logistics/GetLogisticsSelectList";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -5051,7 +5105,7 @@ export class LogisticsServiceProxy {
      * @return Success
      */
     getLogisticsForEdit(id: number | null | undefined): Observable<GetLogisticsForEditOutput> {
-        let url_ = this.baseUrl + "/api/services/app/Logistics/GetLogisticsForEdit?";
+        let url_ = this.baseUrl + "/api/services/ecommerce/Logistics/GetLogisticsForEdit?";
         if (id !== undefined)
             url_ += "Id=" + encodeURIComponent("" + id) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
@@ -5106,7 +5160,7 @@ export class LogisticsServiceProxy {
      * @return Success
      */
     createOrUpdateLogistics(input: CreateOrUpdateLogisticsInput | null | undefined): Observable<EntityDtoOfInt64> {
-        let url_ = this.baseUrl + "/api/services/app/Logistics/CreateOrUpdateLogistics";
+        let url_ = this.baseUrl + "/api/services/ecommerce/Logistics/CreateOrUpdateLogistics";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input);
@@ -5163,7 +5217,7 @@ export class LogisticsServiceProxy {
      * @return Success
      */
     deleteLogistics(ids: number[] | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/app/Logistics/DeleteLogistics?";
+        let url_ = this.baseUrl + "/api/services/ecommerce/Logistics/DeleteLogistics?";
         if (ids !== undefined)
             ids && ids.forEach(item => { url_ += "Ids=" + encodeURIComponent("" + item) + "&"; });
         url_ = url_.replace(/[?&]$/, "");
@@ -5217,7 +5271,7 @@ export class LogisticsServiceProxy {
      * @return Success
      */
     getTenantLogisticses(name: string | null | undefined, sorting: string | null | undefined, maxResultCount: number | null | undefined, skipCount: number | null | undefined): Observable<PagedResultDtoOfTenantLogisticsDto> {
-        let url_ = this.baseUrl + "/api/services/app/Logistics/GetTenantLogisticses?";
+        let url_ = this.baseUrl + "/api/services/ecommerce/Logistics/GetTenantLogisticses?";
         if (name !== undefined)
             url_ += "Name=" + encodeURIComponent("" + name) + "&"; 
         if (sorting !== undefined)
@@ -5277,7 +5331,7 @@ export class LogisticsServiceProxy {
      * @return Success
      */
     getTenantLogisticsSelectList(): Observable<SelectListItemDtoOfInt64[]> {
-        let url_ = this.baseUrl + "/api/services/app/Logistics/GetTenantLogisticsSelectList";
+        let url_ = this.baseUrl + "/api/services/ecommerce/Logistics/GetTenantLogisticsSelectList";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -5334,7 +5388,7 @@ export class LogisticsServiceProxy {
      * @return Success
      */
     getTenantLogisticsForEdit(id: number | null | undefined): Observable<GetLogisticsForEditOutput> {
-        let url_ = this.baseUrl + "/api/services/app/Logistics/GetTenantLogisticsForEdit?";
+        let url_ = this.baseUrl + "/api/services/ecommerce/Logistics/GetTenantLogisticsForEdit?";
         if (id !== undefined)
             url_ += "Id=" + encodeURIComponent("" + id) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
@@ -5389,7 +5443,7 @@ export class LogisticsServiceProxy {
      * @return Success
      */
     createOrUpdateTenantLogistics(input: CreateOrUpdateTenantLogisticsInput | null | undefined): Observable<EntityDtoOfInt64> {
-        let url_ = this.baseUrl + "/api/services/app/Logistics/CreateOrUpdateTenantLogistics";
+        let url_ = this.baseUrl + "/api/services/ecommerce/Logistics/CreateOrUpdateTenantLogistics";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input);
@@ -5446,7 +5500,7 @@ export class LogisticsServiceProxy {
      * @return Success
      */
     deleteTenantLogistics(ids: number[] | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/app/Logistics/DeleteTenantLogistics?";
+        let url_ = this.baseUrl + "/api/services/ecommerce/Logistics/DeleteTenantLogistics?";
         if (ids !== undefined)
             ids && ids.forEach(item => { url_ += "Ids=" + encodeURIComponent("" + item) + "&"; });
         url_ = url_.replace(/[?&]$/, "");
@@ -5929,7 +5983,7 @@ export class OrderServiceProxy {
      * @return Success
      */
     getOrders(logisticsNumber: string | null | undefined, receivedOn_FormDate: moment.Moment | null | undefined, receivedOn_ToDate: moment.Moment | null | undefined, orderStatuses: OrderStatuses[] | null | undefined, paymentStatuses: PaymentStatuses[] | null | undefined, shippingStatuses: ShippingStatuses[] | null | undefined, storeIds: number[] | null | undefined, productIds: number[] | null | undefined, orderNumber: string | null | undefined, createdOn_FormDate: moment.Moment | null | undefined, createdOn_ToDate: moment.Moment | null | undefined, shippingName: string | null | undefined, phoneNumber: string | null | undefined, provinceId: number | null | undefined, cityId: number | null | undefined, districtId: number | null | undefined, orderTypes: OrderTypes[] | null | undefined, orderSources: OrderSources[] | null | undefined, adminComment: string | null | undefined, customerComment: string | null | undefined, sorting: string | null | undefined, maxResultCount: number | null | undefined, skipCount: number | null | undefined): Observable<PagedResultDtoOfOrderListDto> {
-        let url_ = this.baseUrl + "/api/services/app/Order/GetOrders?";
+        let url_ = this.baseUrl + "/api/services/ecommerce/Order/GetOrders?";
         if (logisticsNumber !== undefined)
             url_ += "LogisticsNumber=" + encodeURIComponent("" + logisticsNumber) + "&"; 
         if (receivedOn_FormDate !== undefined)
@@ -6028,7 +6082,7 @@ export class OrderServiceProxy {
      * @return Success
      */
     getOrderDetail(orderId: number | null | undefined): Observable<OrderDetailDto> {
-        let url_ = this.baseUrl + "/api/services/app/Order/GetOrderDetail?";
+        let url_ = this.baseUrl + "/api/services/ecommerce/Order/GetOrderDetail?";
         if (orderId !== undefined)
             url_ += "orderId=" + encodeURIComponent("" + orderId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
@@ -6083,7 +6137,7 @@ export class OrderServiceProxy {
      * @return Success
      */
     getOrderForEdit(orderId: number | null | undefined): Observable<GetOrderForEditOutput> {
-        let url_ = this.baseUrl + "/api/services/app/Order/GetOrderForEdit?";
+        let url_ = this.baseUrl + "/api/services/ecommerce/Order/GetOrderForEdit?";
         if (orderId !== undefined)
             url_ += "orderId=" + encodeURIComponent("" + orderId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
@@ -6138,7 +6192,7 @@ export class OrderServiceProxy {
      * @return Success
      */
     createOrUpdateOrder(input: CreateOrUpdateOrderInput | null | undefined): Observable<EntityDtoOfInt64> {
-        let url_ = this.baseUrl + "/api/services/app/Order/CreateOrUpdateOrder";
+        let url_ = this.baseUrl + "/api/services/ecommerce/Order/CreateOrUpdateOrder";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input);
@@ -6195,7 +6249,7 @@ export class OrderServiceProxy {
      * @return Success
      */
     changeOrderStatus(input: ChangeOrderStatusInputOfOrderStatus | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/app/Order/ChangeOrderStatus";
+        let url_ = this.baseUrl + "/api/services/ecommerce/Order/ChangeOrderStatus";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input);
@@ -6248,7 +6302,7 @@ export class OrderServiceProxy {
      * @return Success
      */
     changeShippingStatus(input: ChangeOrderStatusInputOfShippingStatus | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/app/Order/ChangeShippingStatus";
+        let url_ = this.baseUrl + "/api/services/ecommerce/Order/ChangeShippingStatus";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input);
@@ -6301,7 +6355,7 @@ export class OrderServiceProxy {
      * @return Success
      */
     changePaymentStatus(input: ChangeOrderStatusInputOfPaymentStatus | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/app/Order/ChangePaymentStatus";
+        let url_ = this.baseUrl + "/api/services/ecommerce/Order/ChangePaymentStatus";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input);
@@ -6354,7 +6408,7 @@ export class OrderServiceProxy {
      * @return Success
      */
     deleteOrder(ids: number[] | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/app/Order/DeleteOrder?";
+        let url_ = this.baseUrl + "/api/services/ecommerce/Order/DeleteOrder?";
         if (ids !== undefined)
             ids && ids.forEach(item => { url_ += "Ids=" + encodeURIComponent("" + item) + "&"; });
         url_ = url_.replace(/[?&]$/, "");
@@ -6421,7 +6475,7 @@ export class OrderServiceProxy {
      * @return Success
      */
     getWaitShippingToExcel(sorting: string | null | undefined, maxResultCount: number | null | undefined, skipCount: number | null | undefined, storeIds: number[] | null | undefined, productIds: number[] | null | undefined, orderNumber: string | null | undefined, createdOn_FormDate: moment.Moment | null | undefined, createdOn_ToDate: moment.Moment | null | undefined, shippingName: string | null | undefined, phoneNumber: string | null | undefined, provinceId: number | null | undefined, cityId: number | null | undefined, districtId: number | null | undefined, orderTypes: OrderTypes2[] | null | undefined, orderSources: OrderSources2[] | null | undefined, adminComment: string | null | undefined, customerComment: string | null | undefined): Observable<FileDto> {
-        let url_ = this.baseUrl + "/api/services/app/Order/GetWaitShippingToExcel?";
+        let url_ = this.baseUrl + "/api/services/ecommerce/Order/GetWaitShippingToExcel?";
         if (sorting !== undefined)
             url_ += "Sorting=" + encodeURIComponent("" + sorting) + "&"; 
         if (maxResultCount !== undefined)
@@ -6508,7 +6562,7 @@ export class OrderServiceProxy {
      * @return Success
      */
     getSelectedToExcel(orderIds: number[] | null | undefined): Observable<FileDto> {
-        let url_ = this.baseUrl + "/api/services/app/Order/GetSelectedToExcel?";
+        let url_ = this.baseUrl + "/api/services/ecommerce/Order/GetSelectedToExcel?";
         if (orderIds !== undefined)
             orderIds && orderIds.forEach(item => { url_ += "OrderIds=" + encodeURIComponent("" + item) + "&"; });
         url_ = url_.replace(/[?&]$/, "");
@@ -8049,7 +8103,7 @@ export class ProductServiceProxy {
      * @return Success
      */
     productSync(): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/app/Product/ProductSync";
+        let url_ = this.baseUrl + "/api/services/ecommerce/Product/ProductSync";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -8102,7 +8156,7 @@ export class ProductServiceProxy {
      * @return Success
      */
     getProducts(name: string | null | undefined, sku: string | null | undefined, sorting: string | null | undefined, maxResultCount: number | null | undefined, skipCount: number | null | undefined): Observable<PagedResultDtoOfProductListDto> {
-        let url_ = this.baseUrl + "/api/services/app/Product/GetProducts?";
+        let url_ = this.baseUrl + "/api/services/ecommerce/Product/GetProducts?";
         if (name !== undefined)
             url_ += "Name=" + encodeURIComponent("" + name) + "&"; 
         if (sku !== undefined)
@@ -8164,7 +8218,7 @@ export class ProductServiceProxy {
      * @return Success
      */
     getProductSelectList(): Observable<SelectListItemDtoOfInt64[]> {
-        let url_ = this.baseUrl + "/api/services/app/Product/GetProductSelectList";
+        let url_ = this.baseUrl + "/api/services/ecommerce/Product/GetProductSelectList";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -8221,7 +8275,7 @@ export class ProductServiceProxy {
      * @return Success
      */
     getProductAttributeMapping(productId: number | null | undefined): Observable<GetProductAttributeMappingOutput> {
-        let url_ = this.baseUrl + "/api/services/app/Product/GetProductAttributeMapping?";
+        let url_ = this.baseUrl + "/api/services/ecommerce/Product/GetProductAttributeMapping?";
         if (productId !== undefined)
             url_ += "productId=" + encodeURIComponent("" + productId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
@@ -8276,7 +8330,7 @@ export class ProductServiceProxy {
      * @return Success
      */
     getProductForEdit(id: number | null | undefined): Observable<GetProductForEditOutput> {
-        let url_ = this.baseUrl + "/api/services/app/Product/GetProductForEdit?";
+        let url_ = this.baseUrl + "/api/services/ecommerce/Product/GetProductForEdit?";
         if (id !== undefined)
             url_ += "Id=" + encodeURIComponent("" + id) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
@@ -8331,7 +8385,7 @@ export class ProductServiceProxy {
      * @return Success
      */
     createOrUpdateProduct(input: CreateOrUpdateProductInput | null | undefined): Observable<EntityDtoOfInt64> {
-        let url_ = this.baseUrl + "/api/services/app/Product/CreateOrUpdateProduct";
+        let url_ = this.baseUrl + "/api/services/ecommerce/Product/CreateOrUpdateProduct";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input);
@@ -8388,7 +8442,7 @@ export class ProductServiceProxy {
      * @return Success
      */
     deleteProduct(ids: number[] | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/app/Product/DeleteProduct?";
+        let url_ = this.baseUrl + "/api/services/ecommerce/Product/DeleteProduct?";
         if (ids !== undefined)
             ids && ids.forEach(item => { url_ += "Ids=" + encodeURIComponent("" + item) + "&"; });
         url_ = url_.replace(/[?&]$/, "");
@@ -8451,7 +8505,7 @@ export class ProductAttributeServiceProxy {
      * @return Success
      */
     createOrUpdateAttribute(input: CreateOrUpdateAttributeInput | null | undefined): Observable<EntityDtoOfInt64> {
-        let url_ = this.baseUrl + "/api/services/app/ProductAttribute/CreateOrUpdateAttribute";
+        let url_ = this.baseUrl + "/api/services/ecommerce/ProductAttribute/CreateOrUpdateAttribute";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input);
@@ -8507,7 +8561,7 @@ export class ProductAttributeServiceProxy {
      * @return Success
      */
     getAttributes(): Observable<ProductAttributeListDto[]> {
-        let url_ = this.baseUrl + "/api/services/app/ProductAttribute/GetAttributes";
+        let url_ = this.baseUrl + "/api/services/ecommerce/ProductAttribute/GetAttributes";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -8564,7 +8618,7 @@ export class ProductAttributeServiceProxy {
      * @return Success
      */
     getAttributeValues(attributeId: number | null | undefined): Observable<PredefinedProductAttributeValueDto[]> {
-        let url_ = this.baseUrl + "/api/services/app/ProductAttribute/GetAttributeValues?";
+        let url_ = this.baseUrl + "/api/services/ecommerce/ProductAttribute/GetAttributeValues?";
         if (attributeId !== undefined)
             url_ += "attributeId=" + encodeURIComponent("" + attributeId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
@@ -8623,7 +8677,7 @@ export class ProductAttributeServiceProxy {
      * @return Success
      */
     createOrUpdateAttributeValue(input: CreateOrUpdateAttributeValueInput | null | undefined): Observable<EntityDtoOfInt64> {
-        let url_ = this.baseUrl + "/api/services/app/ProductAttribute/CreateOrUpdateAttributeValue";
+        let url_ = this.baseUrl + "/api/services/ecommerce/ProductAttribute/CreateOrUpdateAttributeValue";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input);
@@ -9768,6 +9822,92 @@ export class RoleServiceProxy {
 }
 
 @Injectable()
+export class SaleStatisticServiceProxy {
+    private http: HttpClient;
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * 获取销售统计
+     * @param sources (optional) 来源
+     * @param productIds (optional) 产品Id
+     * @param storeIds (optional) 店铺Id
+     * @param searchMonth (optional) 统计月份（Utc时间）
+     * @param statisticRange_FormDate (optional) 开始时间
+     * @param statisticRange_ToDate (optional) 结束时间
+     * @return Success
+     */
+    getSaleStatistics(sources: Sources[] | null | undefined, productIds: number[] | null | undefined, storeIds: number[] | null | undefined, searchMonth: moment.Moment | null | undefined, statisticRange_FormDate: moment.Moment | null | undefined, statisticRange_ToDate: moment.Moment | null | undefined): Observable<SaleStatisticDto[]> {
+        let url_ = this.baseUrl + "/api/services/statistic/SaleStatistic/GetSaleStatistics?";
+        if (sources !== undefined)
+            sources && sources.forEach(item => { url_ += "Sources=" + encodeURIComponent("" + item) + "&"; });
+        if (productIds !== undefined)
+            productIds && productIds.forEach(item => { url_ += "ProductIds=" + encodeURIComponent("" + item) + "&"; });
+        if (storeIds !== undefined)
+            storeIds && storeIds.forEach(item => { url_ += "StoreIds=" + encodeURIComponent("" + item) + "&"; });
+        if (searchMonth !== undefined)
+            url_ += "SearchMonth=" + encodeURIComponent(searchMonth ? "" + searchMonth.toJSON() : "") + "&"; 
+        if (statisticRange_FormDate !== undefined)
+            url_ += "StatisticRange.FormDate=" + encodeURIComponent(statisticRange_FormDate ? "" + statisticRange_FormDate.toJSON() : "") + "&"; 
+        if (statisticRange_ToDate !== undefined)
+            url_ += "StatisticRange.ToDate=" + encodeURIComponent(statisticRange_ToDate ? "" + statisticRange_ToDate.toJSON() : "") + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetSaleStatistics(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetSaleStatistics(<any>response_);
+                } catch (e) {
+                    return <Observable<SaleStatisticDto[]>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<SaleStatisticDto[]>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetSaleStatistics(response: HttpResponseBase): Observable<SaleStatisticDto[]> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(SaleStatisticDto.fromJS(item));
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<SaleStatisticDto[]>(<any>null);
+    }
+}
+
+@Injectable()
 export class SessionServiceProxy {
     private http: HttpClient;
     private baseUrl: string;
@@ -9959,7 +10099,7 @@ export class ShipmentServiceProxy {
      * @return Success
      */
     getShipments(status: Status | null | undefined, trackingNumber: string | null | undefined, deliveriedOn_FormDate: moment.Moment | null | undefined, deliveriedOn_ToDate: moment.Moment | null | undefined, receivedOn_FormDate: moment.Moment | null | undefined, receivedOn_ToDate: moment.Moment | null | undefined, sorting: string | null | undefined, maxResultCount: number | null | undefined, skipCount: number | null | undefined): Observable<PagedResultDtoOfShipmentListDto> {
-        let url_ = this.baseUrl + "/api/services/app/Shipment/GetShipments?";
+        let url_ = this.baseUrl + "/api/services/ecommerce/Shipment/GetShipments?";
         if (status !== undefined)
             url_ += "Status=" + encodeURIComponent("" + status) + "&"; 
         if (trackingNumber !== undefined)
@@ -10030,7 +10170,7 @@ export class ShipmentServiceProxy {
      * @return Success
      */
     getOrderShipments(orderId: number | null | undefined): Observable<ShipmentDto[]> {
-        let url_ = this.baseUrl + "/api/services/app/Shipment/GetOrderShipments?";
+        let url_ = this.baseUrl + "/api/services/ecommerce/Shipment/GetOrderShipments?";
         if (orderId !== undefined)
             url_ += "orderId=" + encodeURIComponent("" + orderId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
@@ -10089,7 +10229,7 @@ export class ShipmentServiceProxy {
      * @return Success
      */
     getShipmentForEdit(id: number | null | undefined): Observable<GetShipmentForEditOutput> {
-        let url_ = this.baseUrl + "/api/services/app/Shipment/GetShipmentForEdit?";
+        let url_ = this.baseUrl + "/api/services/ecommerce/Shipment/GetShipmentForEdit?";
         if (id !== undefined)
             url_ += "Id=" + encodeURIComponent("" + id) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
@@ -10144,7 +10284,7 @@ export class ShipmentServiceProxy {
      * @return Success
      */
     createOrUpdateShipment(input: CreateOrUpdateShipmentInput | null | undefined): Observable<EntityDtoOfInt64> {
-        let url_ = this.baseUrl + "/api/services/app/Shipment/CreateOrUpdateShipment";
+        let url_ = this.baseUrl + "/api/services/ecommerce/Shipment/CreateOrUpdateShipment";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input);
@@ -10201,7 +10341,7 @@ export class ShipmentServiceProxy {
      * @return Success
      */
     deleteShipment(ids: number[] | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/app/Shipment/DeleteShipment?";
+        let url_ = this.baseUrl + "/api/services/ecommerce/Shipment/DeleteShipment?";
         if (ids !== undefined)
             ids && ids.forEach(item => { url_ += "Ids=" + encodeURIComponent("" + item) + "&"; });
         url_ = url_.replace(/[?&]$/, "");
@@ -10252,7 +10392,7 @@ export class ShipmentServiceProxy {
      * @return Success
      */
     quickDelivery(input: QuickDeliveryInput | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/app/Shipment/QuickDelivery";
+        let url_ = this.baseUrl + "/api/services/ecommerce/Shipment/QuickDelivery";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input);
@@ -10301,6 +10441,92 @@ export class ShipmentServiceProxy {
 }
 
 @Injectable()
+export class ShipmentStatisticServiceProxy {
+    private http: HttpClient;
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * 获取物流统计
+     * @param sources (optional) 来源
+     * @param productIds (optional) 产品Id
+     * @param logisticsIds (optional) 自选物流Id
+     * @param searchMonth (optional) 统计月份（Utc时间）
+     * @param statisticRange_FormDate (optional) 开始时间
+     * @param statisticRange_ToDate (optional) 结束时间
+     * @return Success
+     */
+    getSaleStatistics(sources: Sources2[] | null | undefined, productIds: number[] | null | undefined, logisticsIds: number[] | null | undefined, searchMonth: moment.Moment | null | undefined, statisticRange_FormDate: moment.Moment | null | undefined, statisticRange_ToDate: moment.Moment | null | undefined): Observable<ShipmentStatisticDto[]> {
+        let url_ = this.baseUrl + "/api/services/statistic/ShipmentStatistic/GetSaleStatistics?";
+        if (sources !== undefined)
+            sources && sources.forEach(item => { url_ += "Sources=" + encodeURIComponent("" + item) + "&"; });
+        if (productIds !== undefined)
+            productIds && productIds.forEach(item => { url_ += "ProductIds=" + encodeURIComponent("" + item) + "&"; });
+        if (logisticsIds !== undefined)
+            logisticsIds && logisticsIds.forEach(item => { url_ += "LogisticsIds=" + encodeURIComponent("" + item) + "&"; });
+        if (searchMonth !== undefined)
+            url_ += "SearchMonth=" + encodeURIComponent(searchMonth ? "" + searchMonth.toJSON() : "") + "&"; 
+        if (statisticRange_FormDate !== undefined)
+            url_ += "StatisticRange.FormDate=" + encodeURIComponent(statisticRange_FormDate ? "" + statisticRange_FormDate.toJSON() : "") + "&"; 
+        if (statisticRange_ToDate !== undefined)
+            url_ += "StatisticRange.ToDate=" + encodeURIComponent(statisticRange_ToDate ? "" + statisticRange_ToDate.toJSON() : "") + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetSaleStatistics(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetSaleStatistics(<any>response_);
+                } catch (e) {
+                    return <Observable<ShipmentStatisticDto[]>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<ShipmentStatisticDto[]>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetSaleStatistics(response: HttpResponseBase): Observable<ShipmentStatisticDto[]> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(ShipmentStatisticDto.fromJS(item));
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<ShipmentStatisticDto[]>(<any>null);
+    }
+}
+
+@Injectable()
 export class ShippingTrackerServiceProxy {
     private http: HttpClient;
     private baseUrl: string;
@@ -10319,7 +10545,7 @@ export class ShippingTrackerServiceProxy {
      * @return Success
      */
     getShipmentTracking(orderId: number | null | undefined, shipmentId: number | null | undefined, refresh: boolean | null | undefined): Observable<TrackingDto> {
-        let url_ = this.baseUrl + "/api/services/app/ShippingTracker/GetShipmentTracking?";
+        let url_ = this.baseUrl + "/api/services/ecommerce/ShippingTracker/GetShipmentTracking?";
         if (orderId !== undefined)
             url_ += "OrderId=" + encodeURIComponent("" + orderId) + "&"; 
         if (shipmentId !== undefined)
@@ -10966,7 +11192,7 @@ export class SMSTemplateServiceProxy {
 }
 
 @Injectable()
-export class StateServiceServiceProxy {
+export class StateServiceProxy {
     private http: HttpClient;
     private baseUrl: string;
     protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
@@ -10984,7 +11210,7 @@ export class StateServiceServiceProxy {
      * @return Success
      */
     getProvinces(maxResultCount: number | null | undefined, skipCount: number | null | undefined, sorting: string | null | undefined): Observable<PagedResultDtoOfProvinceListDto> {
-        let url_ = this.baseUrl + "/api/services/app/StateService/GetProvinces?";
+        let url_ = this.baseUrl + "/api/services/app/State/GetProvinces?";
         if (maxResultCount !== undefined)
             url_ += "MaxResultCount=" + encodeURIComponent("" + maxResultCount) + "&"; 
         if (skipCount !== undefined)
@@ -11042,7 +11268,7 @@ export class StateServiceServiceProxy {
      * @return Success
      */
     getProvinceSelectList(): Observable<SelectListItemDtoOfInt32[]> {
-        let url_ = this.baseUrl + "/api/services/app/StateService/GetProvinceSelectList";
+        let url_ = this.baseUrl + "/api/services/app/State/GetProvinceSelectList";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -11099,7 +11325,7 @@ export class StateServiceServiceProxy {
      * @return Success
      */
     createOrUpdateProvince(input: CreateOrUpdateProvinceInput | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/app/StateService/CreateOrUpdateProvince";
+        let url_ = this.baseUrl + "/api/services/app/State/CreateOrUpdateProvince";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input);
@@ -11152,7 +11378,7 @@ export class StateServiceServiceProxy {
      * @return Success
      */
     deleteProvince(id: number | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/app/StateService/DeleteProvince?";
+        let url_ = this.baseUrl + "/api/services/app/State/DeleteProvince?";
         if (id !== undefined)
             url_ += "Id=" + encodeURIComponent("" + id) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
@@ -11206,7 +11432,7 @@ export class StateServiceServiceProxy {
      * @return Success
      */
     getCitys(provinceId: number | null | undefined, sorting: string | null | undefined, maxResultCount: number | null | undefined, skipCount: number | null | undefined): Observable<PagedResultDtoOfCityListDto> {
-        let url_ = this.baseUrl + "/api/services/app/StateService/GetCitys?";
+        let url_ = this.baseUrl + "/api/services/app/State/GetCitys?";
         if (provinceId !== undefined)
             url_ += "ProvinceId=" + encodeURIComponent("" + provinceId) + "&"; 
         if (sorting !== undefined)
@@ -11267,7 +11493,7 @@ export class StateServiceServiceProxy {
      * @return Success
      */
     getCitySelectList(provinceId: number | null | undefined): Observable<SelectListItemDtoOfInt32[]> {
-        let url_ = this.baseUrl + "/api/services/app/StateService/GetCitySelectList?";
+        let url_ = this.baseUrl + "/api/services/app/State/GetCitySelectList?";
         if (provinceId !== undefined)
             url_ += "provinceId=" + encodeURIComponent("" + provinceId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
@@ -11326,7 +11552,7 @@ export class StateServiceServiceProxy {
      * @return Success
      */
     createOrUpdateCity(input: CreateOrUpdateCityInput | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/app/StateService/CreateOrUpdateCity";
+        let url_ = this.baseUrl + "/api/services/app/State/CreateOrUpdateCity";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input);
@@ -11379,7 +11605,7 @@ export class StateServiceServiceProxy {
      * @return Success
      */
     deleteCity(id: number | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/app/StateService/DeleteCity?";
+        let url_ = this.baseUrl + "/api/services/app/State/DeleteCity?";
         if (id !== undefined)
             url_ += "Id=" + encodeURIComponent("" + id) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
@@ -11433,7 +11659,7 @@ export class StateServiceServiceProxy {
      * @return Success
      */
     getDistricts(ctyId: number | null | undefined, sorting: string | null | undefined, maxResultCount: number | null | undefined, skipCount: number | null | undefined): Observable<PagedResultDtoOfDistrictListDto> {
-        let url_ = this.baseUrl + "/api/services/app/StateService/GetDistricts?";
+        let url_ = this.baseUrl + "/api/services/app/State/GetDistricts?";
         if (ctyId !== undefined)
             url_ += "CtyId=" + encodeURIComponent("" + ctyId) + "&"; 
         if (sorting !== undefined)
@@ -11494,7 +11720,7 @@ export class StateServiceServiceProxy {
      * @return Success
      */
     getDistrictSelectList(cityId: number | null | undefined): Observable<SelectListItemDtoOfInt32[]> {
-        let url_ = this.baseUrl + "/api/services/app/StateService/GetDistrictSelectList?";
+        let url_ = this.baseUrl + "/api/services/app/State/GetDistrictSelectList?";
         if (cityId !== undefined)
             url_ += "cityId=" + encodeURIComponent("" + cityId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
@@ -11553,7 +11779,7 @@ export class StateServiceServiceProxy {
      * @return Success
      */
     createOrUpdateDistrict(input: CreateOrUpdateDistrictInput | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/app/StateService/CreateOrUpdateDistrict";
+        let url_ = this.baseUrl + "/api/services/app/State/CreateOrUpdateDistrict";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input);
@@ -11606,7 +11832,7 @@ export class StateServiceServiceProxy {
      * @return Success
      */
     deleteDistrict(id: number | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/app/StateService/DeleteDistrict?";
+        let url_ = this.baseUrl + "/api/services/app/State/DeleteDistrict?";
         if (id !== undefined)
             url_ += "Id=" + encodeURIComponent("" + id) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
@@ -11673,7 +11899,7 @@ export class StoreServiceProxy {
      * @return Success
      */
     getStores(name: string | null | undefined, source: Source | null | undefined, sorting: string | null | undefined, maxResultCount: number | null | undefined, skipCount: number | null | undefined): Observable<PagedResultDtoOfStoreListDto> {
-        let url_ = this.baseUrl + "/api/services/app/Store/GetStores?";
+        let url_ = this.baseUrl + "/api/services/ecommerce/Store/GetStores?";
         if (name !== undefined)
             url_ += "Name=" + encodeURIComponent("" + name) + "&"; 
         if (source !== undefined)
@@ -11735,7 +11961,7 @@ export class StoreServiceProxy {
      * @return Success
      */
     getStoreSelectList(): Observable<SelectListItemDtoOfInt64[]> {
-        let url_ = this.baseUrl + "/api/services/app/Store/GetStoreSelectList";
+        let url_ = this.baseUrl + "/api/services/ecommerce/Store/GetStoreSelectList";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -11792,7 +12018,7 @@ export class StoreServiceProxy {
      * @return Success
      */
     getStoreForEdit(id: number | null | undefined): Observable<GetStoreForEditOutput> {
-        let url_ = this.baseUrl + "/api/services/app/Store/GetStoreForEdit?";
+        let url_ = this.baseUrl + "/api/services/ecommerce/Store/GetStoreForEdit?";
         if (id !== undefined)
             url_ += "Id=" + encodeURIComponent("" + id) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
@@ -11847,7 +12073,7 @@ export class StoreServiceProxy {
      * @return Success
      */
     createOrUpdateStore(input: CreateOrUpdateStoreInput | null | undefined): Observable<EntityDtoOfInt64> {
-        let url_ = this.baseUrl + "/api/services/app/Store/CreateOrUpdateStore";
+        let url_ = this.baseUrl + "/api/services/ecommerce/Store/CreateOrUpdateStore";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input);
@@ -11904,7 +12130,7 @@ export class StoreServiceProxy {
      * @return Success
      */
     deleteStore(ids: number[] | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/app/Store/DeleteStore?";
+        let url_ = this.baseUrl + "/api/services/ecommerce/Store/DeleteStore?";
         if (ids !== undefined)
             ids && ids.forEach(item => { url_ += "Ids=" + encodeURIComponent("" + item) + "&"; });
         url_ = url_.replace(/[?&]$/, "");
@@ -26649,6 +26875,176 @@ export interface ICreateOrUpdateRoleInput {
     grantedPermissionNames: string[];
 }
 
+export class SaleStatisticDto implements ISaleStatisticDto {
+    /** 统计时间 */
+    date!: string | undefined;
+    /** 渠道 */
+    channel!: string | undefined;
+    /** 商品 */
+    product!: string | undefined;
+    /** 下单数量 */
+    orderNum!: number | undefined;
+    /** 下单金额 */
+    orderTotal!: number | undefined;
+    /** 广告消耗 */
+    advertCost!: number | undefined;
+    /** 转化成本 */
+    transformCost!: number | undefined;
+    /** ROI */
+    roi!: number | undefined;
+    /** 发货数量 */
+    shipmentNum!: number | undefined;
+    /** 签收数量 */
+    receivedNum!: number | undefined;
+    /** 签收金额 */
+    receivedTotal!: number | undefined;
+    /** 签收率 */
+    receivedRate!: number | undefined;
+    /** 签收成本 */
+    receivedCost!: number | undefined;
+    /** 拒签数量 */
+    rejectNum!: number | undefined;
+    /** 拒签金额 */
+    rejectTotal!: number | undefined;
+    /** 拒签率 */
+    rejectRate!: number | undefined;
+    /** 货物成本 */
+    goodsCost!: number | undefined;
+    /** 物流费用 */
+    shipmentCost!: number | undefined;
+    /** 佣金 */
+    rewardAmount!: number | undefined;
+    /** 总成本 */
+    totalCost!: number | undefined;
+    /** 利润 */
+    profit!: number | undefined;
+    /** 利润率 */
+    profitRate!: number | undefined;
+    /** 成本利润率 */
+    costProfitRate!: number | undefined;
+
+    constructor(data?: ISaleStatisticDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.date = data["date"];
+            this.channel = data["channel"];
+            this.product = data["product"];
+            this.orderNum = data["orderNum"];
+            this.orderTotal = data["orderTotal"];
+            this.advertCost = data["advertCost"];
+            this.transformCost = data["transformCost"];
+            this.roi = data["roi"];
+            this.shipmentNum = data["shipmentNum"];
+            this.receivedNum = data["receivedNum"];
+            this.receivedTotal = data["receivedTotal"];
+            this.receivedRate = data["receivedRate"];
+            this.receivedCost = data["receivedCost"];
+            this.rejectNum = data["rejectNum"];
+            this.rejectTotal = data["rejectTotal"];
+            this.rejectRate = data["rejectRate"];
+            this.goodsCost = data["goodsCost"];
+            this.shipmentCost = data["shipmentCost"];
+            this.rewardAmount = data["rewardAmount"];
+            this.totalCost = data["totalCost"];
+            this.profit = data["profit"];
+            this.profitRate = data["profitRate"];
+            this.costProfitRate = data["costProfitRate"];
+        }
+    }
+
+    static fromJS(data: any): SaleStatisticDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SaleStatisticDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["date"] = this.date;
+        data["channel"] = this.channel;
+        data["product"] = this.product;
+        data["orderNum"] = this.orderNum;
+        data["orderTotal"] = this.orderTotal;
+        data["advertCost"] = this.advertCost;
+        data["transformCost"] = this.transformCost;
+        data["roi"] = this.roi;
+        data["shipmentNum"] = this.shipmentNum;
+        data["receivedNum"] = this.receivedNum;
+        data["receivedTotal"] = this.receivedTotal;
+        data["receivedRate"] = this.receivedRate;
+        data["receivedCost"] = this.receivedCost;
+        data["rejectNum"] = this.rejectNum;
+        data["rejectTotal"] = this.rejectTotal;
+        data["rejectRate"] = this.rejectRate;
+        data["goodsCost"] = this.goodsCost;
+        data["shipmentCost"] = this.shipmentCost;
+        data["rewardAmount"] = this.rewardAmount;
+        data["totalCost"] = this.totalCost;
+        data["profit"] = this.profit;
+        data["profitRate"] = this.profitRate;
+        data["costProfitRate"] = this.costProfitRate;
+        return data; 
+    }
+}
+
+export interface ISaleStatisticDto {
+    /** 统计时间 */
+    date: string | undefined;
+    /** 渠道 */
+    channel: string | undefined;
+    /** 商品 */
+    product: string | undefined;
+    /** 下单数量 */
+    orderNum: number | undefined;
+    /** 下单金额 */
+    orderTotal: number | undefined;
+    /** 广告消耗 */
+    advertCost: number | undefined;
+    /** 转化成本 */
+    transformCost: number | undefined;
+    /** ROI */
+    roi: number | undefined;
+    /** 发货数量 */
+    shipmentNum: number | undefined;
+    /** 签收数量 */
+    receivedNum: number | undefined;
+    /** 签收金额 */
+    receivedTotal: number | undefined;
+    /** 签收率 */
+    receivedRate: number | undefined;
+    /** 签收成本 */
+    receivedCost: number | undefined;
+    /** 拒签数量 */
+    rejectNum: number | undefined;
+    /** 拒签金额 */
+    rejectTotal: number | undefined;
+    /** 拒签率 */
+    rejectRate: number | undefined;
+    /** 货物成本 */
+    goodsCost: number | undefined;
+    /** 物流费用 */
+    shipmentCost: number | undefined;
+    /** 佣金 */
+    rewardAmount: number | undefined;
+    /** 总成本 */
+    totalCost: number | undefined;
+    /** 利润 */
+    profit: number | undefined;
+    /** 利润率 */
+    profitRate: number | undefined;
+    /** 成本利润率 */
+    costProfitRate: number | undefined;
+}
+
 export class GetCurrentLoginInformationsOutput implements IGetCurrentLoginInformationsOutput {
     user!: UserLoginInfoDto | undefined;
     tenant!: TenantLoginInfoDto | undefined;
@@ -27675,6 +28071,146 @@ export interface IQuickDeliveryInput {
     logisticsNumber: string | undefined;
     /** 备注 */
     adminComment: string | undefined;
+}
+
+export class ShipmentStatisticDto implements IShipmentStatisticDto {
+    /** 渠道 */
+    channel!: string | undefined;
+    /** 商品 */
+    product!: string | undefined;
+    /** 快递 */
+    logistics!: string | undefined;
+    /** 统计/下单时间 */
+    date!: string | undefined;
+    /** 发货数量 */
+    shipmentNum!: number | undefined;
+    /** 签收数量 */
+    receivedNum!: number | undefined;
+    /** 签收金额 */
+    receivedTotal!: number | undefined;
+    /** 签收率 */
+    receivedRate!: number | undefined;
+    /** 拒签数量 */
+    rejectNum!: number | undefined;
+    /** 拒签金额 */
+    rejectTotal!: number | undefined;
+    /** 拒签率 */
+    rejectRate!: number | undefined;
+    /** 在途数量 */
+    onPassagNum!: number | undefined;
+    /** 同城数量 */
+    destinationCityNum!: number | undefined;
+    /** 派件数量 */
+    deliveringNum!: number | undefined;
+    /** 问题件数量 */
+    issueNum!: number | undefined;
+    /** 回款数量 */
+    clearNum!: number | undefined;
+    /** 回款金额 */
+    cleaTotal!: number | undefined;
+    /** 回款率 */
+    cleaRate!: number | undefined;
+
+    constructor(data?: IShipmentStatisticDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.channel = data["channel"];
+            this.product = data["product"];
+            this.logistics = data["logistics"];
+            this.date = data["date"];
+            this.shipmentNum = data["shipmentNum"];
+            this.receivedNum = data["receivedNum"];
+            this.receivedTotal = data["receivedTotal"];
+            this.receivedRate = data["receivedRate"];
+            this.rejectNum = data["rejectNum"];
+            this.rejectTotal = data["rejectTotal"];
+            this.rejectRate = data["rejectRate"];
+            this.onPassagNum = data["onPassagNum"];
+            this.destinationCityNum = data["destinationCityNum"];
+            this.deliveringNum = data["deliveringNum"];
+            this.issueNum = data["issueNum"];
+            this.clearNum = data["clearNum"];
+            this.cleaTotal = data["cleaTotal"];
+            this.cleaRate = data["cleaRate"];
+        }
+    }
+
+    static fromJS(data: any): ShipmentStatisticDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new ShipmentStatisticDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["channel"] = this.channel;
+        data["product"] = this.product;
+        data["logistics"] = this.logistics;
+        data["date"] = this.date;
+        data["shipmentNum"] = this.shipmentNum;
+        data["receivedNum"] = this.receivedNum;
+        data["receivedTotal"] = this.receivedTotal;
+        data["receivedRate"] = this.receivedRate;
+        data["rejectNum"] = this.rejectNum;
+        data["rejectTotal"] = this.rejectTotal;
+        data["rejectRate"] = this.rejectRate;
+        data["onPassagNum"] = this.onPassagNum;
+        data["destinationCityNum"] = this.destinationCityNum;
+        data["deliveringNum"] = this.deliveringNum;
+        data["issueNum"] = this.issueNum;
+        data["clearNum"] = this.clearNum;
+        data["cleaTotal"] = this.cleaTotal;
+        data["cleaRate"] = this.cleaRate;
+        return data; 
+    }
+}
+
+export interface IShipmentStatisticDto {
+    /** 渠道 */
+    channel: string | undefined;
+    /** 商品 */
+    product: string | undefined;
+    /** 快递 */
+    logistics: string | undefined;
+    /** 统计/下单时间 */
+    date: string | undefined;
+    /** 发货数量 */
+    shipmentNum: number | undefined;
+    /** 签收数量 */
+    receivedNum: number | undefined;
+    /** 签收金额 */
+    receivedTotal: number | undefined;
+    /** 签收率 */
+    receivedRate: number | undefined;
+    /** 拒签数量 */
+    rejectNum: number | undefined;
+    /** 拒签金额 */
+    rejectTotal: number | undefined;
+    /** 拒签率 */
+    rejectRate: number | undefined;
+    /** 在途数量 */
+    onPassagNum: number | undefined;
+    /** 同城数量 */
+    destinationCityNum: number | undefined;
+    /** 派件数量 */
+    deliveringNum: number | undefined;
+    /** 问题件数量 */
+    issueNum: number | undefined;
+    /** 回款数量 */
+    clearNum: number | undefined;
+    /** 回款金额 */
+    cleaTotal: number | undefined;
+    /** 回款率 */
+    cleaRate: number | undefined;
 }
 
 /** 物流跟踪详情 */
@@ -32652,6 +33188,14 @@ export enum OrderSources2 {
     _50 = 50, 
 }
 
+export enum Sources {
+    _10 = 10, 
+    _20 = 20, 
+    _30 = 30, 
+    _40 = 40, 
+    _50 = 50, 
+}
+
 /** 空(全部) */
 export enum Status {
     _100 = 100, 
@@ -32668,6 +33212,14 @@ export enum Status {
     _404 = 404, 
     _500 = 500, 
     _600 = 600, 
+}
+
+export enum Sources2 {
+    _10 = 10, 
+    _20 = 20, 
+    _30 = 30, 
+    _40 = 40, 
+    _50 = 50, 
 }
 
 /** 渠道来源(空-获取所有) */
