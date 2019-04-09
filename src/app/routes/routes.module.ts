@@ -12,8 +12,6 @@ import {UserRegisterComponent} from './passport/register/register.component';
 import {UserRegisterResultComponent} from './passport/register-result/register-result.component';
 import {UserLockComponent} from './passport/lock/lock.component';
 // single pages
-import {UserLogin2Component} from './passport/login2/login2.component';
-import {UserLogin3Component} from './passport/login3/login3.component';
 import {CallbackComponent} from './callback/callback.component';
 
 // files pages
@@ -29,8 +27,6 @@ const COMPONENTS = [
   UserRegisterResultComponent,
   UserLockComponent,
   // single pages
-  UserLogin2Component,
-  UserLogin3Component,
   CallbackComponent,
   FilesComponent
 

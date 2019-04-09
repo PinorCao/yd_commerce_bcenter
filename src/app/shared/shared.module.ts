@@ -12,14 +12,15 @@ import {DelonFormModule} from '@delon/form';
 import {TranslateModule} from '@ngx-translate/core';
 
 // #region third libs
-import {NgZorroAntdModule, NzFormModule} from 'ng-zorro-antd';
+import {NgZorroAntdModule} from 'ng-zorro-antd';
 import {SortablejsModule} from 'angular-sortablejs';
 import {NgxImageGalleryModule} from 'ngx-image-gallery';
+import {MouseFocusDirective} from '@shared/components/mouse-focus/mouse-focus.directive';
+import {StatusLabelComponent} from '@shared/components/status-label/status-label.component';
 /*import {EditorModule} from '@tinymce/tinymce-angular';*/
 
 const THIRDMODULES = [
   NgZorroAntdModule,
-  NzFormModule,
   SortablejsModule,
   NgxImageGalleryModule
 ];
@@ -45,14 +46,15 @@ const COMPONENTS_ENTRY = [
   FileManagerComponent,
   AvatarComponent,
   AvatarsComponent,
-  FeatureComponent
+  FeatureComponent,
+  StatusLabelComponent
 ];
 const COMPONENTS = [
   EditorComponent,
   ...COMPONENTS_ENTRY,
   ...PRO_SHARED_COMPONENTS
 ];
-const DIRECTIVES = [ImgDirective, DelayDirective, MasonryDirective, ScrollbarDirective];
+const DIRECTIVES = [ImgDirective, DelayDirective, MasonryDirective, ScrollbarDirective, MouseFocusDirective];
 
 const PIPES = [UploadFilePipe, ToBoolPipe];
 

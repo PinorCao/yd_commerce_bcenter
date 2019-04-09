@@ -14,8 +14,6 @@ import {UserRegisterComponent} from './passport/register/register.component';
 import {UserRegisterResultComponent} from './passport/register-result/register-result.component';
 import {UserLockComponent} from './passport/lock/lock.component';
 // single pages
-import {UserLogin2Component} from './passport/login2/login2.component';
-import {UserLogin3Component} from './passport/login3/login3.component';
 import {CallbackComponent} from './callback/callback.component';
 
 // files pages
@@ -38,12 +36,7 @@ const routes: Routes = [
       {path: 'shipping', loadChildren: './shipping/shipping.module#ShippingModule'},
       {path: 'shipment', loadChildren: './shipment/shipment.module#ShipmentModule'},
       {path: 'advert', loadChildren: './advert/advert.module#AdvertModule'},
-      {path: 'pro', loadChildren: './pro/pro.module#ProModule'},
       {path: 'sys', loadChildren: './sys/sys.module#SysModule'},
-      {path: 'ec', loadChildren: './ec/ec.module#ECModule'},
-      {path: 'map', loadChildren: './map/map.module#MapModule'},
-      {path: 'chart', loadChildren: './chart/chart.module#ChartModule'},
-      {path: 'other', loadChildren: './other/other.module#OtherModule'},
       // Exception
       {path: 'exception', loadChildren: './exception/exception.module#ExceptionModule'},
       {path: 'files', component: FilesComponent}
@@ -77,8 +70,6 @@ const routes: Routes = [
     ]
   },
   // 单页不包裹Layout
-  {path: 'login2', component: UserLogin2Component},
-  {path: 'login3', component: UserLogin3Component},
   {path: 'callback/:type', component: CallbackComponent},
   {path: '**', redirectTo: 'dashboard'}
 ];

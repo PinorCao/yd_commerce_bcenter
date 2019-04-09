@@ -1,6 +1,6 @@
 <!--<h3>{{ 'app.register.register' | translate }}</h3>-->
 <form nz-form [formGroup]="form" (ngSubmit)="submit()" role="form">
-  <nz-tabset nzSize="large" [nzSelectedIndex]="pos">
+  <nz-tabset nzSize="large" [nzSelectedIndex]="0">
     <nz-tab *ngFor="let item of tabs" [nzTitle]="item.tab" (nzClick)="to(item)"></nz-tab>
   </nz-tabset>
   <div class="content">

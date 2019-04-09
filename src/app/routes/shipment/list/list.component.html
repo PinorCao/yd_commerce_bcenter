@@ -61,7 +61,7 @@
                         </div>
                     </nz-dropdown>-->
                 </th>
-                <th nzShowFilter [nzFilters]="orderStatus" (nzFilterChange)="filterChange('status',$event)">
+                <th>
                     状态
                 </th>
                 <th>
@@ -83,7 +83,7 @@
                     <td>{{data.logisticsName}}</td>
                     <td>{{data.deliveryOn | _date}}</td>
                     <td>
-                        <a [routerLink]="'/order/edit/' + data.id">编辑</a>
+                        <a [routerLink]="'/shipment/edit/' + data.id">编辑</a>
                         <nz-divider nzType="vertical"></nz-divider>
                         <a>删除</a>
                     </td>
